@@ -1133,7 +1133,7 @@ const S = {
           <div class="lx-legend nb-leg"><span><u></u>setembro</span><span><i></i>outubro</span></div>
 
           <div class="nx-h"><small>ÚLTIMAS LIVES</small><button class="nx-all">Ver todas${ic('chev')}</button></div>
-          <div class="nb-lives">${LIVES.slice(0, 3).map(([t, d, g, u, pc]) => { const [wd, dt] = d.split(' '); return `<div class="nb-lc ${pc === 100 ? 'nb-best' : ''}"><div class="nb-top"><span class="nb-date">${wd.replace('.', '').toUpperCase()} <b>${dt.slice(0, 5)}</b></span>${pc === 100 ? `<span class="nb-crown">${ic('trophy')}melhor</span>` : ''}</div><b class="nb-title">${t}</b><span class="nb-gem">${ic('gem')}<b>${g}</b></span><span class="nb-sub">${d.split(' · ')[1]} · ${u}</span><span class="nb-bar"><span style="width:${pc}%"></span></span></div>` }).join('')}</div>
+          <div class="nb-lives">${LIVES.slice(0, 3).map(([t, d, g, u, pc]) => { const [wd, dt] = d.split(' '); return `<div class="nb-lc ${pc === 100 ? 'nb-best' : ''}"><div class="nb-top"><span class="nb-date">${wd.replace('.', '').toUpperCase()} <b>${dt.slice(0, 5)}</b></span>${pc === 100 ? `<span class="nb-crown">${ic('trophy')}melhor do mês</span>` : ''}</div><b class="nb-title">${t}</b><span class="nb-gem">${ic('gem')}<b>${g}</b></span><span class="nb-sub">${d.split(' · ')[1]} · ${u}</span><span class="nb-bar"><span style="width:${pc}%"></span></span></div>` }).join('')}</div>
         </div>
       </div>
     </section>
