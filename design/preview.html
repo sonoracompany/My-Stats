@@ -878,6 +878,13 @@ body.esm.liq .ibtn.solid svg { color: #1D3F6D !important; }
 .lx-bars i { background: #0e6b4f; } .lx-bars u { background: rgb(15 42 32 / .16); }
 .lx-legend { display: flex; justify-content: flex-end; gap: 14px; margin-top: 6px; font-size: 11px; color: #7b8a81; }
 .lx-legend span { display: flex; align-items: center; gap: 5px; } .lx-legend i, .lx-legend u { width: 12px; height: 3px; border-radius: 3px; background: #0e6b4f; } .lx-legend u { background: rgb(15 42 32 / .16); }
+/* métricas do topo: uma faixa de vidro só, baixa, com 3 colunas separadas por linhas finas (no lugar de 3 cartões altos) */
+.lx-glass { grid-template-columns: 1.3fr 1fr 1fr; gap: 0; margin-top: 24px; padding: 12px 0; border-radius: 18px; background: rgb(255 255 255 / .07); border: 1px solid rgb(255 255 255 / .1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.lx-glass > div { padding: 0 14px; gap: 5px; background: none; border: 0; border-radius: 0; backdrop-filter: none; -webkit-backdrop-filter: none; min-width: 0; }
+.lx-glass > div + div { border-left: 1px solid rgb(255 255 255 / .12); }
+.lx-glass small { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: rgb(255 255 255 / .62); white-space: nowrap; }
+.lx-glass i { width: 18px; height: 18px; margin: 0; border-radius: 6px; flex: none; } .lx-glass i svg { width: 12px; height: 12px; stroke-width: 2.2; }
+.lx-glass b { font-size: 16.5px; }
 </style>
 
 <div class="page">
@@ -957,9 +964,9 @@ const S = {
         <div class="lx-ends"><span>0</span><span class="lx-tick"><i></i>esperado hoje</span><button class="lx-goal">${ic('target')}<b>2,5 mi</b>${ic('pen')}</button></div>
       </div>
       <div class="lx-glass">
-        <div><i>${ic('usd')}</i><b class="num">R$ 38.264</b><small>saldo do mês</small></div>
-        <div><i>${ic('live')}</i><b class="num">21</b><small>lives</small></div>
-        <div><i>${ic('clock')}</i><b class="num">48h10</b><small>ao vivo</small></div>
+        <div><small><i>${ic('usd')}</i>saldo do mês</small><b class="num">R$ 38.264</b></div>
+        <div><small><i>${ic('live')}</i>lives</small><b class="num">21</b></div>
+        <div><small><i>${ic('clock')}</i>ao vivo</small><b class="num">48h10</b></div>
       </div>
     </section>
 
