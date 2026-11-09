@@ -4,8 +4,9 @@ App pessoal (PWA instalado na tela de início do iPhone) do **Galli**, criador d
 Mostra diamantes, recompensas, saques, estatísticas e metas. Fala sempre em **português do Brasil**, de forma simples
 (o Galli não é programador).
 
-- Repositório: `andregustavooficial/My-Stats` · branch padrão `main`
-- App publicado: https://andregustavooficial.github.io/My-Stats/
+- Repositório: `sonoracompany/My-Stats` · branch padrão `main` (transferido de `andregustavooficial/My-Stats` em nov/2026)
+- App publicado: https://sonoracompany.github.io/My-Stats/ (o endereço antigo `andregustavooficial.github.io/My-Stats` deixou de
+  valer com a transferência; o app precisa ser adicionado de novo à tela de início pelo endereço novo)
 - Hospedagem: GitHub Pages, publicado pelo workflow `.github/workflows/pages.yml` a cada push em `main` que mexa em `app/`
   (o passo "Stamp version" troca `__V__` pelo commit, para o iPhone não usar arquivos antigos).
 - Banco: Supabase (URL e chave anon pública em `app/app.js`; os dados são protegidos por RLS "owner" em cada tabela).
