@@ -878,6 +878,139 @@ body.esm.liq .ibtn.solid svg { color: #1D3F6D !important; }
 .lx-bars i { background: #0e6b4f; } .lx-bars u { background: rgb(15 42 32 / .16); }
 .lx-legend { display: flex; justify-content: flex-end; gap: 14px; margin-top: 6px; font-size: 11px; color: #7b8a81; }
 .lx-legend span { display: flex; align-items: center; gap: 5px; } .lx-legend i, .lx-legend u { width: 12px; height: 3px; border-radius: 3px; background: #0e6b4f; } .lx-legend u { background: rgb(15 42 32 / .16); }
+/* métricas do topo: uma faixa de vidro só, baixa, com 3 colunas separadas por linhas finas (no lugar de 3 cartões altos) */
+.lx-glass { grid-template-columns: 1.3fr 1fr 1fr; gap: 0; margin-top: 24px; padding: 12px 0; border-radius: 18px; background: rgb(255 255 255 / .07); border: 1px solid rgb(255 255 255 / .1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.lx-glass > div { padding: 0 14px; gap: 5px; background: none; border: 0; border-radius: 0; backdrop-filter: none; -webkit-backdrop-filter: none; min-width: 0; }
+.lx-glass > div + div { border-left: 1px solid rgb(255 255 255 / .12); }
+.lx-glass small { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: rgb(255 255 255 / .62); white-space: nowrap; }
+.lx-glass i { width: 18px; height: 18px; margin: 0; border-radius: 6px; flex: none; } .lx-glass i svg { width: 12px; height: 12px; stroke-width: 2.2; }
+.lx-glass b { font-size: 16.5px; }
+/* números e rótulos centralizados em cada coluna */
+.lx-glass > div { align-items: center; text-align: center; padding: 0 8px; }
+.lx-glass small { justify-content: center; }
+/* ===== Início: parte de baixo refeita ===== */
+.nx { display: flex; flex-direction: column; gap: 12px; padding: 18px 0 8px; border-top: 1px solid rgb(15 42 32 / .08); }
+.nx-h { display: flex; justify-content: space-between; align-items: center; min-height: 32px; margin: 10px 2px -4px; }
+.nx-h small { font-size: 10.5px; letter-spacing: .2em; font-weight: 700; color: #7b8a81; }
+.nx-all { position: relative; border: 0; background: none; display: flex; align-items: center; gap: 2px; height: 32px; padding: 0 0 0 8px; font-size: 12.5px; font-weight: 700; color: #0e6b4f; }
+.nx-all svg { width: 14px; height: 14px; } .nx-all::after { content: ""; position: absolute; inset: -6px; }
+.nx-card { background: #fcfdf9; border: 1px solid rgb(15 42 32 / .07); border-radius: 20px; overflow: hidden; box-shadow: 0 1px 2px rgb(15 42 32 / .04), 0 12px 26px -18px rgb(15 42 32 / .3); }
+/* atalho da carreira: cartão esmeralda com troféu cobre, abre a tela Carreira */
+.cx-teaser { position: relative; overflow: hidden; width: 100%; border: 0; text-align: left; color: #fff; display: grid; grid-template-columns: 44px 1fr 30px; gap: 14px; align-items: center; padding: 16px 16px 24px; border-radius: 22px;
+  background: radial-gradient(90% 120% at 100% 0%, rgb(226 116 47 / .28), transparent 60%), linear-gradient(160deg, #0f7558, #0a5640 60%, #083f30); box-shadow: 0 18px 34px -20px rgb(8 63 48 / .8); transition: transform .16s ease; }
+.cx-teaser:active { transform: scale(.98); }
+.cx-teaser::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(115deg, rgb(255 255 255 / .02) 0 1px, transparent 1px 7px); pointer-events: none; }
+.cx-ic { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; color: #fff; background: linear-gradient(160deg, #f08a45, #c25a1c); box-shadow: 0 8px 18px -8px rgb(194 90 28 / .8); } .cx-ic svg { width: 22px; height: 22px; }
+.cx-t { min-width: 0; } .cx-t small { display: block; font-size: 10px; letter-spacing: .2em; font-weight: 700; color: rgb(255 255 255 / .6); }
+.cx-t b { display: block; margin: 3px 0 1px; font: 700 24px/1.1 -apple-system, "SF Pro Display", system-ui, sans-serif; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.cx-t > span { white-space: nowrap; font-size: 12px; color: rgb(255 255 255 / .72); }
+.cx-go { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: rgb(255 255 255 / .12); color: #c6f59a; } .cx-go svg { width: 15px; height: 15px; }
+.cx-line { position: absolute; left: 16px; right: 16px; bottom: 11px; height: 3px; border-radius: 3px; background: rgb(255 255 255 / .14); }
+.cx-line i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #f08a45, #e2742f); }
+/* dólar */
+.nx-fx { display: grid; grid-template-columns: 34px 1fr 1fr; gap: 0 12px; align-items: center; padding: 14px 16px 0; }
+.nx-fx > div + div { border-left: 1px solid rgb(15 42 32 / .08); padding-left: 14px; }
+.nx-fx small { display: block; font-size: 11.5px; font-weight: 600; color: #7b8a81; } .nx-fx b { font-size: 17px; font-weight: 700; color: #0f2a20; white-space: nowrap; } .nx-fx > div + div b { color: #5f6e66; }
+.nx-fx p { grid-column: 1 / -1; margin: 12px -16px 0; padding: 9px 16px; font-size: 12px; color: #5f6e66; background: rgb(198 245 154 / .22); border-top: 1px solid rgb(15 42 32 / .06); } .nx-fx p b { font-size: 12px; color: #c25a1c; }
+/* comparação */
+.nx-row { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; padding: 12px 16px; } .nx-row + .nx-row { border-top: 1px solid rgb(15 42 32 / .06); }
+.nx-row > div > b { display: block; font-size: 14.5px; font-weight: 600; color: #0f2a20; } .nx-row small { font-size: 11.5px; color: #7b8a81; }
+.nx-v { display: flex; align-items: center; gap: 8px; } .nx-v b { font-size: 16px; font-weight: 700; color: #0f2a20; white-space: nowrap; }
+.nx-v em { min-width: 48px; text-align: center; font-style: normal; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 99px; white-space: nowrap; }
+.nx-v em.u { color: #0e6b4f; background: rgb(198 245 154 / .7); } .nx-v em.d { color: #b0243a; background: rgb(226 51 74 / .1); }
+/* últimas lives */
+.nx-live { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; padding: 12px 16px; } .nx-live + .nx-live { border-top: 1px solid rgb(15 42 32 / .06); }
+.nx-dt { width: 44px; height: 48px; border-radius: 13px; background: rgb(198 245 154 / .55); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+.nx-dt b { font-size: 18px; font-weight: 800; color: #0e6b4f; } .nx-dt small { margin-top: 4px; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; color: #c25a1c; }
+.nx-lt { min-width: 0; } .nx-lt > b { display: block; font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #0f2a20; } .nx-lt > span { font-size: 12px; color: #7b8a81; }
+.nx-lt .nx-bar { display: block; height: 3px; margin-top: 7px; border-radius: 3px; background: rgb(15 42 32 / .07); overflow: hidden; } .nx-lt .nx-bar span { display: block; height: 100%; border-radius: inherit; background: #0e6b4f; }
+.nx-crown { display: inline-grid; vertical-align: -2px; margin-right: 5px; color: #e2742f; } .nx-crown svg { width: 14px; height: 14px; stroke-width: 2.2; }
+.nx-g { text-align: right; } .nx-g b { display: block; font-size: 15px; font-weight: 700; color: #0e6b4f; } .nx-g small { font-size: 10.5px; color: #7b8a81; }
+
+/* ===== Tela Carreira ===== */
+.cx-hero { background: radial-gradient(120% 60% at 85% 0%, rgb(226 116 47 / .22), transparent 60%), radial-gradient(90% 50% at 0% 100%, rgb(198 245 154 / .1), transparent 60%), linear-gradient(170deg, #0f7558, #0b5c45 55%, #083f30); }
+.cx-big { position: relative; z-index: 1; margin-top: 26px; text-align: center; }
+.cx-big small { font-size: 10.5px; letter-spacing: .24em; font-weight: 600; color: rgb(255 255 255 / .6); }
+.cx-big b { display: block; margin: 6px 0 4px; font: 700 46px/1.1 -apple-system, "SF Pro Display", system-ui, sans-serif; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+.cx-big span { font-size: 13px; font-weight: 600; color: #f5b98a; }
+.cx-track { position: relative; z-index: 1; height: 52px; margin: 34px 18px 0; }
+.cx-rail { position: absolute; left: 0; right: 0; top: 11px; height: 6px; border-radius: 6px; background: rgb(0 0 0 / .22); }
+.cx-rail i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, rgb(198 245 154 / .35), #c6f59a); }
+.cx-ms { position: absolute; top: 7px; translate: -50% 0; display: flex; flex-direction: column; align-items: center; gap: 9px; font-size: 10.5px; font-weight: 700; color: rgb(255 255 255 / .55); white-space: nowrap; }
+.cx-ms i { width: 14px; height: 14px; border-radius: 50%; background: #0a5640; box-shadow: inset 0 0 0 2px rgb(255 255 255 / .35); }
+.cx-ms.ok { color: rgb(255 255 255 / .85); } .cx-ms.ok i { background: #c6f59a; box-shadow: inset 0 0 0 3px #0a5640; }
+.cx-ms.fut { color: #f5b98a; } .cx-ms.fut i { box-shadow: inset 0 0 0 2px #e2742f; }
+.cx-now { position: absolute; top: 14px; width: 28px; height: 28px; translate: -50% -50%; border-radius: 50%; background: rgb(198 245 154 / .2); }
+.cx-now::after { content: ""; position: absolute; inset: 8px; border-radius: 50%; background: #c6f59a; box-shadow: 0 0 12px rgb(198 245 154 / .7); }
+@media (prefers-reduced-motion: no-preference) {
+  .cx-rail i { animation: cxfill 1.4s cubic-bezier(.23,1,.32,1) both; } .cx-now { animation: cxnow 1.4s cubic-bezier(.23,1,.32,1) both; }
+}
+@keyframes cxfill { from { width: 0; } } @keyframes cxnow { from { left: 0; } }
+.cx-goalrow { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 12px; font-size: 12.5px; color: rgb(255 255 255 / .7); } .cx-goalrow b { color: #fff; }
+.cx .lx-glass { grid-template-columns: repeat(3, 1fr); }
+.cx-yr { display: grid; grid-template-columns: 76px 1fr 62px; gap: 12px; align-items: center; padding: 8px 0; }
+.cx-yr span { font-size: 14px; font-weight: 700; color: #0f2a20; line-height: 1.15; }
+.lx-block .cx-yr small { display: block; font-size: 10.5px; font-weight: 500; letter-spacing: 0; color: #7b8a81; }
+.cx-yr > i { height: 10px; border-radius: 9px; background: rgb(15 42 32 / .07); overflow: hidden; } .cx-yr > i i { display: block; height: 100%; border-radius: inherit; background: #8fd3a4; }
+.cx-yr.top > i i { background: linear-gradient(90deg, #f08a45, #c25a1c); } .lx-block .cx-yr.top small, .cx-yr.top b { color: #c25a1c; }
+.cx-yr.cur > i i { background: repeating-linear-gradient(135deg, #0e6b4f 0 6px, #3e9c78 6px 12px); }
+.cx-yr b { text-align: right; font-size: 14px; font-weight: 600; color: #0f2a20; }
+.cx-tl { display: flex; flex-direction: column; margin-top: 2px; }
+.cx-mi { position: relative; display: grid; grid-template-columns: 14px 1fr auto; gap: 14px; align-items: center; padding: 10px 0; }
+.cx-mi:not(:last-child)::before { content: ""; position: absolute; left: 6px; top: 50%; height: 100%; width: 2px; background: rgb(14 107 79 / .25); }
+.cx-mi:nth-last-child(2)::before { background: repeating-linear-gradient(#e2742f 0 3px, transparent 3px 7px); }
+.cx-mi i { position: relative; z-index: 1; width: 14px; height: 14px; border-radius: 50%; background: #c6f59a; box-shadow: inset 0 0 0 3px #0e6b4f; }
+.cx-mi b { font-size: 14.5px; font-weight: 600; color: #0f2a20; } .cx-mi span { font-size: 12.5px; color: #7b8a81; }
+.cx-mi.fut i { background: #f7f8f3; box-shadow: inset 0 0 0 2px #e2742f; } .cx-mi.fut b, .cx-mi.fut span { color: #c25a1c; } .cx-mi.fut span { font-weight: 600; }
+.cx .rk { padding: 10px 0; } .cx .rk + .rk { border-top-color: rgb(15 42 32 / .06); } .cx .rk .t b { color: #0f2a20; } .cx .rk > b { color: #0f2a20; }
+/* ===== Início: proposta "Blocos" para comparativos e lives ===== */
+/* (bloco: rótulo em cima; número + barrinhas; % e valor de setembro embaixo) */
+.nx-a, .nx-b { display: contents; }
+[data-cmp="b"] .nx-a, :root:not([data-cmp="b"]) .nx-b { display: none; }
+.nb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.nb-t { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto auto; gap: 0 8px; padding: 13px 14px 12px; border-radius: 20px; background: #fcfdf9; border: 1px solid rgb(15 42 32 / .07); box-shadow: 0 1px 2px rgb(15 42 32 / .04), 0 12px 26px -18px rgb(15 42 32 / .3); }
+.nb-t > small { display: flex; align-items: center; gap: 7px; min-width: 0; font-size: 12px; font-weight: 600; color: #5f6e66; white-space: nowrap; }
+.nb-t .si { width: 26px; height: 26px; border-radius: 8px; flex: none; } .nb-t .si svg { width: 14px; height: 14px; }
+.nb-t > em { align-self: center; font-style: normal; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 99px; white-space: nowrap; }
+.nb-t > em.u { color: #0e6b4f; background: rgb(198 245 154 / .7); } .nb-t > em.d { color: #b0243a; background: rgb(226 51 74 / .1); }
+.nb-t > b { margin-top: 12px; font: 700 22px/1.1 -apple-system, "SF Pro Display", system-ui, sans-serif; letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: #0f2a20; white-space: nowrap; }
+.nb-mb { grid-column: 2; grid-row: 2 / 4; align-self: end; justify-self: end; display: flex; align-items: flex-end; gap: 4px; height: 36px; }
+.nb-mb i { display: block; width: 9px; min-height: 3px; border-radius: 4px 4px 2px 2px; background: rgb(15 42 32 / .14); } .nb-mb i + i { background: #0e6b4f; }
+.nb-t.dn .nb-mb i + i { background: #c2414f; }
+.nb-prev { margin-top: 3px; font-size: 11.5px; color: #7b8a81; white-space: nowrap; }
+.nb-leg { margin-top: -2px; } .nb-leg i { background: #0e6b4f !important; }
+.nb-lives { display: flex; gap: 10px; overflow-x: auto; margin: 0 -22px; padding: 2px 22px 12px; scroll-snap-type: x mandatory; scroll-padding: 0 22px; scrollbar-width: none; overscroll-behavior-x: contain; }
+.nb-lives::-webkit-scrollbar { display: none; }
+.nb-lc { flex: none; width: 168px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 3px; padding: 13px 14px 14px; border-radius: 20px; background: #fcfdf9; border: 1px solid rgb(15 42 32 / .07); box-shadow: 0 1px 2px rgb(15 42 32 / .04), 0 12px 26px -18px rgb(15 42 32 / .3); }
+.nb-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.nb-date { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; color: #c25a1c; padding: 3px 8px; border-radius: 99px; background: rgb(198 245 154 / .5); } .nb-date b { color: #0e6b4f; letter-spacing: 0; }
+.nb-crown { display: flex; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 700; color: #c25a1c; } .nb-crown svg { width: 13px; height: 13px; stroke-width: 2.2; }
+.nb-title { font-size: 13.5px; font-weight: 700; line-height: 1.25; color: #0f2a20; min-height: 34px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.nb-gem { display: flex; align-items: center; gap: 5px; margin-top: 6px; color: #0e6b4f; } .nb-gem svg { width: 16px; height: 16px; stroke-width: 2; }
+.nb-gem b { font: 700 20px/1.1 -apple-system, "SF Pro Display", system-ui, sans-serif; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.nb-sub { font-size: 11.5px; color: #7b8a81; white-space: nowrap; }
+.nb-bar { display: block; height: 3px; margin-top: 10px; border-radius: 3px; background: rgb(15 42 32 / .08); overflow: hidden; } .nb-bar span { display: block; height: 100%; border-radius: inherit; background: #0e6b4f; }
+.nb-lc.nb-best { background: linear-gradient(165deg, #fdf0e4, #fcfdf9 62%); border-color: rgb(226 116 47 / .25); }
+.nb-lc.nb-best .nb-date { background: rgb(226 116 47 / .14); } .nb-lc.nb-best .nb-bar span { background: linear-gradient(90deg, #f08a45, #c25a1c); }
+.nb-more { flex: none; width: 104px; scroll-snap-align: start; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border-radius: 20px; border: 1.5px dashed rgb(14 107 79 / .3); background: none; color: #0e6b4f; font-size: 12px; font-weight: 700; line-height: 1.3; }
+.nb-more svg { width: 34px; height: 34px; padding: 9px; border-radius: 50%; background: rgb(198 245 154 / .6); stroke-width: 2.4; }
+/* bloco do comparativo, ajuste: */
+.nb-t { grid-template-rows: auto auto auto; }
+.nb-t > small { grid-column: 1 / -1; }
+.nb-t > b { grid-column: 1; grid-row: 2; }
+.nb-mb { grid-row: 2; height: 30px; }
+.nb-prev { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+.nb-prev em { font-style: normal; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 99px; white-space: nowrap; }
+.nb-prev em.u { color: #0e6b4f; background: rgb(198 245 154 / .7); } .nb-prev em.d { color: #b0243a; background: rgb(226 51 74 / .1); }
+/* lives em blocos, uma embaixo da outra: data e título à esquerda, diamantes à direita, barrinha embaixo */
+.nb-lives { flex-direction: column; overflow: visible; margin: 0; padding: 0; scroll-snap-type: none; }
+.nb-lc { width: auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 14px; row-gap: 0; align-items: center; padding: 13px 16px 14px; }
+.nb-top { grid-column: 1; grid-row: 1; justify-content: flex-start; gap: 10px; margin-bottom: 7px; }
+.nb-title { grid-column: 1; grid-row: 2; min-height: 0; font-size: 14.5px; -webkit-line-clamp: 2; }
+.nb-sub { grid-column: 1; grid-row: 3; margin-top: 1px; }
+.nb-gem { grid-column: 2; grid-row: 1 / 4; margin: 0; align-self: center; }
+.nb-gem b { font-size: 21px; }
+.nb-bar { grid-column: 1 / -1; grid-row: 4; margin-top: 12px; }
 </style>
 
 <div class="page">
@@ -885,6 +1018,7 @@ body.esm.liq .ibtn.solid svg { color: #1D3F6D !important; }
     <h1>My Stats — do zero</h1>
     <p>Fundo em tom médio com degradê e doodles bem sutis (diamante, microfone, coração, brilhos). Cor principal em azul royal ou vermelho escuro: troque abaixo. Ícones com a cor de cada assunto. SF Pro no texto, SF Mono nos números. Números de exemplo.</p>
     <div class="themes">Cor: <button class="chip" id="t-har" aria-pressed="false">Harmonia</button><button class="chip" id="t-liq" aria-pressed="false">Líquen</button><button class="chip" id="t-pal3" aria-pressed="false">Paleta 3</button><button class="chip" id="t-mus" aria-pressed="false">Musgo</button><button class="chip" id="t-esm" aria-pressed="true">Esmeralda</button><button class="chip" id="t-pal" aria-pressed="false">Gelo</button><button class="chip" id="t-ard" aria-pressed="false">Ardósia</button><button class="chip" id="t-are" aria-pressed="false">Areia</button><button class="chip" id="t-noi" aria-pressed="false">Noite</button><button class="chip" id="t-blue" aria-pressed="false">Azul profundo</button><button class="chip" id="t-red" aria-pressed="false">Vermelho escuro</button></div>
+    <div class="tbpick">Comparativos e lives: <button class="chip" data-cmp="a" aria-pressed="false">Lista</button><button class="chip" data-cmp="b" aria-pressed="true">Blocos (nova)</button></div>
     <div class="tbpick">Barra: <button class="chip" data-tbp="" aria-pressed="false">Atual</button><button class="chip" data-tbp="d" aria-pressed="true">4 · Deslizante</button><button class="chip" data-tbp="e" aria-pressed="false">5 · Dock</button><button class="chip" data-tbp="f" aria-pressed="false">6 · Pontinho</button></div>
     <div class="chips" id="nav"></div>
   </div>
@@ -957,9 +1091,9 @@ const S = {
         <div class="lx-ends"><span>0</span><span class="lx-tick"><i></i>esperado hoje</span><button class="lx-goal">${ic('target')}<b>2,5 mi</b>${ic('pen')}</button></div>
       </div>
       <div class="lx-glass">
-        <div><i>${ic('usd')}</i><b class="num">R$ 38.264</b><small>saldo do mês</small></div>
-        <div><i>${ic('live')}</i><b class="num">21</b><small>lives</small></div>
-        <div><i>${ic('clock')}</i><b class="num">48h10</b><small>ao vivo</small></div>
+        <div><small><i>${ic('usd')}</i>saldo do mês</small><b class="num">R$ 38.264</b></div>
+        <div><small><i>${ic('live')}</i>lives</small><b class="num">21</b></div>
+        <div><small><i>${ic('clock')}</i>ao vivo</small><b class="num">48h10</b></div>
       </div>
     </section>
 
@@ -970,27 +1104,79 @@ const S = {
         <div class="lx-hint">${ic('target')}<span>Precisa de <b>59,6 mil</b> por dia<br>sua média é 93,5 mil</span><button>Editar meta</button></div>
       </div>
 
-      <div class="lx-block lx-career">
-        <div class="lx-row"><small>CARREIRA</small><small>DESDE NOV/2023</small></div>
-        <b class="num">82.391.913</b>
-        <span class="lx-usd">≈ US$ 415.740</span><div class="lx-line"><i style="width:82.4%"></i></div>
-        <div class="lx-row"><span>82% de 100 mi</span><span class="cop">chega ~ mar/2027</span></div>
-      </div>
+      <div class="nx">
+        <button class="cx-teaser" data-go="carreira" aria-label="Abrir sua carreira">
+          <span class="cx-ic">${ic('trophy')}</span>
+          <span class="cx-t"><small>SUA CARREIRA</small><b class="num">82.391.913</b><span>82% de 100 mi · ~ jun/2027</span></span>
+          <span class="cx-go">${ic('chev')}</span>
+          <i class="cx-line"><i style="width:82.4%"></i></i>
+        </button>
 
-      <div class="lx-block lx-split">
-        <div><small>DÓLAR DO SAQUE</small><b class="num">R$ 4,8497</b><span>último saque · 22/10</span></div>
-        <div><small>COMERCIAL HOJE</small><b class="num">R$ 5,05</b><span>R$ 0,20 a mais</span></div>
+        <div class="nx-card nx-fx">
+          <span class="si c">${ic('usd')}</span>
+          <div><small>Dólar do saque</small><b class="num">R$ 4,8497</b></div>
+          <div><small>Comercial hoje</small><b class="num">R$ 5,05</b></div>
+          <p>No saque fica <b>R$ 0,20</b> por dólar no caminho · último saque 22/10</p>
+        </div>
+
+        <div class="nx-a">
+          <div class="nx-h"><small>COMPARADO A SETEMBRO</small><small>ATÉ DIA 22</small></div>
+          <div class="nx-card">${[['user', 'Seguidores', '+3.412', '+3.159', 8, 1, 'g'], ['usd', 'Por live', 'R$ 1.822', 'R$ 1.735', 5, 1, 'c'], ['eye', 'Pico médio', '812', '837', 3, 0, 'g'], ['heart', 'Curtidas', '9,8 mi', '8,6 mi', 14, 1, 'g']].map(([i, l, v, prev, d, up, c]) => `<div class="nx-row"><span class="si ${c}">${ic(i)}</span><div><b>${l}</b><small>setembro: ${prev}</small></div><div class="nx-v"><b class="num">${v}</b><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${d}%</em></div></div>`).join('')}</div>
+
+          <div class="nx-h"><small>ÚLTIMAS LIVES</small><button class="nx-all">Ver todas${ic('chev')}</button></div>
+          <div class="nx-card">${LIVES.slice(0, 3).map(([t, d, g, u, pc]) => { const [wd, dt] = d.split(' '); return `<div class="nx-live"><div class="nx-dt"><b>${dt.slice(0, 2)}</b><small>${wd.replace('.', '').toUpperCase()}</small></div><div class="nx-lt"><b>${pc === 100 ? `<span class="nx-crown">${ic('trophy')}</span>` : ''}${t}</b><span>${d.split(' · ')[1]} · ${u}</span><span class="nx-bar"><span style="width:${pc}%"></span></span></div><div class="nx-g"><b class="num">${g}</b><small>diamantes</small></div></div>` }).join('')}</div>
+        </div>
+
+        <div class="nx-b">
+          <div class="nx-h"><small>COMPARADO A SETEMBRO</small><small>ATÉ DIA 22</small></div>
+          <div class="nb-grid">${[['user', 'Seguidores', '+3.412', '+3.159', 3412, 3159, 8, 1, 'g'], ['usd', 'Por live', 'R$ 1.822', 'R$ 1.735', 1822, 1735, 5, 1, 'c'], ['eye', 'Pico médio', '812', '837', 812, 837, 3, 0, 'g'], ['heart', 'Curtidas', '9,8 mi', '8,6 mi', 9.8, 8.6, 14, 1, 'g']].map(([i, l, v, prev, a, b, d, up, c]) => { const m = Math.max(a, b); return `<div class="nb-t ${up ? '' : 'dn'}"><small><span class="si ${c}">${ic(i)}</span>${l}</small><b>${v}</b><span class="nb-mb" aria-hidden="true"><i style="height:${(b / m * 100).toFixed(0)}%"></i><i style="height:${(a / m * 100).toFixed(0)}%"></i></span><span class="nb-prev"><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${d}%</em>set.: ${prev}</span></div>` }).join('')}</div>
+          <div class="lx-legend nb-leg"><span><u></u>setembro</span><span><i></i>outubro</span></div>
+
+          <div class="nx-h"><small>ÚLTIMAS LIVES</small><button class="nx-all">Ver todas${ic('chev')}</button></div>
+          <div class="nb-lives">${LIVES.slice(0, 3).map(([t, d, g, u, pc]) => { const [wd, dt] = d.split(' '); return `<div class="nb-lc ${pc === 100 ? 'nb-best' : ''}"><div class="nb-top"><span class="nb-date">${wd.replace('.', '').toUpperCase()} <b>${dt.slice(0, 5)}</b></span>${pc === 100 ? `<span class="nb-crown">${ic('trophy')}melhor do mês</span>` : ''}</div><b class="nb-title">${t}</b><span class="nb-gem">${ic('gem')}<b>${g}</b></span><span class="nb-sub">${d.split(' · ')[1]} · ${u}</span><span class="nb-bar"><span style="width:${pc}%"></span></span></div>` }).join('')}</div>
+        </div>
+      </div>
+    </section>
+  </div>` },
+
+  carreira: { tab: 'inicio', name: '✦ Carreira · tela nova', html: () => `
+  <div class="lx cx">
+    <section class="lx-hero cx-hero">
+      <div class="lx-bar"><button data-go="inicioX">${ic('back')}Início</button><span>DESDE NOV/2023</span></div>
+      <p class="lx-hi">Sua <b>carreira</b></p>
+      <div class="cx-big"><small>DIAMANTES NO TOTAL</small><b class="num" id="cxN">82.391.913</b><span>≈ US$ 415.740 em recompensas</span></div>
+      <div class="cx-track">
+        <div class="cx-rail"><i style="width:82.4%"></i></div>
+        ${[[10, '10 mi'], [25, '25 mi'], [50, '50 mi'], [75, '75 mi'], [100, '100 mi']].map(([p, l]) => `<span class="cx-ms ${p <= 82.4 ? 'ok' : 'fut'}" style="left:${p}%"><i></i>${l}</span>`).join('')}
+        <span class="cx-now" style="left:82.4%"></span>
+      </div>
+      <div class="cx-goalrow"><span>Faltam <b class="num">17,6 mi</b> · chega ~ jun/2027</span><button class="lx-goal">${ic('target')}<b>100 mi</b>${ic('pen')}</button></div>
+      <div class="lx-glass">
+        <div><small><i>${ic('cal')}</i>meses</small><b class="num">36</b></div>
+        <div><small><i>${ic('live')}</i>lives</small><b class="num">412</b></div>
+        <div><small><i>${ic('clock')}</i>ao vivo</small><b class="num">946h</b></div>
+      </div>
+    </section>
+
+    <section class="lx-sheet">
+      <div class="lx-block lx-lead">
+        <small>NO RITMO ATUAL</small>
+        <p>Faltam <b>17,6 milhões</b>. Com a média dos últimos 3 meses (<b>2,3 mi por mês</b>), você chega aos <em>100 milhões</em> em <b>junho de 2027</b>.</p>
       </div>
 
       <div class="lx-block">
-        <div class="lx-row lx-h"><small>OUTUBRO × SETEMBRO</small><small>ATÉ DIA 22</small></div>
-        <div class="lx-grid">${[['SEGUIDORES', '+3.412', '+8%', 1, 100, 92], ['POR LIVE', 'R$ 1.822', '+5%', 1, 100, 95], ['PICO', '812', '−3%', 0, 97, 100], ['CURTIDAS', '9,8 mi', '+14%', 1, 100, 87]].map(([l, v, d, up, a, b]) => `<div class="lx-gc"><small>${l}</small><div class="lx-gv"><b>${v}</b><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${d.replace(/[+−]/, '')}</em></div><div class="lx-bars"><i style="width:${a}%"></i><u style="width:${b}%"></u></div></div>`).join('')}</div>
-        <div class="lx-legend"><span><i></i>outubro</span><span><u></u>setembro</span></div>
+        <div class="lx-row lx-h"><small>ANO A ANO</small><small>DIAMANTES</small></div>
+        ${[['2023', 'nov e dez', 1.2, ''], ['2024', '', 31.4, ''], ['2025', 'melhor ano', 33.1, 'top'], ['2026', 'até 22/out', 16.7, 'cur']].map(([y, sub, v, cls]) => `<div class="cx-yr ${cls}"><span>${y}${sub ? `<small>${sub}</small>` : ''}</span><i><i style="width:${(v / 33.1 * 100).toFixed(1)}%"></i></i><b class="num">${v.toFixed(1).replace('.', ',')} mi</b></div>`).join('')}
       </div>
 
       <div class="lx-block">
-        <div class="lx-row lx-h"><small>ÚLTIMAS LIVES</small><small class="lx-link">VER TODAS</small></div>
-        ${LIVES.slice(0, 3).map(([t, d, g, u, pc]) => { const [wd, dt] = d.split(' '); return `<div class="lx-live"><div class="lx-date"><b>${dt.slice(0, 2)}</b><small>${wd.replace('.', '').toUpperCase()}</small></div><div class="lx-lt"><b>${t}</b><span>${d.split(' · ')[1]} · ${u}</span></div><b class="num lx-g">${g}</b></div>` }).join('')}
+        <div class="lx-row lx-h"><small>MARCOS</small><small>QUANDO CHEGOU</small></div>
+        <div class="cx-tl">${[['1 milhão', 'dez/2023'], ['10 milhões', 'abr/2024'], ['25 milhões', 'out/2024'], ['50 milhões', 'jul/2025'], ['75 milhões', 'jul/2026'], ['100 milhões', 'previsão ~ jun/2027', 1]].map(([l, d, f]) => `<div class="cx-mi ${f ? 'fut' : ''}"><i></i><b>${l}</b><span>${d}</span></div>`).join('')}</div>
+      </div>
+
+      <div class="lx-block">
+        <div class="lx-row lx-h"><small>MELHORES MESES</small><small>DIAMANTES</small></div>
+        ${[['março de 2025', 24, '3,12 mi'], ['julho de 2025', 23, '3,05 mi'], ['setembro de 2026', 22, '2,60 mi']].map(([m, n, v], i) => `<div class="rk"><span class="pos ${i === 0 ? 'g' : ''}">${i + 1}º</span><div class="t"><b>${m}</b><span>${n} lives</span></div><b class="num">${v}</b></div>`).join('')}
       </div>
     </section>
   </div>` },
@@ -1027,7 +1213,7 @@ const S = {
     </div>
 
     ${sec('Comparado a setembro', `<div class="sg-list">
-      ${[['user', 'Novos seguidores', '+3.412', '↑ 8%'], ['heart', 'Curtidas', '9,8 mi', '↑ 14%'], ['eye', 'Pico de pessoas', '812', '↓ 3%']].map(([i, l, v, d]) => `<div class="sg-row"><span class="si g">${ic(i)}</span><div><b>${l}</b></div><strong class="num">${v} <em class="${d[0] === '↓' ? 'down' : 'up'}">${d}</em></strong></div>`).join('')}
+      ${[['user', 'Seguidores', '+3.412', '↑ 8%'], ['heart', 'Curtidas', '9,8 mi', '↑ 14%'], ['eye', 'Pico de pessoas', '812', '↓ 3%']].map(([i, l, v, d]) => `<div class="sg-row"><span class="si g">${ic(i)}</span><div><b>${l}</b></div><strong class="num">${v} <em class="${d[0] === '↓' ? 'down' : 'up'}">${d}</em></strong></div>`).join('')}
     </div>`, '<span>até dia 22</span>')}
 
     ${sec('Últimas lives', `<div class="group">${LIVES.slice(0, 3).map(lvRow).join('')}</div>`, 'Ver todas')}` },
@@ -1313,6 +1499,10 @@ go('inicio')
 
 // escolher a proposta de barra de abas
 document.documentElement.dataset.tb = 'd'
+// alternar a proposta dos comparativos e lives do Início
+document.documentElement.dataset.cmp = 'b'
+document.addEventListener('click', e => { const b = e.target.closest('[data-cmp]'); if (!b) return
+  document.documentElement.dataset.cmp = b.dataset.cmp; document.querySelectorAll('[data-cmp]').forEach(x => x.setAttribute('aria-pressed', x === b)) })
 // posição da aba aberta, pra o destaque deslizar
 const tbPos = () => { const t = document.getElementById('tabbar'); const i = [...t.children].findIndex(b => b.classList.contains('on')); t.style.setProperty('--ti', Math.max(i, 0)) }
 { const _g = go; go = k => { _g(k); tbPos() }; tbPos() }
@@ -1337,4 +1527,6 @@ function lxAnim() {
   requestAnimationFrame(step)
 }
 { const _g3 = go; go = k => { _g3(k); if (k === 'inicioX') lxAnim() }; go('inicioX') }
+// tela Carreira: o total conta subindo ao abrir
+{ const _g4 = go; go = k => { _g4(k); if (k === 'carreira') countUp(document.getElementById('cxN')) } }
 </script>

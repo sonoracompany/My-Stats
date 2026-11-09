@@ -67,11 +67,15 @@ Mostra diamantes, recompensas, saques, estatísticas e metas. Fala sempre em **p
 ## Onde paramos
 
 - No app (publicado): tema Esmeralda, barra de abas presa ao rodapé com destaque verde-limão que desliza,
-  meta do mês e meta do acumulado (com previsão), resumo do mês e "Seu público", "Vindos dos vídeos",
-  estatísticas novas (melhor dia, duração ideal, calendário, títulos, 6 meses), saque Payoneer/Pix, relatório pro contador.
-- **Em andamento (só na prévia, ainda NÃO aplicado no app):** redesign total da tela **Início** — tela
-  "✦ Início · Redesign total" (`inicioX`) em `design/preview.html`: topo esmeralda de ponta a ponta com arco de meta animado
-  (sobe do zero), diamantes em negrito, pílula de %, seletor de meta, métricas em blocos de vidro; folha clara com
-  "O mês até agora", Carreira, Dólar, grade Outubro × Setembro com barrinhas e últimas lives.
-  O Galli aprovou a direção e pediu ajustes até a versão atual. Próximos passos: confirmar com ele, aplicar no app
-  (com dados reais) e depois redesenhar as outras telas no mesmo estilo.
+  resumo do mês e "Seu público", "Vindos dos vídeos", estatísticas novas (melhor dia, duração ideal, calendário,
+  títulos, 6 meses), saque Payoneer/Pix, relatório pro contador.
+- **Início redesenhado (nov/2026, aprovado e publicado):** `renderHome` em `app.js`, estilos no fim de `style.css`
+  (classes `lx-*`, `nx-*`, `nb-*`, `cx-*`). Topo esmeralda de ponta a ponta (sem o cabeçalho de sempre: `body.luxe`,
+  `theme-color` muda para `#0f7558`), arco da meta que sobe do zero (`lxAnim`), faixa de vidro com saldo/lives/horas,
+  folha clara com "O mês até agora", atalho da carreira, dólar, comparativos em blocos 2×2 e últimas lives em cartões
+  (etiqueta "melhor do mês" = live com mais diamantes no mês; recorde da carreira não existe, faltam dados).
+- **Tela Carreira** (`renderCareer`, rota `career`, abre pelo cartão do Início): total desde nov/2023, trilha de marcos até
+  a meta do acumulado, ritmo e previsão, mês a mês, marcos e melhores meses. Ano a ano e datas dos marcos antigos não
+  aparecem porque não há histórico mês a mês antes do app (só o total em `LIFETIME`).
+- Prévia: `design/preview.html` (tela "✦ Início · Redesign total" e "✦ Carreira · tela nova").
+- **Próximo passo:** redesenhar as outras telas (Lives, Estatísticas, Recompensas) no mesmo estilo, sempre com prévia antes.
