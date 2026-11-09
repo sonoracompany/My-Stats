@@ -1002,6 +1002,15 @@ body.esm.liq .ibtn.solid svg { color: #1D3F6D !important; }
 .nb-prev { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; margin-top: 8px; }
 .nb-prev em { font-style: normal; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 99px; white-space: nowrap; }
 .nb-prev em.u { color: #0e6b4f; background: rgb(198 245 154 / .7); } .nb-prev em.d { color: #b0243a; background: rgb(226 51 74 / .1); }
+/* lives em blocos, uma embaixo da outra: data e título à esquerda, diamantes à direita, barrinha embaixo */
+.nb-lives { flex-direction: column; overflow: visible; margin: 0; padding: 0; scroll-snap-type: none; }
+.nb-lc { width: auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 14px; row-gap: 0; align-items: center; padding: 13px 16px 14px; }
+.nb-top { grid-column: 1; grid-row: 1; justify-content: flex-start; gap: 10px; margin-bottom: 7px; }
+.nb-title { grid-column: 1; grid-row: 2; min-height: 0; font-size: 14.5px; -webkit-line-clamp: 2; }
+.nb-sub { grid-column: 1; grid-row: 3; margin-top: 1px; }
+.nb-gem { grid-column: 2; grid-row: 1 / 4; margin: 0; align-self: center; }
+.nb-gem b { font-size: 21px; }
+.nb-bar { grid-column: 1 / -1; grid-row: 4; margin-top: 12px; }
 </style>
 
 <div class="page">
@@ -1124,7 +1133,7 @@ const S = {
           <div class="lx-legend nb-leg"><span><u></u>setembro</span><span><i></i>outubro</span></div>
 
           <div class="nx-h"><small>ÚLTIMAS LIVES</small><button class="nx-all">Ver todas${ic('chev')}</button></div>
-          <div class="nb-lives">${LIVES.slice(0, 3).map(([t, d, g, u, pc]) => { const [wd, dt] = d.split(' '); return `<div class="nb-lc ${pc === 100 ? 'nb-best' : ''}"><div class="nb-top"><span class="nb-date">${wd.replace('.', '').toUpperCase()} <b>${dt.slice(0, 5)}</b></span>${pc === 100 ? `<span class="nb-crown">${ic('trophy')}melhor</span>` : ''}</div><b class="nb-title">${t}</b><span class="nb-gem">${ic('gem')}<b>${g}</b></span><span class="nb-sub">${d.split(' · ')[1]} · ${u}</span><span class="nb-bar"><span style="width:${pc}%"></span></span></div>` }).join('')}<button class="nb-more">${ic('chev')}<span>Ver todas<br>as lives</span></button></div>
+          <div class="nb-lives">${LIVES.slice(0, 3).map(([t, d, g, u, pc]) => { const [wd, dt] = d.split(' '); return `<div class="nb-lc ${pc === 100 ? 'nb-best' : ''}"><div class="nb-top"><span class="nb-date">${wd.replace('.', '').toUpperCase()} <b>${dt.slice(0, 5)}</b></span>${pc === 100 ? `<span class="nb-crown">${ic('trophy')}melhor</span>` : ''}</div><b class="nb-title">${t}</b><span class="nb-gem">${ic('gem')}<b>${g}</b></span><span class="nb-sub">${d.split(' · ')[1]} · ${u}</span><span class="nb-bar"><span style="width:${pc}%"></span></span></div>` }).join('')}</div>
         </div>
       </div>
     </section>
