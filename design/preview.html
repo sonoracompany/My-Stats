@@ -1011,6 +1011,131 @@ body.esm.liq .ibtn.solid svg { color: #1D3F6D !important; }
 .nb-gem { grid-column: 2; grid-row: 1 / 4; margin: 0; align-self: center; }
 .nb-gem b { font-size: 21px; }
 .nb-bar { grid-column: 1 / -1; grid-row: 4; margin-top: 12px; }
+/* ===== Lives: 3 propostas (A Calendário, B Gráfico, C Pódio) ===== */
+.ls .lx-glass { grid-template-columns: repeat(3, 1fr); }
+.ls-month { position: relative; z-index: 1; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; margin-top: 18px; }
+.ls-month button { width: 44px; height: 44px; border-radius: 14px; border: 1px solid rgb(255 255 255 / .14); background: rgb(255 255 255 / .07); color: #c6f59a; display: grid; place-items: center; }
+.ls-month button:disabled { opacity: .35; } .ls-month button svg { width: 18px; height: 18px; }
+.ls-month > div { text-align: center; } .ls-month b { display: block; font-size: 24px; font-weight: 700; letter-spacing: -.02em; } .ls-month b em { font-style: normal; font-weight: 300; color: rgb(255 255 255 / .7); }
+.ls-month small { font-size: 12px; color: rgb(255 255 255 / .6); }
+.ls-big { position: relative; z-index: 1; margin-top: 22px; text-align: center; }
+.ls-big small { font-size: 10.5px; letter-spacing: .24em; font-weight: 600; color: rgb(255 255 255 / .6); }
+.ls-big b { display: block; margin: 6px 0 8px; font: 700 44px/1.1 -apple-system, "SF Pro Display", system-ui, sans-serif; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+.ls-big.sm b { font-size: 36px; }
+.ls-pill { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: rgb(255 255 255 / .7); }
+.ls-pill i { font-style: normal; font-size: 12px; font-weight: 800; color: #0a5640; background: #c6f59a; padding: 2px 8px; border-radius: 99px; box-shadow: 0 0 14px rgb(198 245 154 / .45); }
+/* A · calendário */
+.ls-cal { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 24px; }
+.ls-cal .h { text-align: center; font-size: 10px; font-weight: 700; letter-spacing: .1em; color: rgb(255 255 255 / .5); }
+.ls-cal i { aspect-ratio: 1; border-radius: 10px; display: grid; place-items: center; font-style: normal; background: color-mix(in srgb, #c6f59a calc(var(--a, 0) * 100%), rgb(255 255 255 / .06)); }
+.ls-cal i b { font-size: 11.5px; font-weight: 700; color: rgb(255 255 255 / .85); } .ls-cal i.hi b { color: #0a5640; }
+.ls-cal i.x { background: none; } .ls-cal i.off b { color: rgb(255 255 255 / .4); }
+.ls-cal i.fut { background: none; box-shadow: inset 0 0 0 1px rgb(255 255 255 / .1); } .ls-cal i.fut b { color: rgb(255 255 255 / .3); font-weight: 500; }
+.ls-cal i.max { background: linear-gradient(160deg, #f08a45, #c25a1c); } .ls-cal i.max b { color: #fff; }
+.ls-cal i.now { box-shadow: 0 0 0 2px #0b5c45, 0 0 0 3.5px #c6f59a; }
+.ls-leg { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 10.5px; color: rgb(255 255 255 / .55); }
+.ls-leg span { display: flex; align-items: center; gap: 4px; } .ls-leg i { width: 11px; height: 11px; border-radius: 4px; background: color-mix(in srgb, #c6f59a calc(var(--a) * 100%), rgb(255 255 255 / .06)); } .ls-leg i.max { background: #e2742f; }
+/* B e C · gráfico de diamantes por dia */
+.ls-chart { position: relative; z-index: 1; margin-top: 30px; }
+.ls-chart svg { display: block; width: 100%; height: 120px; overflow: visible; }
+.ls-chart rect { fill: #c6f59a; } .ls-chart rect.m { fill: #e2742f; } .ls-chart rect.f { fill: rgb(255 255 255 / .14); }
+.ls-chart line.a { stroke: rgb(255 255 255 / .55); stroke-dasharray: 4 4; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ls-tip { position: absolute; top: 0; translate: -50% calc(-100% - 6px); padding: 3px 8px; border-radius: 99px; font-size: 10.5px; font-weight: 700; white-space: nowrap; color: #fff; background: #c25a1c; }
+.ls-avg { position: absolute; right: 0; translate: 0 calc(-100% - 3px); font-size: 10px; font-weight: 600; color: rgb(255 255 255 / .7); }
+.ls-axis { display: flex; justify-content: space-between; margin-top: 6px; font-size: 10.5px; color: rgb(255 255 255 / .5); }
+.ls-chart.lt { margin-top: 26px; } .ls-chart.lt rect { fill: #8fd3a4; } .ls-chart.lt rect.f { fill: rgb(15 42 32 / .08); } .ls-chart.lt line.a { stroke: #7b8a81; }
+.ls-chart.lt .ls-avg, .ls-chart.lt .ls-axis { color: #7b8a81; }
+.ls-chartcard { padding: 14px 16px 12px; }
+@media (prefers-reduced-motion: no-preference) { .ls-chart rect:not(.f) { transform-origin: 0 120px; transform-box: view-box; animation: lsgrow .7s cubic-bezier(.23, 1, .32, 1) both; animation-delay: calc(var(--i) * 18ms); } }
+@keyframes lsgrow { from { transform: scaleY(0); } }
+/* C · pódio */
+.ls-pod { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1.15fr 1fr; align-items: end; gap: 8px; margin-top: 22px; }
+.ls-pod > div { min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; }
+.ls-pod small { font-size: 10.5px; color: rgb(255 255 255 / .6); }
+.ls-pt { font-size: 12.5px; font-weight: 700; line-height: 1.2; min-height: 30px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ls-pod b { font: 700 17px/1.2 -apple-system, "SF Pro Display", system-ui, sans-serif; font-variant-numeric: tabular-nums; } .ls-pod .p1 b { font-size: 20px; color: #c6f59a; }
+.ls-blk { width: 100%; margin-top: 8px; padding-top: 10px; border-radius: 14px 14px 4px 4px; display: flex; justify-content: center; font-size: 17px; font-weight: 800; color: rgb(255 255 255 / .75); background: rgb(255 255 255 / .08); border: 1px solid rgb(255 255 255 / .12); }
+.p1 .ls-blk { height: 92px; border: 0; color: #0a5640; background: linear-gradient(#c6f59a, #9fdc72); box-shadow: 0 10px 30px -10px rgb(198 245 154 / .6); }
+.p2 .ls-blk { height: 66px; } .p3 .ls-blk { height: 50px; }
+.ls-crown { width: 30px; height: 30px; margin-bottom: 4px; border-radius: 10px; display: grid; place-items: center; color: #fff; background: linear-gradient(160deg, #f08a45, #c25a1c); box-shadow: 0 8px 18px -8px rgb(194 90 28 / .8); } .ls-crown svg { width: 16px; height: 16px; }
+@media (prefers-reduced-motion: no-preference) { .ls-blk { transform-origin: bottom; animation: lsgrow .8s cubic-bezier(.23, 1, .32, 1) both; } .p1 .ls-blk { animation-delay: .15s; } .p3 .ls-blk { animation-delay: .08s; } }
+/* folha clara */
+.ls .lx-block:first-child { border-top: 0; }
+.ls-c3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 4px; }
+.ls-c3 > div { display: flex; flex-direction: column; gap: 3px; padding: 11px 11px 10px; border-radius: 16px; background: #fcfdf9; border: 1px solid rgb(15 42 32 / .07); box-shadow: 0 1px 2px rgb(15 42 32 / .04), 0 10px 22px -18px rgb(15 42 32 / .3); min-width: 0; }
+.lx-block .ls-c3 small { font-size: 11px; letter-spacing: 0; font-weight: 600; color: #7b8a81; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ls-c3 b { font: 700 16.5px/1.15 -apple-system, "SF Pro Display", system-ui, sans-serif; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: #0f2a20; white-space: nowrap; }
+.ls-c3 em, .ls-crh em { align-self: flex-start; font-style: normal; font-size: 10.5px; font-weight: 800; padding: 1px 7px; border-radius: 99px; }
+.ls-c3 em.u, .ls-crh em.u { color: #0e6b4f; background: rgb(198 245 154 / .7); } .ls-c3 em.d, .ls-crh em.d { color: #b0243a; background: rgb(226 51 74 / .1); }
+.ls-best { padding: 16px; border-radius: 22px; background: linear-gradient(150deg, #fbe0cc, #fdf1e7 55%, #fcfdf9); border: 1px solid rgb(226 116 47 / .2); box-shadow: 0 12px 26px -18px rgb(194 90 28 / .45); }
+.ls-bh { display: flex; align-items: center; gap: 12px; }
+.ls-bi { width: 42px; height: 42px; flex: none; border-radius: 13px; display: grid; place-items: center; color: #fff; background: linear-gradient(160deg, #f08a45, #c25a1c); box-shadow: 0 8px 18px -8px rgb(194 90 28 / .8); } .ls-bi svg { width: 21px; height: 21px; }
+.lx-block .ls-bh small { font-size: 10px; letter-spacing: .16em; font-weight: 700; color: #c25a1c; } .ls-bh b { display: block; margin-top: 2px; font-size: 19px; font-weight: 800; color: #0f2a20; }
+.ls-bk { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 14px; padding-top: 12px; border-top: 1px solid rgb(194 90 28 / .15); text-align: center; }
+.ls-bk > div + div { border-left: 1px solid rgb(194 90 28 / .15); } .ls-bk b { display: block; font-size: 16px; font-weight: 700; color: #0f2a20; } .ls-bk span { font-size: 11px; color: #9a5a32; }
+.ls-seg { display: grid; grid-template-columns: repeat(3, 1fr); padding: 3px; margin-top: 6px; border-radius: 12px; background: rgb(15 42 32 / .06); }
+.ls-seg button { height: 34px; border: 0; border-radius: 9px; background: none; font-size: 12.5px; font-weight: 600; color: #5f6e66; transition: background-color .2s ease, color .2s ease; }
+.ls-seg button.on { background: #fcfdf9; color: #0e6b4f; font-weight: 700; box-shadow: 0 2px 6px rgb(15 42 32 / .12); }
+.ls-wk { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 4px 8px; } .ls-wk b { font-size: 13px; font-weight: 700; color: #0f2a20; } .ls-wk span { font-size: 11.5px; color: #7b8a81; }
+.ls-list { background: #fcfdf9; border: 1px solid rgb(15 42 32 / .07); border-radius: 20px; overflow: hidden; box-shadow: 0 1px 2px rgb(15 42 32 / .04), 0 12px 26px -18px rgb(15 42 32 / .3); }
+.ls-row { width: 100%; border: 0; background: none; text-align: left; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 14px; } .ls-row + .ls-row { border-top: 1px solid rgb(15 42 32 / .06); }
+.ls-rt { min-width: 0; } .ls-rt > b { display: block; font-size: 14px; font-weight: 700; color: #0f2a20; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ls-rt > span { font-size: 11.5px; color: #7b8a81; }
+.ls-rg { text-align: right; } .ls-rg b { display: block; font-size: 15px; font-weight: 700; color: #0e6b4f; } .ls-rg small { font-size: 10.5px; color: #7b8a81; }
+.ls-more { margin: 12px 0 0; text-align: center; font-size: 12px; font-weight: 600; color: #7b8a81; }
+/* B · comparativo em linhas com barrinhas */
+.ls-cr { padding: 12px 16px; } .ls-cr + .ls-cr { border-top: 1px solid rgb(15 42 32 / .06); }
+.ls-crh { display: grid; grid-template-columns: 30px 1fr auto auto; gap: 10px; align-items: center; }
+.ls-crh .si { width: 30px; height: 30px; border-radius: 9px; } .ls-crh .si svg { width: 15px; height: 15px; }
+.ls-crl { font-size: 14px; font-weight: 600; color: #0f2a20; line-height: 1.2; } .ls-crl small { display: block; font-size: 11px; font-weight: 500; color: #7b8a81; }
+.ls-crh b { font-size: 15.5px; font-weight: 700; color: #0f2a20; white-space: nowrap; } .ls-crh em { align-self: center; min-width: 46px; text-align: center; }
+.ls-cb { display: flex; flex-direction: column; gap: 3px; margin: 9px 0 0 40px; } .ls-cb u, .ls-cb i { display: block; height: 4px; border-radius: 4px; }
+.ls-cb u { background: rgb(15 42 32 / .14); } .ls-cb i { background: #0e6b4f; } .ls-cb i.d { background: #c2414f; }
+/* C · linha do tempo */
+.ls-tl { margin-top: 10px; }
+.ls-ti { position: relative; display: grid; grid-template-columns: 38px 12px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 11px 0; }
+.ls-ti + .ls-ti { border-top: 1px solid rgb(15 42 32 / .06); }
+.ls-ti::before { content: ""; position: absolute; left: 55px; top: 0; bottom: 0; width: 2px; background: rgb(14 107 79 / .16); }
+.ls-ti:first-child::before { top: 50%; } .ls-ti:last-child::before { bottom: 50%; }
+.ls-td { text-align: center; line-height: 1; } .ls-td b { display: block; font-size: 20px; font-weight: 300; color: #0f2a20; }
+.lx-block .ls-td small { font-size: 9.5px; letter-spacing: .12em; font-weight: 700; color: #c25a1c; }
+.ls-ti > i { position: relative; z-index: 1; width: 12px; height: 12px; border-radius: 50%; background: #c6f59a; box-shadow: inset 0 0 0 3px #0e6b4f; }
+.ls-ti.b > i { background: #fdf0e4; box-shadow: inset 0 0 0 3px #e2742f; } .ls-ti.b .ls-rg b { color: #c25a1c; }
+/* Lives: ajustes */
+.lx-block .ls-rg small, .lx-block .ls-crl small, .lx-block .nb-t > small, .lx-block .nb-prev, .lx-block .ls-wk span { letter-spacing: 0; }
+.lx-block .ls-rg small, .lx-block .ls-crl small { font-weight: 500; color: #7b8a81; font-size: 10.5px; }
+.lx-block .nb-t > small { font-size: 12px; font-weight: 600; color: #5f6e66; }
+.ls-chart rect { stroke: none; }
+.nb-date, .nb-crown { white-space: nowrap; }
+/* Lives A: comparativos com K e M, mais respiro */
+.ls-c3 { gap: 10px; } .ls-c3 > div { padding: 12px 12px 11px; gap: 4px; }
+.ls-c3 b { font-size: 19px; }
+/* cartão da melhor live: vira botão que abre a página da live */
+.ls-best { display: block; width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; transition: transform .16s ease; }
+.ls-best:active { transform: scale(.98); }
+.ls-bh > div { flex: 1; min-width: 0; }
+.ls-bgo { width: 30px; height: 30px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #c25a1c; background: rgb(226 116 47 / .12); } .ls-bgo svg { width: 15px; height: 15px; }
+.ls-bmore { display: block; margin-top: 12px; text-align: center; font-size: 12px; font-weight: 700; color: #c25a1c; }
+/* página da live */
+.ld-hero { background: radial-gradient(120% 60% at 85% 0%, rgb(226 116 47 / .24), transparent 60%), radial-gradient(90% 50% at 0% 100%, rgb(198 245 154 / .1), transparent 60%), linear-gradient(170deg, #0f7558, #0b5c45 55%, #083f30); }
+.ld-title { position: relative; z-index: 1; margin-top: 22px; }
+.ld-tag { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; color: #fff; background: rgb(226 116 47 / .85); } .ld-tag svg { width: 13px; height: 13px; stroke-width: 2.2; }
+.ld-title h2 { margin: 10px 0 2px; font-size: 30px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+.ld-title p { margin: 0; font-size: 13px; color: rgb(255 255 255 / .7); }
+.ld .ls-big { margin-top: 20px; }
+.ld-money { font-size: 13px; font-weight: 600; color: #f5b98a; }
+.ld-c3 b { font-size: 18px; }
+.ld-note { display: flex; gap: 8px; align-items: flex-start; margin: 12px 2px 0; font-size: 12.5px; line-height: 1.4; color: #5f6e66; } .ld-note svg { width: 16px; height: 16px; flex: none; margin-top: 1px; color: #e2742f; }
+.ld-rw > div { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 12px 16px; } .ld-rw > div + div { border-top: 1px solid rgb(15 42 32 / .06); }
+.ld-rw span { font-size: 14px; font-weight: 600; color: #0f2a20; } .ld-rw b { font-size: 16px; font-weight: 700; color: #0e6b4f; text-align: right; }
+.lx-block .ld-rw small { grid-column: 1 / -1; font-size: 11.5px; font-weight: 500; letter-spacing: 0; color: #7b8a81; }
+.ld-tt { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; padding: 12px 16px; }
+.ld-tt b { display: block; font-size: 14.5px; font-weight: 700; color: #0f2a20; } .lx-block .ld-tt small { font-size: 12px; font-weight: 500; letter-spacing: 0; color: #7b8a81; }
+.ld-tt em { font-style: normal; font-size: 11px; font-weight: 800; color: #c25a1c; background: rgb(226 116 47 / .12); padding: 2px 8px; border-radius: 99px; }
+.ld-edit { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 48px; margin-top: 8px; border: 1px solid rgb(15 42 32 / .15); border-radius: 99px; background: none; font-size: 14px; font-weight: 600; color: #0f2a20; } .ld-edit svg { width: 16px; height: 16px; color: #0e6b4f; }
+.lx-block .ld-eng small { white-space: normal; overflow: visible; line-height: 1.25; min-height: 2.5em; hyphens: manual; }
+.ld-eng b { margin-top: auto; }
+.ls-list2 { margin-top: 4px; } .ls-list2 .nx-row { padding: 11px 16px; min-height: 58px; }
+.lx-block .ls-list2 small { letter-spacing: 0; font-weight: 500; }
 </style>
 
 <div class="page">
@@ -1073,6 +1198,58 @@ const OLDP = {gem:'<path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20"/>',home:'
 const FLOAT = [[6, 0, 34, 14, 0], [22, 0, 24, 11, -6], [38, 0, 38, 17, -3], [54, 0, 28, 12, -9], [70, 0, 32, 15, -1], [86, 0, 26, 10, -5], [14, 0, 30, 16, -11], [62, 0, 22, 13, -8], [94, 0, 34, 18, -13], [46, 0, 26, 12, -14]]
 const NOTE = '<rect x="2.5" y="6" width="19" height="12" rx="3.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6.2 9.6h.01M17.8 14.4h.01"/>'
 const floaters = (shape = P.gem.replace(/<path class="d"[^>]*\/>/, '')) => `<div class="floaters" aria-hidden="true">${FLOAT.map(([x, y, sz, d, dl]) => `<svg viewBox="0 0 24 24" style="left:${x}%;top:${y}%;width:${sz}px;height:${sz}px;animation-duration:${d}s;animation-delay:${dl}s">${shape}</svg>`).join('')}</div>`
+// ===== Lives: 3 propostas (dados de exemplo de outubro) =====
+// [título, dia da semana, data, duração, diamantes, US$, diamantes (número), por hora]
+const LSM = [
+  ['LIVE DA MANHÃ', 'qui', '22/10', '1h04', '45.020', 'US$ 180,08', 45020, 42200],
+  ["LET'S SING", 'ter', '20/10', '3h12', '104.000', 'US$ 416,32', 104000, 32500],
+  ['ONE SONG, ONE MEMORY', 'seg', '19/10', '1h59', '82.800', 'US$ 331,28', 82800, 41700],
+  ['SEXTOU', 'sex', '16/10', '2h56', '79.900', 'US$ 319,60', 79900, 27200],
+  ['NOITE ACÚSTICA', 'qui', '15/10', '2h10', '71.300', 'US$ 285,20', 71300, 32900],
+  ['PEDIDOS DE MÚSICA', 'qua', '14/10', '1h45', '66.900', 'US$ 267,60', 66900, 38200],
+  ['SEXTOU', 'sex', '09/10', '2h40', '88.400', 'US$ 353,60', 88400, 33150],
+]
+const LS_WEEKS = [['19 – 25 out', '3 lives · 231,8 mil', 0, 3], ['12 – 18 out', '3 lives · 218,1 mil', 3, 6], ['5 – 11 out', '1 live · 88,4 mil', 6, 7]]
+const DAYK = [92, 118, 0, 86, 97, 74, 101, 88, 112, 0, 95, 83, 99, 104, 91, 108, 0, 84, 96, 104, 148, 45]   // mil diamantes por dia (1 a 22)
+const LS_CMP = [['gem', 'Diamantes', '1,96 mi', '1,75 mi', 12, 1, 'g', 196, 175], ['usd', 'Recompensas', 'US$ 7,8 mil', 'US$ 7,2 mil', 9, 1, 'c', 78, 72], ['cal', 'Por dia de live', '103.338', '99.360', 4, 1, 'g', 103, 99],
+  ['clock', 'Por hora', '40.763', '42.020', 3, 0, 'g', 40.8, 42], ['live', 'Por live', '93.496', '91.660', 2, 1, 'g', 93.5, 91.7], ['clock', 'Ao vivo', '48h10', '41h50', 15, 1, 'g', 48.2, 41.8]]
+const LS_K = ['1,96M', 'US$ 7,8K', '103,3K', '40,8K', '93,5K', '48h10']   // comparativos em K e M
+const LS_KP = ['1,75M', 'US$ 7,2K', '99,4K', '42K', '91,7K', '41h50']   // os mesmos de setembro
+const lsBar = `<div class="lx-bar"><span>LIVES</span><button>${ic('cam')}Prints</button></div>`
+const lsMonth = () => `<div class="ls-month"><button aria-label="Mês anterior">${ic('back')}</button><div><b>Outubro <em>2026</em></b><small>21 lives · 19 dias de live</small></div><button aria-label="Próximo mês" disabled>${ic('chev')}</button></div>`
+const lsBig = (cls = '') => `<div class="ls-big ${cls}"><small>DIAMANTES NO MÊS</small><b>1.963.400</b><span class="ls-pill"><i>↑ 12%</i>vs setembro até dia 22</span></div>`
+const lsGlass = cells => `<div class="lx-glass">${cells.map(([i, l, v]) => `<div><small><i>${ic(i)}</i>${l}</small><b class="num">${v}</b></div>`).join('')}</div>`
+const lsSeg = (v, on = 'data') => `<div class="ls-seg" data-lsv="${v}">${[['data', 'Data'], ['diamantes', 'Diamantes'], ['hora', 'Por hora']].map(([k, l]) => `<button class="${k === on ? 'on' : ''}" data-lss="${k}">${l}</button>`).join('')}</div>`
+const lsSorted = s => s === 'diamantes' ? [...LSM].sort((a, b) => b[6] - a[6]) : s === 'hora' ? [...LSM].sort((a, b) => b[7] - a[7]) : LSM
+const lsCrown = t => t[6] === 104000 ? `<span class="nx-crown">${ic('trophy')}</span>` : ''
+// calendário do mês (outubro de 2026 começa numa quinta)
+const lsCal = () => `<div class="ls-cal">${['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map(d => `<span class="h">${d}</span>`).join('')}${'<i class="x"></i>'.repeat(3)}${Array.from({ length: 31 }, (_, k) => {
+  const v = DAYK[k], a = v ? 0.25 + v / 148 * 0.75 : 0
+  const cls = v === undefined ? 'fut' : !v ? 'off' : v === 148 ? 'max' : a > 0.62 ? 'hi' : ''
+  return `<i class="${cls} ${k === 21 ? 'now' : ''}" style="--a:${a.toFixed(2)}"><b>${k + 1}</b></i>` }).join('')}</div>
+  <div class="ls-leg"><span>menos ${[.3, .55, .8, 1].map(a => `<i style="--a:${a}"></i>`).join('')} mais</span><span><i class="max"></i>melhor dia · 21/10</span></div>`
+// gráfico de diamantes por dia (no topo esmeralda ou num cartão claro)
+const lsChart = dark => { const W = 300, H = 120, bw = W / 31, top = 148, avg = 103.3
+  const bars = Array.from({ length: 31 }, (_, k) => { const v = DAYK[k], x = (k * bw + bw * 0.18).toFixed(1), w = (bw * 0.64).toFixed(1)
+    if (v === undefined) return `<rect x="${x}" y="${H - 3}" width="${w}" height="3" rx="1.5" class="f"/>`
+    if (!v) return ''
+    const h = v / top * H; return `<rect x="${x}" y="${(H - h).toFixed(1)}" width="${w}" height="${h.toFixed(1)}" rx="2" class="${v === top ? 'm' : ''}" style="--i:${k}"/>` }).join('')
+  const ay = H - avg / top * H
+  return `<div class="ls-chart ${dark ? 'dk' : 'lt'}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${bars}<line x1="0" x2="${W}" y1="${ay.toFixed(1)}" y2="${ay.toFixed(1)}" class="a"/></svg>
+    <span class="ls-tip" style="left:${(20.5 / 31 * 100).toFixed(2)}%">21/10 · 148 mil</span><span class="ls-avg" style="top:${ay.toFixed(0)}px">média 103 mil</span>
+    <div class="ls-axis"><span>1</span><span>8</span><span>15</span><span>22</span><span>31</span></div></div>` }
+const lsBest = () => `<button class="ls-best" data-go="liveD" aria-label="Ver todos os dados da melhor live"><div class="ls-bh"><span class="ls-bi">${ic('trophy')}</span><div><small>MELHOR DO MÊS · TER 20/10</small><b>LET'S SING</b></div><span class="ls-bgo">${ic('chev')}</span></div>
+  <div class="ls-bk"><div><b>104K</b><span>diamantes</span></div><div><b>32,5K</b><span>por hora</span></div><div><b>+260</b><span>seguidores</span></div></div>
+  <span class="ls-bmore">Ver todos os dados da live</span></button>`
+// listas
+const lsRow = t => `<button class="ls-row"><span class="nx-dt"><b>${t[2].slice(0, 2)}</b><small>${t[1].toUpperCase()}</small></span><span class="ls-rt"><b>${lsCrown(t)}${t[0]}</b><span>${t[3]} · ${t[5]}</span></span><span class="ls-rg"><b>${t[4]}</b><small>${(t[7] / 1000).toFixed(1).replace('.', ',')} mil/h</small></span></button>`
+const lsCardB = t => `<div class="nb-lc ${t[6] === 104000 ? 'nb-best' : ''}"><div class="nb-top"><span class="nb-date">${t[1].toUpperCase()} <b>${t[2]}</b></span>${t[6] === 104000 ? `<span class="nb-crown">${ic('trophy')}melhor do mês</span>` : ''}</div><b class="nb-title">${t[0]}</b><span class="nb-gem">${ic('gem')}<b>${t[4]}</b></span><span class="nb-sub">${t[3]} · ${t[5]}</span><span class="nb-bar"><span style="width:${(t[6] / 1040).toFixed(1)}%"></span></span></div>`
+const lsTl = t => `<div class="ls-ti ${t[6] === 104000 ? 'b' : ''}"><span class="ls-td"><b>${t[2].slice(0, 2)}</b><small>${t[1].toUpperCase()}</small></span><i></i><span class="ls-rt"><b>${lsCrown(t)}${t[0]}</b><span>${t[3]} · ${t[5]}</span></span><span class="ls-rg"><b>${t[4]}</b><small>${(t[7] / 1000).toFixed(1).replace('.', ',')} mil/h</small></span></div>`
+const lsList = (v, s = 'data') => v === 'A'
+  ? (s === 'data' ? LS_WEEKS.map(([w, info, a, b]) => `<div class="ls-wk"><b>${w}</b><span>${info}</span></div><div class="ls-list">${LSM.slice(a, b).map(lsRow).join('')}</div>`).join('') : `<div class="ls-list" style="margin-top:12px">${lsSorted(s).map(lsRow).join('')}</div>`)
+  : v === 'B' ? `<div class="nb-lives" style="margin-top:12px">${lsSorted(s).map(lsCardB).join('')}</div>`
+  : `<div class="ls-tl">${lsSorted(s).map(lsTl).join('')}</div>`
+const lsMore = '<p class="ls-more">+ 14 lives em outubro</p>'
 const S = {
   inicioX: { tab: 'inicio', name: '✦ Início · Redesign total', html: () => `
   <div class="lx">
@@ -1178,6 +1355,86 @@ const S = {
         <div class="lx-row lx-h"><small>MELHORES MESES</small><small>DIAMANTES</small></div>
         ${[['março de 2025', 24, '3,12 mi'], ['julho de 2025', 23, '3,05 mi'], ['setembro de 2026', 22, '2,60 mi']].map(([m, n, v], i) => `<div class="rk"><span class="pos ${i === 0 ? 'g' : ''}">${i + 1}º</span><div class="t"><b>${m}</b><span>${n} lives</span></div><b class="num">${v}</b></div>`).join('')}
       </div>
+    </section>
+  </div>` },
+
+  livesA: { tab: 'lives', name: '✦ Lives · A Calendário', html: () => `
+  <div class="lx ls">
+    <section class="lx-hero">
+      ${lsBar}${lsMonth()}${lsBig()}
+      ${lsCal()}
+      ${lsGlass([['live', 'por live', '93,5 mil'], ['clock', 'por hora', '40,8 mil'], ['cal', 'ao vivo', '48h10']])}
+    </section>
+    <section class="lx-sheet">
+      <div class="lx-block"><div class="lx-row lx-h"><small>COMPARADO A SETEMBRO</small><small>ATÉ DIA 22</small></div>
+        <div class="nx-card ls-list2">${LS_CMP.map(([i, l, v, p, d, up, c], k) => `<div class="nx-row"><span class="si ${c}">${ic(i)}</span><div><b>${l}</b><small>setembro: ${LS_KP[k]}</small></div><div class="nx-v"><b>${LS_K[k]}</b><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${d}%</em></div></div>`).join('')}</div></div>
+      <div class="lx-block">${lsBest()}</div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>LIVES DO MÊS</small></div>${lsSeg('A')}<div data-lsl="A">${lsList('A')}</div>${lsMore}</div>
+    </section>
+  </div>` },
+
+  liveD: { tab: 'lives', name: '✦ Lives · Página da live', html: () => `
+  <div class="lx ls ld">
+    <section class="lx-hero ld-hero">
+      <div class="lx-bar"><button data-go="livesA">${ic('back')}Lives</button><span>TER · 20 OUT</span></div>
+      <div class="ld-title"><span class="ld-tag">${ic('trophy')}melhor live do mês · 1ª de 21</span><h2>LET'S SING</h2><p>terça, 20 de outubro · 3h12 ao vivo</p></div>
+      <div class="ls-big"><small>DIAMANTES</small><b>104.000</b><span class="ld-money">≈ US$ 416,32 · R$ 2.019</span></div>
+      ${lsGlass([['clock', 'por hora', '32,5K'], ['user', 'seguidores', '+260'], ['eye', 'pico', '1.500']])}
+    </section>
+    <section class="lx-sheet">
+      <div class="lx-block"><div class="lx-row lx-h"><small>COMPARADA À MÉDIA DO MÊS</small><small>21 LIVES</small></div>
+        <div class="nx-card">${[['gem', 'Diamantes', '104K', '93,5K', 11, 1, 'g', 104, 93.5], ['clock', 'Por hora', '32,5K', '40,8K', 20, 0, 'g', 32.5, 40.8], ['cal', 'Duração', '3h12', '2h17', 40, 1, 'g', 192, 137], ['eye', 'Pico', '1.500', '812', 85, 1, 'g', 1500, 812], ['user', 'Seguidores', '+260', '+162', 60, 1, 'g', 260, 162]].map(([i, l, v, p, d, up, c, a, b]) => { const m = Math.max(a, b); return `<div class="ls-cr"><div class="ls-crh"><span class="si ${c}">${ic(i)}</span><span class="ls-crl">${l}<small>média: ${p}</small></span><b>${v}</b><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${d}%</em></div><div class="ls-cb"><u style="width:${(b / m * 100).toFixed(0)}%"></u><i class="${up ? '' : 'd'}" style="width:${(a / m * 100).toFixed(0)}%"></i></div></div>` }).join('')}</div>
+        <div class="lx-legend" style="margin-top:8px"><span><u></u>média do mês</span><span><i></i>esta live</span></div>
+        <p class="ld-note">${ic('clock')}<span>Rendeu mais no total, mas menos por hora: lives longas tendem a render menos por hora.</span></p></div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>PÚBLICO</small></div>
+        <div class="ls-c3 ld-c3">${[['Visualizações', '41,4K'], ['Espectadores', '38K'], ['Ativos', '9,8K'], ['Pico', '1.500'], ['Média ao vivo', '620'], ['Tempo médio', '30 s']].map(([l, v]) => `<div><small>${l}</small><b>${v}</b></div>`).join('')}</div></div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>ENGAJAMENTO</small></div>
+        <div class="ls-c3 ld-c3 ld-eng">${[['Curtidas', '1,24M'], ['Comentários', '2,5K'], ['Compartilha&shy;mentos', '410'], ['Presentea&shy;dores', '312'], ['💎 por presenteador', '333'], ['💎 por espectador', '2,74']].map(([l, v]) => `<div><small>${l}</small><b>${v}</b></div>`).join('')}</div></div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>RECOMPENSA DA LIVE</small></div>
+        <div class="nx-card ld-rw">
+          <div><span>Porcentagem</span><b>40%</b><small>38% por 25 min ou mais + 2% por 5 novos seguidores</small></div>
+          <div><span>Em dólares</span><b>US$ 416,32</b><small>104.000 diamantes × US$ 0,01 × 40%</small></div>
+          <div><span>Em reais</span><b>≈ R$ 2.019</b><small>no dólar do último saque (R$ 4,8497)</small></div>
+        </div>
+        <p class="ld-note">${ic('cal')}<span>Também conta para o semanal desta semana (até 13% a mais).</span></p></div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>ESSE TÍTULO</small></div>
+        <div class="nx-card ld-tt"><span class="si g">${ic('live')}</span><div><b>LET'S SING</b><small>6 lives com esse título · média 98,2K</small></div><em>melhor</em></div></div>
+      <button class="ld-edit">${ic('pen')}Editar dados da live</button>
+    </section>
+  </div>` },
+
+  livesB: { tab: 'lives', name: '✦ Lives · B Gráfico', html: () => `
+  <div class="lx ls">
+    <section class="lx-hero">
+      ${lsBar}${lsMonth()}${lsBig()}
+      ${lsChart(true)}
+      ${lsGlass([['cal', 'por dia', '103 mil'], ['clock', 'por hora', '40,8 mil'], ['live', 'por live', '93,5 mil']])}
+    </section>
+    <section class="lx-sheet">
+      <div class="lx-block">${lsBest()}</div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>COMPARADO A SETEMBRO</small><small>ATÉ DIA 22</small></div>
+        <div class="nx-card">${LS_CMP.map(([i, l, v, p, d, up, c, a, b]) => { const m = Math.max(a, b); return `<div class="ls-cr"><div class="ls-crh"><span class="si ${c}">${ic(i)}</span><span class="ls-crl">${l}<small>set.: ${p}</small></span><b>${v}</b><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${d}%</em></div><div class="ls-cb"><u style="width:${(b / m * 100).toFixed(0)}%"></u><i class="${up ? '' : 'd'}" style="width:${(a / m * 100).toFixed(0)}%"></i></div></div>` }).join('')}</div>
+        <div class="lx-legend" style="margin-top:8px"><span><u></u>setembro</span><span><i></i>outubro</span></div></div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>LIVES DO MÊS</small></div>${lsSeg('B')}<div data-lsl="B">${lsList('B')}</div>${lsMore}</div>
+    </section>
+  </div>` },
+
+  livesC: { tab: 'lives', name: '✦ Lives · C Pódio', html: () => `
+  <div class="lx ls">
+    <section class="lx-hero">
+      ${lsBar}${lsMonth()}${lsBig('sm')}
+      <div class="ls-pod">
+        <div class="p2"><small>sex · 09/10</small><span class="ls-pt">SEXTOU</span><b>88.400</b><span class="ls-blk">2º</span></div>
+        <div class="p1"><span class="ls-crown">${ic('trophy')}</span><small>ter · 20/10</small><span class="ls-pt">LET'S SING</span><b>104.000</b><span class="ls-blk">1º</span></div>
+        <div class="p3"><small>seg · 19/10</small><span class="ls-pt">ONE SONG, ONE MEMORY</span><b>82.800</b><span class="ls-blk">3º</span></div>
+      </div>
+      ${lsGlass([['live', 'lives', '21'], ['cal', 'dias de live', '19'], ['clock', 'ao vivo', '48h10']])}
+    </section>
+    <section class="lx-sheet">
+      <div class="lx-block"><div class="lx-row lx-h"><small>COMPARADO A SETEMBRO</small><small>ATÉ DIA 22</small></div>
+        <div class="nb-grid">${LS_CMP.map(([i, l, v, p, d, up, c, a, b]) => { const m = Math.max(a, b); return `<div class="nb-t ${up ? '' : 'dn'}"><small><span class="si ${c}">${ic(i)}</span>${l}</small><b>${v}</b><span class="nb-mb" aria-hidden="true"><i style="height:${(b / m * 100).toFixed(0)}%"></i><i style="height:${(a / m * 100).toFixed(0)}%"></i></span><span class="nb-prev"><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${d}%</em>set.: ${p}</span></div>` }).join('')}</div></div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>DIAMANTES POR DIA</small><small>MÉDIA 103 MIL</small></div><div class="nx-card ls-chartcard">${lsChart(false)}</div></div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>LIVES DO MÊS</small></div>${lsSeg('C')}<div data-lsl="C">${lsList('C')}</div>${lsMore}</div>
     </section>
   </div>` },
 
@@ -1526,7 +1783,11 @@ function lxAnim() {
   }
   requestAnimationFrame(step)
 }
-{ const _g3 = go; go = k => { _g3(k); if (k === 'inicioX') lxAnim() }; go('inicioX') }
+{ const _g3 = go; go = k => { _g3(k); if (k === 'inicioX') lxAnim() }; go('livesA') }
+// Lives: ordenar a lista (Data / Diamantes / Por hora)
+document.addEventListener('click', e => { const b = e.target.closest('[data-lss]'); if (!b) return
+  const seg = b.parentNode; for (const x of seg.children) x.classList.toggle('on', x === b)
+  const v = seg.dataset.lsv; document.querySelector(`[data-lsl="${v}"]`).innerHTML = lsList(v, b.dataset.lss) })
 // tela Carreira: o total conta subindo ao abrir
 { const _g4 = go; go = k => { _g4(k); if (k === 'carreira') countUp(document.getElementById('cxN')) } }
 </script>

@@ -77,5 +77,10 @@ Mostra diamantes, recompensas, saques, estatísticas e metas. Fala sempre em **p
 - **Tela Carreira** (`renderCareer`, rota `career`, abre pelo cartão do Início): total desde nov/2023, trilha de marcos até
   a meta do acumulado, ritmo e previsão, mês a mês, marcos e melhores meses. Ano a ano e datas dos marcos antigos não
   aparecem porque não há histórico mês a mês antes do app (só o total em `LIFETIME`).
-- Prévia: `design/preview.html` (tela "✦ Início · Redesign total" e "✦ Carreira · tela nova").
-- **Próximo passo:** redesenhar as outras telas (Lives, Estatísticas, Recompensas) no mesmo estilo, sempre com prévia antes.
+- **Lives redesenhada (opção "A Calendário", aprovada):** `renderLives` com topo esmeralda (troca de mês, total, calendário
+  do mês com o melhor dia em cobre, faixa por live/por hora/ao vivo), comparativo em lista, cartão da melhor live do mês e
+  lista agrupada por semana (ordenar por data/diamantes/por hora). Tocar numa live abre a folha de edição; só o cartão da
+  melhor do mês abre a **página da live** (`renderLive`, rota `live`, `state.liveId`).
+- **Números grandes com K e M no app inteiro** (`compact`, `mil1`, `goalLabel`, `usdK`): 1,96M, 59,6K, US$ 7,8K.
+- Prévia: `design/preview.html` (telas "✦ Início · Redesign total", "✦ Carreira · tela nova", "✦ Lives · A/B/C", "✦ Lives · Página da live").
+- **Próximo passo:** redesenhar Estatísticas e Recompensas no mesmo estilo, sempre com prévia antes.
