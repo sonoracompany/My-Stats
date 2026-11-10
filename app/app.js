@@ -302,8 +302,8 @@ function renderShell() {
 }
 
 // O que cada aba precisa do banco
-const NEEDS = { home: ['lives', 'withdrawals', 'goals', 'summaries'], career: ['lives', 'withdrawals', 'goals', 'summaries'], lives: ['lives', 'summaries'], stats: ['lives', 'withdrawals', 'summaries'], rewards: ['lives', 'withdrawals', 'snapshots', 'summaries'] }
-const DRAW = { home: a => renderHome(a), career: a => renderCareer(a), lives: a => renderLives(a), stats: a => renderStats(a), rewards: a => renderRewards(a) }
+const NEEDS = { home: ['lives', 'withdrawals', 'goals', 'summaries'], career: ['lives', 'withdrawals', 'goals', 'summaries'], live: ['lives', 'withdrawals'], lives: ['lives', 'summaries'], stats: ['lives', 'withdrawals', 'summaries'], rewards: ['lives', 'withdrawals', 'snapshots', 'summaries'] }
+const DRAW = { home: a => renderHome(a), career: a => renderCareer(a), live: a => renderLive(a), lives: a => renderLives(a), stats: a => renderStats(a), rewards: a => renderRewards(a) }
 
 async function fetchFor(tab) {
   const sig = () => JSON.stringify([...NEEDS[tab].map(n => state.data[n]), state.data.settings, state.rate?.commercial])
@@ -318,21 +318,21 @@ async function reload(tab = state.tab) {
   if (await fetchFor(tab) && state.tab === tab) DRAW[tab](false)
 }
 
-const TAB_ORDER = ['home', 'career', 'lives', 'stats', 'rewards']   // a Carreira abre pelo Início e fica entre ele e Lives
-const LUXE = ['home', 'career']   // telas com o topo esmeralda de ponta a ponta (sem o cabeçalho de sempre)
+const TAB_ORDER = ['home', 'career', 'lives', 'live', 'stats', 'rewards']   // a Carreira abre pelo Início; a página da live, pela Lives
+const LUXE = ['home', 'career', 'lives', 'live']   // telas com o topo esmeralda de ponta a ponta (sem o cabeçalho de sempre)
 function go(tab) {
   const from = TAB_ORDER.indexOf(state.tab), to = TAB_ORDER.indexOf(tab)
   const v = document.getElementById('view')
   v.classList.remove('slide-l', 'slide-r')
   if (from !== to) { void v.offsetWidth; v.classList.add(to > from ? 'slide-r' : 'slide-l') }
   state.tab = tab
-  const tabId = tab === 'career' ? 'home' : tab
+  const tabId = { career: 'home', live: 'lives' }[tab] || tab
   app.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tabId))
   app.querySelector('.tabs').style.setProperty('--ti', TABS.findIndex(t => t.id === tabId))   // o destaque desliza até a aba
   const luxe = LUXE.includes(tab)
   document.body.classList.toggle('luxe', luxe)
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', luxe ? '#0f7558' : '#dfe8d4')
-  document.getElementById('title').textContent = { home: 'E aí, Galli!', career: 'Carreira', rewards: 'Recompensas', stats: 'Estatísticas' }[tab] ?? ENTITIES[tab].title
+  document.getElementById('title').textContent = { home: 'E aí, Galli!', career: 'Carreira', live: 'Live', rewards: 'Recompensas', stats: 'Estatísticas' }[tab] ?? ENTITIES[tab].title
   const kicker = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })
   document.getElementById('kicker').textContent = tab === 'home' ? kicker[0].toUpperCase() + kicker.slice(1).replace('-feira', '') : ''
   window.scrollTo(0, 0)
@@ -350,8 +350,8 @@ const sumOf = (rows, k) => rows.reduce((a, r) => a + (Number(r[k]) || 0), 0)
 const avgOf = (rows, k) => { const v = rows.map(r => Number(r[k])).filter(n => n > 0); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : 0 }
 const brl0 = v => 'R$ ' + new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 }).format(Math.round(Number(v) || 0))
 const dec = (v, d = 1) => new Intl.NumberFormat('pt-BR', { maximumFractionDigits: d, minimumFractionDigits: d }).format(v)
-// 1.963.400 → "1,96 mi"; 536.600 → "537 mil"
-const compact = v => (v >= 1e6 ? `${dec(v / 1e6, 2)} mi` : v >= 1e4 ? `${int(Math.round(v / 1e3))} mil` : int(Math.round(v)))
+// números grandes com K e M: 1.963.400 → "1,96M"; 536.600 → "537K"
+const compact = v => (v >= 1e6 ? `${dec(v / 1e6, 2)}M` : v >= 1e4 ? `${int(Math.round(v / 1e3))}K` : int(Math.round(v)))
 const ymOf = d => d.toLocaleDateString('sv-SE').slice(0, 7)
 const prevYm = ym => { const [y, m] = ym.split('-').map(Number); return ymOf(new Date(y, m - 2, 15)) }
 const monthWord = ym => new Date(`${ym}-15T12:00`).toLocaleDateString('pt-BR', { month: 'long' })
@@ -391,16 +391,6 @@ function monthPicker(ym, sub, attr, i, n) {
     </div>`
 }
 
-// linha de live: data no quadradinho, duração e valor, barrinha contra a melhor do mês
-function lvRow(l, max, bestId) {
-  const sub = [l.duration_min && `${hours(l.duration_min)} ao vivo`, l.rewards_usd != null && usd(l.rewards_usd)].filter(Boolean).join(' · ')
-  return `<button class="lv" data-edit="lives" data-id="${l.id}">
-    <span class="dt"><b>${esc(l.date.slice(8))}</b><small>${esc(weekday(l.date))}</small></span>
-    <div class="t"><b>${l.id === bestId ? `<i class="crown">${ic('trophy')}</i>` : ''}${esc(l.title || fmtDate(l.date))}</b><span>${esc(sub)}</span><i class="lb"><i style="transform:scaleX(${((Number(l.diamonds) || 0) / (max || 1)).toFixed(3)})"></i></i></div>
-    <b class="g">${l.diamonds != null ? esc(int(l.diamonds)) : '—'}</b>
-  </button>`
-}
-
 // ---------- Início ----------
 
 // arco da meta: meia-volta de raio 130 dentro de um quadro 300×165 (f vai de 0 a 1)
@@ -408,10 +398,14 @@ const arcPt = f => { const a = Math.PI * (1 - Math.min(Math.max(f, 0), 1)); retu
 const greet = () => { const h = new Date().getHours(); return h >= 5 && h < 12 ? 'Bom dia' : h >= 12 && h < 18 ? 'Boa tarde' : 'Boa noite' }
 const monShort = d => d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')
 const shortMonthYear = d => `${monShort(d)}/${d.getFullYear()}`
-// 59.600 → "59,6 mil"; 1.963.400 → "1,96 mi"
-const mil1 = v => (v >= 1e6 ? `${dec(v / 1e6, 2)} mi` : v >= 1e3 ? `${dec(v / 1e3, 1).replace(/,0$/, '')} mil` : int(Math.round(v)))
-// 100.000.000 → "100 mi"; 2.500.000 → "2,5 mi"
-const goalLabel = v => (v >= 1e6 ? `${dec(v / 1e6, 2).replace(/,?0+$/, '')} mi` : compact(v))
+// 59.600 → "59,6K"; 1.963.400 → "1,96M"
+const mil1 = v => (v >= 1e6 ? `${dec(v / 1e6, 2)}M` : v >= 1e3 ? `${dec(v / 1e3, 1).replace(/,0$/, '')}K` : int(Math.round(v)))
+// 100.000.000 → "100M"; 2.500.000 → "2,5M"
+const goalLabel = v => (v >= 1e6 ? `${dec(v / 1e6, 2).replace(/,?0+$/, '')}M` : compact(v))
+// por extenso, nos marcos: "1 milhão", "25 milhões"
+const millions = v => (v === 1e6 ? '1 milhão' : `${dec(v / 1e6, 2).replace(/,?0+$/, '')} milhões`)
+// dólares curtos: US$ 7.853 → "US$ 7,9K"
+const usdK = v => (v >= 1e3 ? `US$ ${dec(v / 1e3, 1).replace(/,0$/, '')}K` : usd0(Math.round(v)))
 // diamantes do mês: lives registradas ou o resumo do TikTok, o que for maior
 const monthGems = (lives, ym) => Math.max(sumOf(lives.filter(l => l.date?.startsWith(ym)), 'diamonds'), Number(summaryOf(ym)?.diamonds) || 0)
 
@@ -629,12 +623,12 @@ function renderCareer(animate) {
   const total = life.diamonds
   const lf = lifeForecast(total, lives)
   const rate = payoutRate(withdrawals, state.rate?.commercial)?.rate
-  const end = lf.goal || 1e8   // sem meta, a trilha vai até 100 mi
+  const end = lf.goal || 1e8   // sem meta, a trilha vai até 100M
   const f = Math.min(total / end, 1)
   const cur = today().slice(0, 7)
   const [cy, cm] = cur.split('-').map(Number)
   const nMonths = (cy - 2023) * 12 + (cm - 11) + 1   // desde nov/2023, contando o mês atual
-  const brlBig = v => (v >= 1e6 ? `R$ ${dec(v / 1e6, 1)} mi` : brl0(v))
+  const brlBig = v => (v >= 1e6 ? `R$ ${dec(v / 1e6, 1)}M` : brl0(v))
 
   const marks = [0.1, 0.25, 0.5, 0.75, 1].map(k => k * end)
   const goalRow = !lf.goal ? '<span>Defina uma meta para a carreira</span>'
@@ -662,9 +656,9 @@ function renderCareer(animate) {
   // marcos: os que já passou e a previsão dos próximos
   const steps = [...new Set([1e6, 1e7, 2.5e7, 5e7, 7.5e7, end])].filter(v => v <= end).sort((a, b) => a - b)
   const msHtml = steps.map(v => {
-    if (v <= total) return `<div class="cx-mi"><i></i><b>${esc(goalLabel(v).replace(' mi', ' milhões').replace(/^1 milhões$/, '1 milhão'))}</b><span>alcançado</span></div>`
+    if (v <= total) return `<div class="cx-mi"><i></i><b>${esc(millions(v))}</b><span>alcançado</span></div>`
     const n = lf.avg ? Math.ceil((v - total) / lf.avg) : 0
-    return `<div class="cx-mi fut"><i></i><b>${esc(goalLabel(v).replace(' mi', ' milhões'))}</b><span>${n ? `previsão ~ ${esc(shortMonthYear(lf.at(n)))}` : `faltam ${esc(mil1(v - total))}`}</span></div>`
+    return `<div class="cx-mi fut"><i></i><b>${esc(millions(v))}</b><span>${n ? `previsão ~ ${esc(shortMonthYear(lf.at(n)))}` : `faltam ${esc(mil1(v - total))}`}</span></div>`
   }).join('')
 
   // melhores meses entre os que têm dados
@@ -793,7 +787,7 @@ function projCard(ml, rate, ym, current, nLives) {
       <div class="pk"><div><span>Em dólares</span><b>${esc(usd0(Math.round(totalUsd)))}</b></div><div><span>Em reais</span><b>${rate ? esc(brl0(totalUsd * rate)) : '—'}</b></div><div><span>Limite em ${esc(next)}.</span><b>${esc(compactUsd(limitFor(totalUsd).tier[1]))}</b></div></div>
     </div>`)
 }
-const compactUsd = v => (v >= 1000 && v % 1000 === 0 ? `US$ ${int(v / 1000)} mil` : usd0(v))
+const compactUsd = v => (v >= 1000 && v % 1000 === 0 ? `US$ ${int(v / 1000)}K` : usd0(v))
 
 const brlRate = r => 'R$ ' + new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 }).format(r)
 
@@ -864,7 +858,7 @@ function celebrate(goal, ym, again = false) {
 function reveal(root) {
   root.querySelectorAll('[data-count]').forEach(countUp)
   root.querySelectorAll('.lv .crown, .rec.new .rt svg').forEach(x => x.classList.add('wiggle'))
-  root.querySelectorAll('.feature, .life, .fxp, .sec, .month, .seg, .best, .chartcard, .card, .form, .proj, .ret, .rec, .quad, .empty, .cx-teaser, .nx-card, .nb-t, .nb-lc, .lx-block').forEach(el => {
+  root.querySelectorAll('.feature, .life, .fxp, .sec, .month, .seg, .best, .chartcard, .card, .form, .proj, .ret, .rec, .quad, .empty, .cx-teaser, .nx-card, .nb-t, .nb-lc, .lx-block, .ls-best, .ls-list').forEach(el => {
     el.classList.add('reveal')
     revealer.observe(el)
   })
@@ -1223,7 +1217,7 @@ function weekdayCard(lives) {
     ${hint('trophy', `<b>${names[best.d]}</b> rende mais: média de <b class="num">${esc(compact(best.v))}</b> diamantes por live`)}
   </div>`, '<span>todas as lives</span>')
 }
-const compactK = v => (v >= 1e6 ? `${dec(v / 1e6, 1)}mi` : `${int(Math.round(v / 1e3))}k`)
+const compactK = v => (v >= 1e6 ? `${dec(v / 1e6, 1)}M` : `${int(Math.round(v / 1e3))}K`)
 
 // diamantes por hora de acordo com o tamanho da live
 function durationCard(lives) {
@@ -1284,7 +1278,7 @@ function monthsCard(lives, ym) {
   return sec('Últimos 6 meses', `<div class="chartcard">
     <div class="wk mo">${months.map((mm, i) => `<div class="${mm === cur ? 'cur' : vals[i] === top ? 'best1' : ''}"><b>${vals[i] ? esc(dec(vals[i] / 1e6, 2)) : ''}</b><i style="height:${(vals[i] / top * 100).toFixed(1)}%"></i><span>${esc(monthWord(mm).slice(0, 3))}</span></div>`).join('')}</div>
     ${done.length ? hint('stats', `Média de <b class="num">${esc(compact(sumOf(done.map(v => ({ v })), 'v') / done.length))}</b> por mês${months.includes(cur) ? ` · ${esc(monthWord(cur))} ainda em andamento` : ''}`) : ''}
-  </div>`, '<span>milhões de diamantes</span>')
+  </div>`, '<span>diamantes, em milhões</span>')
 }
 
 function recordsCard(lives) {
@@ -1317,70 +1311,218 @@ function recordsCard(lives) {
 const perHour = l => (l.duration_min ? (Number(l.diamonds) || 0) / (l.duration_min / 60) : 0)
 
 const LSORT = ['data', 'diamantes', 'hora']
+const dm = d => `${d.slice(8)}/${d.slice(5, 7)}`
+// linha de live da lista: data, título, duração e valor, diamantes e por hora (toque abre a folha de edição)
+const lsRow = (l, bestId) => `<button type="button" class="ls-row" data-edit="lives" data-id="${l.id}">
+    <span class="nx-dt"><b>${esc(l.date.slice(8))}</b><small>${esc(weekday(l.date).toUpperCase())}</small></span>
+    <span class="ls-rt"><b>${l.id === bestId ? `<span class="nx-crown">${ic('trophy')}</span>` : ''}${esc(l.title || fmtDate(l.date))}</b><span>${esc([l.duration_min && hours(l.duration_min), l.rewards_usd != null && usd(l.rewards_usd)].filter(Boolean).join(' · '))}</span></span>
+    <span class="ls-rg"><b>${l.diamonds != null ? esc(int(l.diamonds)) : '—'}</b>${perHour(l) ? `<small>${esc(mil1(perHour(l)))}/h</small>` : ''}</span>
+  </button>`
+
 function renderLives(animate) {
   const view = document.getElementById('view')
   const { lives } = state.data
   const months = [...new Set([today().slice(0, 7), ...lives.map(l => l.date?.slice(0, 7)).filter(Boolean)])].sort()
   if (!months.includes(state.lmonth)) state.lmonth = months.at(-1)
   const i = months.indexOf(state.lmonth)
-  const s = monthStats(lives, state.lmonth)
+  const ym = state.lmonth
+  const s = monthStats(lives, ym)
   // mês em andamento: compara com o mês anterior só até o mesmo dia (senão 1 dia de novembro vira "↓ 98%")
-  const sameDay = state.lmonth === today().slice(0, 7) && i > 0
-  const prev = i > 0 ? (sameDay ? monthStats(lives.filter(l => +l.date?.slice(8) <= new Date().getDate()), months[i - 1], true) : monthStats(lives, months[i - 1])) : null
+  const current = ym === today().slice(0, 7)
+  const sameDay = current && i > 0
+  const nowDay = new Date().getDate()
+  const prev = i > 0 ? (sameDay ? monthStats(lives.filter(l => +l.date?.slice(8) <= nowDay), months[i - 1], true) : monthStats(lives, months[i - 1])) : null
+  const mName = monthWord(ym), pName = prev ? monthWord(months[i - 1]) : ''
+  const [y, m] = ym.split('-').map(Number)
+  const nDays = new Date(y, m, 0).getDate()
+
+  // calendário: quanto mais verde, mais diamantes no dia; o melhor dia em cobre
+  const byDay = Array.from({ length: nDays }, (_, d) => sumOf(s.ls.filter(l => +l.date.slice(8) === d + 1), 'diamonds'))
+  const top = Math.max(...byDay, 0)
+  const topDay = byDay.indexOf(top) + 1
+  const offset = (new Date(y, m - 1, 1).getDay() + 6) % 7   // semana começa na segunda
+  const cal = `<div class="ls-cal">${['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map(d => `<span class="h">${d}</span>`).join('')}${'<i class="x"></i>'.repeat(offset)}${byDay.map((v, d) => {
+    const fut = current && d + 1 > nowDay
+    const a = v && top ? 0.25 + v / top * 0.75 : 0
+    const cls = fut ? 'fut' : !v ? 'off' : v === top ? 'max' : a > 0.62 ? 'hi' : ''
+    return `<i class="${cls}${current && d + 1 === nowDay ? ' now' : ''}" style="--a:${a.toFixed(2)}"><b>${d + 1}</b></i>` }).join('')}</div>
+    <div class="ls-leg"><span>menos ${[0.3, 0.55, 0.8, 1].map(a => `<i style="--a:${a}"></i>`).join('')} mais</span>${top ? `<span><i class="max"></i>melhor dia · ${String(topDay).padStart(2, '0')}/${String(m).padStart(2, '0')}</span>` : ''}</div>`
+
+  const pct = (a, b) => (b ? Math.round((a - b) / b * 100) : null)
+  // mês fechado com o resumo do TikTok: o que o resumo não traz (ex.: horas ao vivo) aparece como "—", e não como zero
+  const has = k => !s.fromSummary || summaryOf(ym)?.[k] != null
+  const usdM = has('rewards_usd') ? s.usd : null, minM = has('duration_min') ? s.min : null
+  const gp = prev ? pct(s.gems, prev.gems) : null
+  const pill = gp != null ? `<span class="ls-pill"><i>${gp >= 0 ? '↑' : '↓'} ${Math.abs(gp)}%</i>vs ${esc(pName)}${sameDay ? ` até dia ${nowDay}` : ''}</span>` : ''
 
   let body
-  if (!s.ls.length) {
-    body = empty('Nenhuma live neste mês.', 'lives')
-  } else {
+  if (!s.ls.length) body = `<div class="lx-block">${empty('Nenhuma live neste mês.', 'lives')}</div>`
+  else {
     const best = [...s.ls].sort((a, b) => (b.diamonds || 0) - (a.diamonds || 0))[0]
-    const max = Number(best.diamonds) || 1
-    const sorted = state.lsort === 'diamantes' ? [...s.ls].sort((a, b) => (b.diamonds || 0) - (a.diamonds || 0))
-      : state.lsort === 'hora' ? [...s.ls].sort((a, b) => perHour(b) - perHour(a))
-      : s.ls
-    const [y, m] = state.lmonth.split('-').map(Number)
-    const nDays = new Date(y, m, 0).getDate()
-    const byDay = Array.from({ length: nDays }, (_, d) => sumOf(s.ls.filter(l => +l.date.slice(8) === d + 1), 'diamonds'))
-    const top = Math.max(...byDay, 1)
-    const W = 300, H = 110, bw = W / nDays
-    const bars = byDay.map((g, d) => g ? `<rect style="--i:${d}" x="${(d * bw + bw * 0.15).toFixed(1)}" y="${(H - g / top * H).toFixed(1)}" width="${(bw * 0.7).toFixed(1)}" height="${(g / top * H).toFixed(1)}" rx="2" fill="${g === top ? 'var(--copper)' : '#8fd3a4'}"/>` : '').join('')
-    const realAvg = s.days ? sumOf(s.ls, 'diamonds') / s.days : 0
-    const avgY = (H - realAvg / top * H).toFixed(1)
-    const pName = prev ? monthWord(months[i - 1]) : ''
+    const rows = [
+      ['gem', 'Diamantes', s.gems, prev?.gems, compact, 'g'],
+      ['usd', 'Recompensas', usdM, prev?.usd, usdK, 'c'],
+      ['cal', 'Por dia de live', s.perDay, prev?.perDay, mil1, 'g'],
+      ['clock', 'Por hora', s.perHour, prev?.perHour, mil1, 'g'],
+      ['live', 'Por live', s.perLive, prev?.perLive, mil1, 'g'],
+      ['clock', 'Ao vivo', minM, prev?.min, hours, 'g'],
+    ]
+    const cmp = rows.map(([icon, label, a, b, fmt, tone]) => {
+      const p = a != null && b ? pct(a, b) : null
+      return `<div class="nx-row"><span class="si ${tone}">${ic(icon)}</span><div><b>${esc(label)}</b>${prev ? `<small>${esc(pName)}: ${b ? esc(fmt(b)) : '—'}</small>` : ''}</div>
+        <div class="nx-v"><b>${a == null ? '—' : esc(fmt(a))}</b>${p != null ? `<em class="${p >= 0 ? 'u' : 'd'}">${p >= 0 ? '↑' : '↓'} ${Math.abs(p)}%</em>` : ''}</div></div>`
+    }).join('')
+    // lista: por data (agrupada por semana), por diamantes ou por hora
+    let list
+    if (state.lsort === 'data') {
+      const weeks = new Map()
+      for (const l of s.ls) { const w = weekStartOf(new Date(`${l.date}T12:00`)); if (!weeks.has(w)) weeks.set(w, []); weeks.get(w).push(l) }
+      list = [...weeks].map(([w, ls]) => {
+        const a = new Date(`${w}T12:00`), b = new Date(a); b.setDate(a.getDate() + 6)
+        const label = a.getMonth() === b.getMonth() ? `${a.getDate()} – ${b.getDate()} ${monShort(b)}` : `${a.getDate()} ${monShort(a)} – ${b.getDate()} ${monShort(b)}`
+        return `<div class="ls-wk"><b>${esc(label)}</b><span>${ls.length} ${ls.length === 1 ? 'live' : 'lives'} · ${esc(mil1(sumOf(ls, 'diamonds')))}</span></div><div class="ls-list">${ls.map(l => lsRow(l, best.id)).join('')}</div>`
+      }).join('')
+    } else {
+      const sorted = state.lsort === 'diamantes' ? [...s.ls].sort((a, b) => (b.diamonds || 0) - (a.diamonds || 0)) : [...s.ls].sort((a, b) => perHour(b) - perHour(a))
+      list = `<div class="ls-list" style="margin-top:12px">${sorted.map(l => lsRow(l, best.id)).join('')}</div>`
+    }
     body = `
-      ${sec(prev ? `Comparado a ${esc(pName)}${sameDay ? ` até dia ${new Date().getDate()}` : ''}` : 'O mês', `<div class="quad">
-        ${qcell('gem', 'Diamantes', compact(s.gems), delta(s.gems, prev?.gems))}
-        ${qcell('usd', 'Recompensas', s.usd >= 1e4 ? `US$ ${dec(s.usd / 1e3)} mil` : usd0(Math.round(s.usd)), delta(s.usd, prev?.usd), '', true)}
-        ${qcell('cal', 'Por dia de live', s.perDay == null ? '—' : int(Math.round(s.perDay)), delta(s.perDay, prev?.perDay))}
-        ${qcell('clock', 'Por hora', s.perHour == null ? '—' : int(Math.round(s.perHour)), delta(s.perHour, prev?.perHour))}
-        ${qcell('live', 'Por live', s.perLive == null ? '—' : int(Math.round(s.perLive)), delta(s.perLive, prev?.perLive))}
-        ${qcell('clock', 'Ao vivo', hours(s.min), delta(s.min, prev?.min))}
-      </div>`)}
-      <div class="best"><span class="tr">${ic('trophy')}</span><div><small>Melhor live do mês · ${esc(weekday(best.date))}. ${esc(shortDate(`${best.date}T12:00`))}</small><b>${esc(best.title || fmtDate(best.date))}</b>
-        <p><span>${esc(int(best.diamonds))}</span> diam.${best.duration_min ? ` · <span>${esc(int(Math.round(perHour(best))))}</span>/h` : ''}${best.new_followers != null ? ` · <span>+${esc(int(best.new_followers))}</span> seg.` : ''}</p></div></div>
-      <div class="chartcard"><div class="hd"><b>Diamantes por dia</b><span>média <span class="num">${esc(int(Math.round(realAvg)))}</span></span></div>
-        <svg class="grow" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Diamantes por dia do mês">
-          <line x1="0" x2="${W}" y1="${H}" y2="${H}" stroke="var(--line)"/>${bars}
-          <line x1="0" x2="${W}" y1="${avgY}" y2="${avgY}" stroke="var(--muted)" stroke-dasharray="4 4" stroke-width="1" opacity=".6"/>
-        </svg>
-        <div class="axis"><span>1</span><span>8</span><span>15</span><span>22</span><span>${nDays}</span></div></div>
-      <section class="sec">
-        <div class="sort-row"><h2>Lives</h2>
-          <div class="pillbar slider" role="group" aria-label="Ordenar" style="--n:3;--i:${state.lsortPrev ?? LSORT.indexOf(state.lsort)}">${[['data', 'Data'], ['diamantes', 'Diamantes'], ['hora', 'Por hora']].map(([k, l]) =>
-            `<button type="button" data-lsort="${k}" aria-pressed="${state.lsort === k}">${l}</button>`).join('')}</div>
-        </div>
-        <div class="group">${sorted.map(l => lvRow(l, max, best.id)).join('')}</div>
-      </section>`
+      <div class="lx-block"><div class="lx-row lx-h"><small>${prev ? `COMPARADO A ${esc(pName.toUpperCase())}` : 'O MÊS'}</small>${sameDay ? `<small>ATÉ DIA ${nowDay}</small>` : ''}</div>
+        <div class="nx-card ls-cmp">${cmp}</div>
+        ${s.fromSummary ? '<p class="ld-note">' + ic('cal') + '<span>Totais do resumo do TikTok (o mês inteiro); a lista mostra as lives registradas.</span></p>' : ''}</div>
+      <div class="lx-block">
+        <button type="button" class="ls-best" data-live="${best.id}" aria-label="Ver todos os dados da melhor live">
+          <span class="ls-bh"><span class="ls-bi">${ic('trophy')}</span><span class="ls-bt"><small>MELHOR DO MÊS · ${esc(weekday(best.date).toUpperCase())} ${esc(dm(best.date))}</small><b>${esc(best.title || fmtDate(best.date))}</b></span><span class="ls-bgo">${ic('chev')}</span></span>
+          <span class="ls-bk"><span><b>${esc(mil1(Number(best.diamonds) || 0))}</b><small>diamantes</small></span><span><b>${perHour(best) ? esc(mil1(perHour(best))) : '—'}</b><small>por hora</small></span><span><b>${best.new_followers != null ? `+${esc(int(best.new_followers))}` : '—'}</b><small>seguidores</small></span></span>
+          <span class="ls-bmore">Ver todos os dados da live</span>
+        </button>
+      </div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>LIVES DO MÊS</small></div>
+        <div class="ls-seg slider" role="group" aria-label="Ordenar" style="--n:3;--i:${state.lsortPrev ?? LSORT.indexOf(state.lsort)}">${[['data', 'Data'], ['diamantes', 'Diamantes'], ['hora', 'Por hora']].map(([k, l]) => `<button type="button" data-lsort="${k}" aria-pressed="${state.lsort === k}">${l}</button>`).join('')}</div>
+        ${list}
+      </div>`
   }
 
+  const [mw, yw] = new Date(`${ym}-15T12:00`).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).split(' de ')
   view.innerHTML = `
-    ${monthPicker(state.lmonth, `${s.ls.length} ${s.ls.length === 1 ? 'live' : 'lives'} · ${s.days} ${s.days === 1 ? 'dia' : 'dias'} de live`, 'data-month', i, months.length)}
-    ${body}`
+    <div class="lx ls">
+      <section class="lx-hero">
+        <div class="lx-bar"><span>LIVES</span><button type="button" class="lx-prints" data-prints>${ic('cam')}Prints<i class="due" hidden></i></button></div>
+        <div class="ls-month">
+          <button type="button" data-month="-1" aria-label="Mês anterior" ${i === 0 ? 'disabled' : ''}>${ic('back')}</button>
+          <div><b>${esc(cap(mw))} <em>${esc(yw)}</em></b><small>${s.ls.length} ${s.ls.length === 1 ? 'live' : 'lives'} · ${s.days} ${s.days === 1 ? 'dia' : 'dias'} de live</small></div>
+          <button type="button" data-month="1" aria-label="Próximo mês" ${i === months.length - 1 ? 'disabled' : ''}>${ic('chev')}</button>
+        </div>
+        <div class="ls-big"><small>DIAMANTES EM ${esc(mName.toUpperCase())}</small><b>${esc(int(s.gems))}</b>${pill}</div>
+        ${cal}
+        <div class="lx-glass">
+          <div><small><i>${ic('live')}</i>por live</small><b class="num">${s.perLive == null ? '—' : esc(mil1(s.perLive))}</b></div>
+          <div><small><i>${ic('clock')}</i>por hora</small><b class="num">${s.perHour == null ? '—' : esc(mil1(s.perHour))}</b></div>
+          <div><small><i>${ic('cal')}</i>ao vivo</small><b class="num">${minM == null ? '—' : esc(hours(minM))}</b></div>
+        </div>
+      </section>
+      <section class="lx-sheet">${body}</section>
+    </div>`
   view.querySelectorAll('[data-month]').forEach(b => b.addEventListener('click', () => {
     state.lmonth = months[i + Number(b.dataset.month)]
     renderLives()
   }))
-  slideTo(view.querySelector('.pillbar.slider'), LSORT.indexOf(state.lsort)); state.lsortPrev = null
+  slideTo(view.querySelector('.ls-seg.slider'), LSORT.indexOf(state.lsort)); state.lsortPrev = null
   view.querySelectorAll('[data-lsort]').forEach(b => b.addEventListener('click', () => { state.lsortPrev = LSORT.indexOf(state.lsort); state.lsort = b.dataset.lsort; renderLives() }))
+  view.querySelector('[data-live]')?.addEventListener('click', e => { state.liveId = e.currentTarget.dataset.live; go('live') })
+  view.querySelector('[data-prints]').addEventListener('click', openPrints)
+  updateDue()
+  bindList(view)
+  if (animate) reveal(view)
+}
+
+// ---------- Página da live (abre pelo cartão da melhor live do mês) ----------
+
+function renderLive(animate) {
+  const view = document.getElementById('view')
+  const { lives, withdrawals } = state.data
+  const l = lives.find(x => x.id === state.liveId)
+  if (!l) return go('lives')
+  const ym = l.date.slice(0, 7)
+  const ml = lives.filter(x => x.date?.startsWith(ym))
+  const rank = [...ml].sort((a, b) => (b.diamonds || 0) - (a.diamonds || 0)).findIndex(x => x.id === l.id) + 1
+  const rate = payoutRate(withdrawals, state.rate?.commercial)?.rate
+  const gems = Number(l.diamonds) || 0
+  const ph = perHour(l)
+  const n = v => (v == null ? null : Number(v))
+  const dlong = new Date(`${l.date}T12:00`).toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }).replace('-feira', '')
+  const tag = `${weekday(l.date).toUpperCase()} · ${+l.date.slice(8)} ${monShort(new Date(`${l.date}T12:00`)).toUpperCase()}`
+  const mName = monthWord(ym)
+
+  // comparada à média do mês
+  const avgPh = avgOf(ml.map(x => ({ v: perHour(x) })), 'v')
+  const cmpRows = [
+    ['gem', 'Diamantes', gems, avgOf(ml, 'diamonds'), mil1],
+    ['clock', 'Por hora', ph, avgPh, mil1],
+    ['cal', 'Duração', n(l.duration_min), avgOf(ml, 'duration_min'), v => hours(Math.round(v))],
+    ['eye', 'Pico', n(l.peak_viewers), avgOf(ml, 'peak_viewers'), v => int(Math.round(v))],
+    ['user', 'Seguidores', n(l.new_followers), avgOf(ml, 'new_followers'), v => '+' + int(Math.round(v))],
+  ].filter(([, , a, b]) => a != null && a > 0 && b)
+  const cmp = cmpRows.map(([icon, label, a, b, fmt]) => {
+    const p = Math.round((a - b) / b * 100), mx = Math.max(a, b), up = p >= 0
+    return `<div class="ls-cr"><div class="ls-crh"><span class="si g">${ic(icon)}</span><span class="ls-crl">${esc(label)}<small>média: ${esc(fmt(b))}</small></span><b>${esc(fmt(a))}</b><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${Math.abs(p)}%</em></div>
+      <div class="ls-cb"><u style="width:${(b / mx * 100).toFixed(0)}%"></u><i class="${up ? '' : 'd'}" style="width:${(a / mx * 100).toFixed(0)}%"></i></div></div>`
+  }).join('')
+  const avgG = avgOf(ml, 'diamonds')
+  const note = !ml.length || ml.length < 2 || !ph || !avgPh ? ''
+    : gems >= avgG && ph < avgPh ? 'Rendeu mais no total, mas menos por hora: lives longas tendem a render menos por hora.'
+      : gems >= avgG ? 'Acima da média do mês no total e por hora.'
+        : ph >= avgPh ? 'Rendeu menos no total, mas mais por hora: foi uma live mais curta e forte.'
+          : 'Abaixo da média do mês no total e por hora.'
+
+  const tiles = list => list.filter(([, v]) => v != null && !Number.isNaN(v)).map(([label, v]) => `<div><small>${label}</small><b>${esc(v)}</b></div>`).join('')
+  const pub = tiles([
+    ['Visualizações', l.views != null ? mil1(l.views) : null], ['Espectadores', l.unique_viewers != null ? mil1(l.unique_viewers) : null], ['Ativos', l.active_viewers != null ? mil1(l.active_viewers) : null],
+    ['Pico', l.peak_viewers != null ? int(l.peak_viewers) : null], ['Média ao vivo', l.avg_viewers != null ? int(l.avg_viewers) : null], ['Tempo médio', l.avg_watch_sec != null ? `${int(l.avg_watch_sec)} s` : null]])
+  const eng = tiles([
+    ['Curtidas', l.likes != null ? mil1(l.likes) : null], ['Comentários', l.comments != null ? mil1(l.comments) : null], ['Compartilha&shy;mentos', l.shares != null ? mil1(l.shares) : null],
+    ['Presentea&shy;dores', l.gifters != null ? int(l.gifters) : null], ['💎 por presenteador', l.gifters ? int(Math.round(gems / l.gifters)) : null], ['💎 por espectador', l.unique_viewers ? dec(gems / l.unique_viewers, 2) : null]])
+
+  // recompensa: a porcentagem da live pelas regras do TikTok
+  const pctL = livePct(l.duration_min, l.new_followers)
+  const base = pctL - ((l.new_followers ?? 0) >= 5 ? 2 : 0)
+  const why = { 38: '38% por 25 min ou mais', 35: '35% por 10 min ou mais', 30: '30% por 5 min ou mais', 20: '20% (menos de 5 min)' }[base] + ((l.new_followers ?? 0) >= 5 ? ' + 2% por 5 novos seguidores' : '')
+  const usdV = l.rewards_usd != null ? Number(l.rewards_usd) : gems * 0.01 * pctL / 100
+  const same = l.title ? lives.filter(x => x.title === l.title) : []
+  const sameBest = same.length ? Math.max(...same.map(x => Number(x.diamonds) || 0)) : 0
+
+  view.innerHTML = `
+    <div class="lx ls ld">
+      <section class="lx-hero ld-hero">
+        <div class="lx-bar"><button type="button" class="lx-prints" data-back>${ic('back')}Lives</button><span>${esc(tag)}</span></div>
+        <div class="ld-title"><span class="ld-tag">${ic('trophy')}${rank === 1 ? `melhor live de ${esc(mName)} · 1ª de ${ml.length}` : `${rank}ª de ${ml.length} em ${esc(mName)}`}</span><h2>${esc(l.title || fmtDate(l.date))}</h2><p>${esc(dlong)}${l.duration_min ? ` · ${esc(hours(l.duration_min))} ao vivo` : ''}</p></div>
+        <div class="ls-big"><small>DIAMANTES</small><b data-count>${esc(int(gems))}</b><span class="ld-money">≈ ${esc(usd(usdV))}${rate ? ` · ${esc(brl0(usdV * rate))}` : ''}</span></div>
+        <div class="lx-glass">
+          <div><small><i>${ic('clock')}</i>por hora</small><b class="num">${ph ? esc(mil1(ph)) : '—'}</b></div>
+          <div><small><i>${ic('user')}</i>seguidores</small><b class="num">${l.new_followers != null ? `+${esc(int(l.new_followers))}` : '—'}</b></div>
+          <div><small><i>${ic('eye')}</i>pico</small><b class="num">${l.peak_viewers != null ? esc(int(l.peak_viewers)) : '—'}</b></div>
+        </div>
+      </section>
+      <section class="lx-sheet">
+        ${cmp ? `<div class="lx-block"><div class="lx-row lx-h"><small>COMPARADA À MÉDIA DO MÊS</small><small>${ml.length} LIVES</small></div>
+          <div class="nx-card">${cmp}</div>
+          <div class="nb-leg"><span><u></u>média do mês</span><span><i></i>esta live</span></div>
+          ${note ? `<p class="ld-note">${ic('clock')}<span>${note}</span></p>` : ''}</div>` : ''}
+        ${pub ? `<div class="lx-block"><div class="lx-row lx-h"><small>PÚBLICO</small></div><div class="ls-c3">${pub}</div></div>` : ''}
+        ${eng ? `<div class="lx-block"><div class="lx-row lx-h"><small>ENGAJAMENTO</small></div><div class="ls-c3 ld-eng">${eng}</div></div>` : ''}
+        <div class="lx-block"><div class="lx-row lx-h"><small>RECOMPENSA DA LIVE</small></div>
+          <div class="nx-card ld-rw">
+            <div><span>Porcentagem</span><b>${pctL}%</b><small>${esc(why)}</small></div>
+            <div><span>Em dólares</span><b>${esc(usd(usdV))}</b><small>${esc(int(gems))} diamantes × US$ 0,01 × ${pctL}%${l.rewards_usd != null && Math.abs(usdV - gems * 0.01 * pctL / 100) > 0.5 ? ' (valor do print)' : ''}</small></div>
+            ${rate ? `<div><span>Em reais</span><b>≈ ${esc(brl0(usdV * rate))}</b><small>no dólar do último saque (${esc(brlRate(rate))})</small></div>` : ''}
+          </div>
+          <p class="ld-note">${ic('cal')}<span>Também conta para o semanal da semana (até 13% a mais).</span></p></div>
+        ${same.length >= 2 ? `<div class="lx-block"><div class="lx-row lx-h"><small>ESSE TÍTULO</small></div>
+          <div class="nx-card ld-tt"><span class="si g">${ic('live')}</span><div><b>${esc(l.title)}</b><small>${same.length} lives com esse título · média ${esc(mil1(avgOf(same, 'diamonds')))}</small></div>${gems === sameBest ? '<em>melhor</em>' : ''}</div></div>` : ''}
+        <button type="button" class="ld-edit" data-edit="lives" data-id="${l.id}">${ic('pen')}Editar dados da live</button>
+      </section>
+    </div>`
+  view.querySelector('[data-back]').addEventListener('click', () => go('lives'))
   bindList(view)
   if (animate) reveal(view)
 }
