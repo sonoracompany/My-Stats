@@ -1134,6 +1134,8 @@ body.esm.liq .ibtn.solid svg { color: #1D3F6D !important; }
 .ld-edit { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 48px; margin-top: 8px; border: 1px solid rgb(15 42 32 / .15); border-radius: 99px; background: none; font-size: 14px; font-weight: 600; color: #0f2a20; } .ld-edit svg { width: 16px; height: 16px; color: #0e6b4f; }
 .lx-block .ld-eng small { white-space: normal; overflow: visible; line-height: 1.25; min-height: 2.5em; hyphens: manual; }
 .ld-eng b { margin-top: auto; }
+.ls-list2 { margin-top: 4px; } .ls-list2 .nx-row { padding: 11px 16px; min-height: 58px; }
+.lx-block .ls-list2 small { letter-spacing: 0; font-weight: 500; }
 </style>
 
 <div class="page">
@@ -1212,6 +1214,7 @@ const DAYK = [92, 118, 0, 86, 97, 74, 101, 88, 112, 0, 95, 83, 99, 104, 91, 108,
 const LS_CMP = [['gem', 'Diamantes', '1,96 mi', '1,75 mi', 12, 1, 'g', 196, 175], ['usd', 'Recompensas', 'US$ 7,8 mil', 'US$ 7,2 mil', 9, 1, 'c', 78, 72], ['cal', 'Por dia de live', '103.338', '99.360', 4, 1, 'g', 103, 99],
   ['clock', 'Por hora', '40.763', '42.020', 3, 0, 'g', 40.8, 42], ['live', 'Por live', '93.496', '91.660', 2, 1, 'g', 93.5, 91.7], ['clock', 'Ao vivo', '48h10', '41h50', 15, 1, 'g', 48.2, 41.8]]
 const LS_K = ['1,96M', 'US$ 7,8K', '103,3K', '40,8K', '93,5K', '48h10']   // comparativos em K e M
+const LS_KP = ['1,75M', 'US$ 7,2K', '99,4K', '42K', '91,7K', '41h50']   // os mesmos de setembro
 const lsBar = `<div class="lx-bar"><span>LIVES</span><button>${ic('cam')}Prints</button></div>`
 const lsMonth = () => `<div class="ls-month"><button aria-label="Mês anterior">${ic('back')}</button><div><b>Outubro <em>2026</em></b><small>21 lives · 19 dias de live</small></div><button aria-label="Próximo mês" disabled>${ic('chev')}</button></div>`
 const lsBig = (cls = '') => `<div class="ls-big ${cls}"><small>DIAMANTES NO MÊS</small><b>1.963.400</b><span class="ls-pill"><i>↑ 12%</i>vs setembro até dia 22</span></div>`
@@ -1364,7 +1367,7 @@ const S = {
     </section>
     <section class="lx-sheet">
       <div class="lx-block"><div class="lx-row lx-h"><small>COMPARADO A SETEMBRO</small><small>ATÉ DIA 22</small></div>
-        <div class="ls-c3">${LS_CMP.map(([i, l, v, p, d, up], k) => `<div><small>${l}</small><b>${LS_K[k]}</b><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${d}%</em></div>`).join('')}</div></div>
+        <div class="nx-card ls-list2">${LS_CMP.map(([i, l, v, p, d, up, c], k) => `<div class="nx-row"><span class="si ${c}">${ic(i)}</span><div><b>${l}</b><small>setembro: ${LS_KP[k]}</small></div><div class="nx-v"><b>${LS_K[k]}</b><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${d}%</em></div></div>`).join('')}</div></div>
       <div class="lx-block">${lsBest()}</div>
       <div class="lx-block"><div class="lx-row lx-h"><small>LIVES DO MÊS</small></div>${lsSeg('A')}<div data-lsl="A">${lsList('A')}</div>${lsMore}</div>
     </section>
