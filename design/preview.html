@@ -1106,6 +1106,34 @@ body.esm.liq .ibtn.solid svg { color: #1D3F6D !important; }
 .lx-block .nb-t > small { font-size: 12px; font-weight: 600; color: #5f6e66; }
 .ls-chart rect { stroke: none; }
 .nb-date, .nb-crown { white-space: nowrap; }
+/* Lives A: comparativos com K e M, mais respiro */
+.ls-c3 { gap: 10px; } .ls-c3 > div { padding: 12px 12px 11px; gap: 4px; }
+.ls-c3 b { font-size: 19px; }
+/* cartão da melhor live: vira botão que abre a página da live */
+.ls-best { display: block; width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; transition: transform .16s ease; }
+.ls-best:active { transform: scale(.98); }
+.ls-bh > div { flex: 1; min-width: 0; }
+.ls-bgo { width: 30px; height: 30px; flex: none; border-radius: 10px; display: grid; place-items: center; color: #c25a1c; background: rgb(226 116 47 / .12); } .ls-bgo svg { width: 15px; height: 15px; }
+.ls-bmore { display: block; margin-top: 12px; text-align: center; font-size: 12px; font-weight: 700; color: #c25a1c; }
+/* página da live */
+.ld-hero { background: radial-gradient(120% 60% at 85% 0%, rgb(226 116 47 / .24), transparent 60%), radial-gradient(90% 50% at 0% 100%, rgb(198 245 154 / .1), transparent 60%), linear-gradient(170deg, #0f7558, #0b5c45 55%, #083f30); }
+.ld-title { position: relative; z-index: 1; margin-top: 22px; }
+.ld-tag { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; color: #fff; background: rgb(226 116 47 / .85); } .ld-tag svg { width: 13px; height: 13px; stroke-width: 2.2; }
+.ld-title h2 { margin: 10px 0 2px; font-size: 30px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+.ld-title p { margin: 0; font-size: 13px; color: rgb(255 255 255 / .7); }
+.ld .ls-big { margin-top: 20px; }
+.ld-money { font-size: 13px; font-weight: 600; color: #f5b98a; }
+.ld-c3 b { font-size: 18px; }
+.ld-note { display: flex; gap: 8px; align-items: flex-start; margin: 12px 2px 0; font-size: 12.5px; line-height: 1.4; color: #5f6e66; } .ld-note svg { width: 16px; height: 16px; flex: none; margin-top: 1px; color: #e2742f; }
+.ld-rw > div { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 12px 16px; } .ld-rw > div + div { border-top: 1px solid rgb(15 42 32 / .06); }
+.ld-rw span { font-size: 14px; font-weight: 600; color: #0f2a20; } .ld-rw b { font-size: 16px; font-weight: 700; color: #0e6b4f; text-align: right; }
+.lx-block .ld-rw small { grid-column: 1 / -1; font-size: 11.5px; font-weight: 500; letter-spacing: 0; color: #7b8a81; }
+.ld-tt { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; padding: 12px 16px; }
+.ld-tt b { display: block; font-size: 14.5px; font-weight: 700; color: #0f2a20; } .lx-block .ld-tt small { font-size: 12px; font-weight: 500; letter-spacing: 0; color: #7b8a81; }
+.ld-tt em { font-style: normal; font-size: 11px; font-weight: 800; color: #c25a1c; background: rgb(226 116 47 / .12); padding: 2px 8px; border-radius: 99px; }
+.ld-edit { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 48px; margin-top: 8px; border: 1px solid rgb(15 42 32 / .15); border-radius: 99px; background: none; font-size: 14px; font-weight: 600; color: #0f2a20; } .ld-edit svg { width: 16px; height: 16px; color: #0e6b4f; }
+.lx-block .ld-eng small { white-space: normal; overflow: visible; line-height: 1.25; min-height: 2.5em; hyphens: manual; }
+.ld-eng b { margin-top: auto; }
 </style>
 
 <div class="page">
@@ -1183,6 +1211,7 @@ const LS_WEEKS = [['19 – 25 out', '3 lives · 231,8 mil', 0, 3], ['12 – 18 o
 const DAYK = [92, 118, 0, 86, 97, 74, 101, 88, 112, 0, 95, 83, 99, 104, 91, 108, 0, 84, 96, 104, 148, 45]   // mil diamantes por dia (1 a 22)
 const LS_CMP = [['gem', 'Diamantes', '1,96 mi', '1,75 mi', 12, 1, 'g', 196, 175], ['usd', 'Recompensas', 'US$ 7,8 mil', 'US$ 7,2 mil', 9, 1, 'c', 78, 72], ['cal', 'Por dia de live', '103.338', '99.360', 4, 1, 'g', 103, 99],
   ['clock', 'Por hora', '40.763', '42.020', 3, 0, 'g', 40.8, 42], ['live', 'Por live', '93.496', '91.660', 2, 1, 'g', 93.5, 91.7], ['clock', 'Ao vivo', '48h10', '41h50', 15, 1, 'g', 48.2, 41.8]]
+const LS_K = ['1,96M', 'US$ 7,8K', '103,3K', '40,8K', '93,5K', '48h10']   // comparativos em K e M
 const lsBar = `<div class="lx-bar"><span>LIVES</span><button>${ic('cam')}Prints</button></div>`
 const lsMonth = () => `<div class="ls-month"><button aria-label="Mês anterior">${ic('back')}</button><div><b>Outubro <em>2026</em></b><small>21 lives · 19 dias de live</small></div><button aria-label="Próximo mês" disabled>${ic('chev')}</button></div>`
 const lsBig = (cls = '') => `<div class="ls-big ${cls}"><small>DIAMANTES NO MÊS</small><b>1.963.400</b><span class="ls-pill"><i>↑ 12%</i>vs setembro até dia 22</span></div>`
@@ -1206,8 +1235,9 @@ const lsChart = dark => { const W = 300, H = 120, bw = W / 31, top = 148, avg = 
   return `<div class="ls-chart ${dark ? 'dk' : 'lt'}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${bars}<line x1="0" x2="${W}" y1="${ay.toFixed(1)}" y2="${ay.toFixed(1)}" class="a"/></svg>
     <span class="ls-tip" style="left:${(20.5 / 31 * 100).toFixed(2)}%">21/10 · 148 mil</span><span class="ls-avg" style="top:${ay.toFixed(0)}px">média 103 mil</span>
     <div class="ls-axis"><span>1</span><span>8</span><span>15</span><span>22</span><span>31</span></div></div>` }
-const lsBest = () => `<div class="ls-best"><div class="ls-bh"><span class="ls-bi">${ic('trophy')}</span><div><small>MELHOR LIVE DO MÊS · TER 20/10</small><b>LET'S SING</b></div></div>
-  <div class="ls-bk"><div><b>104.000</b><span>diamantes</span></div><div><b>32,5 mil</b><span>por hora</span></div><div><b>+260</b><span>seguidores</span></div></div></div>`
+const lsBest = () => `<button class="ls-best" data-go="liveD" aria-label="Ver todos os dados da melhor live"><div class="ls-bh"><span class="ls-bi">${ic('trophy')}</span><div><small>MELHOR DO MÊS · TER 20/10</small><b>LET'S SING</b></div><span class="ls-bgo">${ic('chev')}</span></div>
+  <div class="ls-bk"><div><b>104K</b><span>diamantes</span></div><div><b>32,5K</b><span>por hora</span></div><div><b>+260</b><span>seguidores</span></div></div>
+  <span class="ls-bmore">Ver todos os dados da live</span></button>`
 // listas
 const lsRow = t => `<button class="ls-row"><span class="nx-dt"><b>${t[2].slice(0, 2)}</b><small>${t[1].toUpperCase()}</small></span><span class="ls-rt"><b>${lsCrown(t)}${t[0]}</b><span>${t[3]} · ${t[5]}</span></span><span class="ls-rg"><b>${t[4]}</b><small>${(t[7] / 1000).toFixed(1).replace('.', ',')} mil/h</small></span></button>`
 const lsCardB = t => `<div class="nb-lc ${t[6] === 104000 ? 'nb-best' : ''}"><div class="nb-top"><span class="nb-date">${t[1].toUpperCase()} <b>${t[2]}</b></span>${t[6] === 104000 ? `<span class="nb-crown">${ic('trophy')}melhor do mês</span>` : ''}</div><b class="nb-title">${t[0]}</b><span class="nb-gem">${ic('gem')}<b>${t[4]}</b></span><span class="nb-sub">${t[3]} · ${t[5]}</span><span class="nb-bar"><span style="width:${(t[6] / 1040).toFixed(1)}%"></span></span></div>`
@@ -1334,9 +1364,39 @@ const S = {
     </section>
     <section class="lx-sheet">
       <div class="lx-block"><div class="lx-row lx-h"><small>COMPARADO A SETEMBRO</small><small>ATÉ DIA 22</small></div>
-        <div class="ls-c3">${LS_CMP.map(([i, l, v, p, d, up]) => `<div><small>${l}</small><b>${v}</b><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${d}%</em></div>`).join('')}</div></div>
+        <div class="ls-c3">${LS_CMP.map(([i, l, v, p, d, up], k) => `<div><small>${l}</small><b>${LS_K[k]}</b><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${d}%</em></div>`).join('')}</div></div>
       <div class="lx-block">${lsBest()}</div>
       <div class="lx-block"><div class="lx-row lx-h"><small>LIVES DO MÊS</small></div>${lsSeg('A')}<div data-lsl="A">${lsList('A')}</div>${lsMore}</div>
+    </section>
+  </div>` },
+
+  liveD: { tab: 'lives', name: '✦ Lives · Página da live', html: () => `
+  <div class="lx ls ld">
+    <section class="lx-hero ld-hero">
+      <div class="lx-bar"><button data-go="livesA">${ic('back')}Lives</button><span>TER · 20 OUT</span></div>
+      <div class="ld-title"><span class="ld-tag">${ic('trophy')}melhor live do mês · 1ª de 21</span><h2>LET'S SING</h2><p>terça, 20 de outubro · 3h12 ao vivo</p></div>
+      <div class="ls-big"><small>DIAMANTES</small><b>104.000</b><span class="ld-money">≈ US$ 416,32 · R$ 2.019</span></div>
+      ${lsGlass([['clock', 'por hora', '32,5K'], ['user', 'seguidores', '+260'], ['eye', 'pico', '1.500']])}
+    </section>
+    <section class="lx-sheet">
+      <div class="lx-block"><div class="lx-row lx-h"><small>COMPARADA À MÉDIA DO MÊS</small><small>21 LIVES</small></div>
+        <div class="nx-card">${[['gem', 'Diamantes', '104K', '93,5K', 11, 1, 'g', 104, 93.5], ['clock', 'Por hora', '32,5K', '40,8K', 20, 0, 'g', 32.5, 40.8], ['cal', 'Duração', '3h12', '2h17', 40, 1, 'g', 192, 137], ['eye', 'Pico', '1.500', '812', 85, 1, 'g', 1500, 812], ['user', 'Seguidores', '+260', '+162', 60, 1, 'g', 260, 162]].map(([i, l, v, p, d, up, c, a, b]) => { const m = Math.max(a, b); return `<div class="ls-cr"><div class="ls-crh"><span class="si ${c}">${ic(i)}</span><span class="ls-crl">${l}<small>média: ${p}</small></span><b>${v}</b><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${d}%</em></div><div class="ls-cb"><u style="width:${(b / m * 100).toFixed(0)}%"></u><i class="${up ? '' : 'd'}" style="width:${(a / m * 100).toFixed(0)}%"></i></div></div>` }).join('')}</div>
+        <div class="lx-legend" style="margin-top:8px"><span><u></u>média do mês</span><span><i></i>esta live</span></div>
+        <p class="ld-note">${ic('clock')}<span>Rendeu mais no total, mas menos por hora: lives longas tendem a render menos por hora.</span></p></div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>PÚBLICO</small></div>
+        <div class="ls-c3 ld-c3">${[['Visualizações', '41,4K'], ['Espectadores', '38K'], ['Ativos', '9,8K'], ['Pico', '1.500'], ['Média ao vivo', '620'], ['Tempo médio', '30 s']].map(([l, v]) => `<div><small>${l}</small><b>${v}</b></div>`).join('')}</div></div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>ENGAJAMENTO</small></div>
+        <div class="ls-c3 ld-c3 ld-eng">${[['Curtidas', '1,24M'], ['Comentários', '2,5K'], ['Compartilha&shy;mentos', '410'], ['Presentea&shy;dores', '312'], ['💎 por presenteador', '333'], ['💎 por espectador', '2,74']].map(([l, v]) => `<div><small>${l}</small><b>${v}</b></div>`).join('')}</div></div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>RECOMPENSA DA LIVE</small></div>
+        <div class="nx-card ld-rw">
+          <div><span>Porcentagem</span><b>40%</b><small>38% por 25 min ou mais + 2% por 5 novos seguidores</small></div>
+          <div><span>Em dólares</span><b>US$ 416,32</b><small>104.000 diamantes × US$ 0,01 × 40%</small></div>
+          <div><span>Em reais</span><b>≈ R$ 2.019</b><small>no dólar do último saque (R$ 4,8497)</small></div>
+        </div>
+        <p class="ld-note">${ic('cal')}<span>Também conta para o semanal desta semana (até 13% a mais).</span></p></div>
+      <div class="lx-block"><div class="lx-row lx-h"><small>ESSE TÍTULO</small></div>
+        <div class="nx-card ld-tt"><span class="si g">${ic('live')}</span><div><b>LET'S SING</b><small>6 lives com esse título · média 98,2K</small></div><em>melhor</em></div></div>
+      <button class="ld-edit">${ic('pen')}Editar dados da live</button>
     </section>
   </div>` },
 
