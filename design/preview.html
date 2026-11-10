@@ -1222,8 +1222,8 @@ const lsGlass = cells => `<div class="lx-glass">${cells.map(([i, l, v]) => `<div
 const lsSeg = (v, on = 'data') => `<div class="ls-seg" data-lsv="${v}">${[['data', 'Data'], ['diamantes', 'Diamantes'], ['hora', 'Por hora']].map(([k, l]) => `<button class="${k === on ? 'on' : ''}" data-lss="${k}">${l}</button>`).join('')}</div>`
 const lsSorted = s => s === 'diamantes' ? [...LSM].sort((a, b) => b[6] - a[6]) : s === 'hora' ? [...LSM].sort((a, b) => b[7] - a[7]) : LSM
 const lsCrown = t => t[6] === 104000 ? `<span class="nx-crown">${ic('trophy')}</span>` : ''
-// calendário do mês (outubro de 2026 começa numa quinta)
-const lsCal = () => `<div class="ls-cal">${['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map(d => `<span class="h">${d}</span>`).join('')}${'<i class="x"></i>'.repeat(3)}${Array.from({ length: 31 }, (_, k) => {
+// calendário do mês, começando no domingo (outubro de 2026 começa numa quinta)
+const lsCal = () => `<div class="ls-cal">${['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(d => `<span class="h">${d}</span>`).join('')}${'<i class="x"></i>'.repeat(4)}${Array.from({ length: 31 }, (_, k) => {
   const v = DAYK[k], a = v ? 0.25 + v / 148 * 0.75 : 0
   const cls = v === undefined ? 'fut' : !v ? 'off' : v === 148 ? 'max' : a > 0.62 ? 'hi' : ''
   return `<i class="${cls} ${k === 21 ? 'now' : ''}" style="--a:${a.toFixed(2)}"><b>${k + 1}</b></i>` }).join('')}</div>

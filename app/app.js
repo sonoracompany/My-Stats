@@ -1340,8 +1340,8 @@ function renderLives(animate) {
   const byDay = Array.from({ length: nDays }, (_, d) => sumOf(s.ls.filter(l => +l.date.slice(8) === d + 1), 'diamonds'))
   const top = Math.max(...byDay, 0)
   const topDay = byDay.indexOf(top) + 1
-  const offset = (new Date(y, m - 1, 1).getDay() + 6) % 7   // semana começa na segunda
-  const cal = `<div class="ls-cal">${['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map(d => `<span class="h">${d}</span>`).join('')}${'<i class="x"></i>'.repeat(offset)}${byDay.map((v, d) => {
+  const offset = new Date(y, m - 1, 1).getDay()   // semana começa no domingo
+  const cal = `<div class="ls-cal">${['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(d => `<span class="h">${d}</span>`).join('')}${'<i class="x"></i>'.repeat(offset)}${byDay.map((v, d) => {
     const fut = current && d + 1 > nowDay
     const a = v && top ? 0.25 + v / top * 0.75 : 0
     const cls = fut ? 'fut' : !v ? 'off' : v === top ? 'max' : a > 0.62 ? 'hi' : ''
