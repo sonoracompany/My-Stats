@@ -33,7 +33,7 @@ Mostra diamantes, recompensas, saques, estatísticas e metas. Fala sempre em **p
 | `app/tiktok.js` | Leitura do texto dos prints: `parseTikTok` (live), `parseWeekly` (Upcoming rewards), `isMonthPrint`/`parseMonth`/`fixMonth` (resumo do mês e Viewer insights) |
 | `app/ocr.js` | Leitura das imagens no próprio iPhone com Tesseract.js 5.1.1 (contraste por faixas, linhas remontadas pela posição, ponto decimal, bolinhas laranjas da liga) |
 | `app/rewards.js` | Regras de pagamento e contas: `ledger` (saldo), `monthEarned`, `limitFor`, `LIMIT_TIERS`, `LIFETIME` (acumulado desde nov/2023) |
-| `supabase/schema.sql` + `supabase/migrations/` | Tabelas (aplicadas no Supabase do Galli até a 005; a 006 `video_posts` foi enviada em nov/2026 para ele rodar) |
+| `supabase/schema.sql` + `supabase/migrations/` | Tabelas (todas já aplicadas no Supabase do Galli até a 006) |
 | `design/preview.html` | Prévia de design (base das propostas) |
 | `.claude/skills/` | Skills de design instaladas: emil-design-eng, animate, mobile-native, design-taste-frontend, ui-ux-pro-max, mobile-design |
 
