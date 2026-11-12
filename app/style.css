@@ -1007,3 +1007,9 @@ body.luxe #view { padding: 0; gap: 0; }
 .lx-backf.on { opacity: 1; transform: none; pointer-events: auto; }
 .lx-backf:active { transform: scale(.94); }
 @media (prefers-reduced-motion: reduce) { .lx-backf { transition: opacity .2s ease; transform: none; } }
+/* aviso: o resumo do mês ainda não chegou (mostra o último que tem) */
+.st-stale { display: grid; grid-template-columns: 20px 1fr; gap: 6px 10px; align-items: start; margin-top: 12px; padding: 12px 14px; border-radius: 16px;
+  background: rgb(226 116 47 / .08); border: 1px solid rgb(226 116 47 / .18); font-size: 12.5px; line-height: 1.4; color: #6b4a33; }
+.st-stale > svg { width: 18px; height: 18px; margin-top: 1px; color: #e2742f; } .st-stale b { color: #0f2a20; }
+.st-cta { grid-column: 2; justify-self: start; height: 36px; margin-top: 4px; padding: 0 14px; border: 0; border-radius: 99px; font-size: 12.5px; font-weight: 700; color: #fff; background: linear-gradient(135deg, #13805e, #0a5640); }
+.lx-h + .st-stale { margin-top: 4px; }
