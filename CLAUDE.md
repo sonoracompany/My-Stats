@@ -33,7 +33,7 @@ Mostra diamantes, recompensas, saques, estatísticas e metas. Fala sempre em **p
 | `app/tiktok.js` | Leitura do texto dos prints: `parseTikTok` (live), `parseWeekly` (Upcoming rewards), `isMonthPrint`/`parseMonth`/`fixMonth` (resumo do mês e Viewer insights) |
 | `app/ocr.js` | Leitura das imagens no próprio iPhone com Tesseract.js 5.1.1 (contraste por faixas, linhas remontadas pela posição, ponto decimal, bolinhas laranjas da liga) |
 | `app/rewards.js` | Regras de pagamento e contas: `ledger` (saldo), `monthEarned`, `limitFor`, `LIMIT_TIERS`, `LIFETIME` (acumulado desde nov/2023) |
-| `supabase/schema.sql` + `supabase/migrations/` | Tabelas (todas já aplicadas no Supabase do Galli até a 005) |
+| `supabase/schema.sql` + `supabase/migrations/` | Tabelas (aplicadas no Supabase do Galli até a 005; a 006 `video_posts` foi enviada em nov/2026 para ele rodar) |
 | `design/preview.html` | Prévia de design (base das propostas) |
 | `.claude/skills/` | Skills de design instaladas: emil-design-eng, animate, mobile-native, design-taste-frontend, ui-ux-pro-max, mobile-design |
 
@@ -45,6 +45,7 @@ Mostra diamantes, recompensas, saques, estatísticas e metas. Fala sempre em **p
 - `settings` — último limite salvo (o limite agora é automático pelo ganho do mês anterior)
 - `goals` — metas: `month = 'AAAA-MM'` (meta do mês) ou `month = 'total'` (meta do acumulado, ex.: 100 mi)
 - `month_summaries` — resumo do mês vindo dos prints do Overview (`data` jsonb: totais, período, gênero, idade, países, "viewers from videos")
+- `video_posts` — quantos vídeos foram postados em cada dia (`date`, `count`; gravar de novo substitui) — migração 006
 
 ## Regras de pagamento do TikTok (usadas no app)
 
@@ -84,6 +85,10 @@ Mostra diamantes, recompensas, saques, estatísticas e metas. Fala sempre em **p
 - **Estatísticas redesenhada (opção "A Abas", aprovada):** `renderStats` com topo esmeralda (projeção do mês que conta
   do zero, barra do mês, faixa dólares/reais/limite), cartão da sequência com o foguinho colorido (`FLAME`), e abas
   Público / Engajamento / Ritmo (`statsPane`; `state.stab`). Calendário e últimos 6 meses saíram (estão na Lives e na Carreira).
+- **Seus vídeos** (`renderVideos`, rota `videos`, abre pelo cartão abaixo da sequência na Estatísticas): registrar vídeos
+  (seletor de data + quantidade + Gravar, que substitui o número do dia e volta a zero), últimos 14 dias, vindos dos vídeos
+  comparando **por dia**, "a quantidade influencia?" (lives com vídeo no dia ou na véspera × sem, desde o 1º registro),
+  vídeos × diamantes por semana e mês a mês. "Vindos dos vídeos" saiu da aba Público.
 - **Animação ao rolar** (`reveal`/`REVEAL`): cada cartão aparece com fade em cascata; as linhas de dentro entram uma por uma
   (`--r`) e os gráficos só se formam quando o cartão aparece (`.reveal.in`). Rolada rápida não deixa nada escondido.
 - **Pílula flutuante de voltar** (`backPill`, `BACK`): só nas páginas extras (Carreira → Início, página da live → Lives);
@@ -91,5 +96,5 @@ Mostra diamantes, recompensas, saques, estatísticas e metas. Fala sempre em **p
 - **Barra de status:** `black-translucent` + faixa esmeralda fixa atrás do relógio (`#app::before`, altura do safe-area).
   Cuidado: a classe `top` é do cabeçalho antigo e fica escondida nas telas novas (`body.luxe .top`); não usar esse nome.
 - **Números grandes com K e M no app inteiro** (`compact`, `mil1`, `goalLabel`, `usdK`): 1,96M, 59,6K, US$ 7,8K.
-- Prévia: `design/preview.html` (telas "✦ Início · Redesign total", "✦ Carreira · tela nova", "✦ Lives · A/B/C", "✦ Lives · Página da live", "✦ Estatísticas · A/B/C").
+- Prévia: `design/preview.html` (telas "✦ Início · Redesign total", "✦ Carreira · tela nova", "✦ Lives · A/B/C", "✦ Lives · Página da live", "✦ Estatísticas · A/B/C", "✦ Estatísticas · Seus vídeos").
 - **Próximo passo:** redesenhar Recompensas no mesmo estilo, sempre com prévia antes.

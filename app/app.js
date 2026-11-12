@@ -112,6 +112,7 @@ ENTITIES.withdrawals = { table: 'withdrawals', order: ['created_at', false] }
 ENTITIES.snapshots = { table: 'reward_snapshots', order: ['taken_at', false] }
 ENTITIES.summaries = { table: 'month_summaries', order: ['month', false], optional: true }   // resumo do mês (migração 005)
 ENTITIES.goals = { table: 'goals', order: ['month', false], optional: true }   // meta de diamantes do mês (migração 004)
+ENTITIES.videoPosts = { table: 'video_posts', order: ['date', false], optional: true }   // vídeos postados por dia (migração 006)
 
 // Ícones (traço) usados nas telas
 const IC = {
@@ -302,8 +303,8 @@ function renderShell() {
 }
 
 // O que cada aba precisa do banco
-const NEEDS = { home: ['lives', 'withdrawals', 'goals', 'summaries'], career: ['lives', 'withdrawals', 'goals', 'summaries'], live: ['lives', 'withdrawals'], lives: ['lives', 'summaries'], stats: ['lives', 'withdrawals', 'summaries'], rewards: ['lives', 'withdrawals', 'snapshots', 'summaries'] }
-const DRAW = { home: a => renderHome(a), career: a => renderCareer(a), live: a => renderLive(a), lives: a => renderLives(a), stats: a => renderStats(a), rewards: a => renderRewards(a) }
+const NEEDS = { home: ['lives', 'withdrawals', 'goals', 'summaries'], career: ['lives', 'withdrawals', 'goals', 'summaries'], live: ['lives', 'withdrawals'], lives: ['lives', 'summaries'], stats: ['lives', 'withdrawals', 'summaries', 'videoPosts'], videos: ['lives', 'summaries', 'videoPosts'], rewards: ['lives', 'withdrawals', 'snapshots', 'summaries'] }
+const DRAW = { home: a => renderHome(a), career: a => renderCareer(a), live: a => renderLive(a), videos: a => renderVideos(a), lives: a => renderLives(a), stats: a => renderStats(a), rewards: a => renderRewards(a) }
 
 async function fetchFor(tab) {
   const sig = () => JSON.stringify([...NEEDS[tab].map(n => state.data[n]), state.data.settings, state.rate?.commercial])
@@ -318,9 +319,9 @@ async function reload(tab = state.tab) {
   if (await fetchFor(tab) && state.tab === tab) DRAW[tab](false)
 }
 
-const TAB_ORDER = ['home', 'career', 'lives', 'live', 'stats', 'rewards']
+const TAB_ORDER = ['home', 'career', 'lives', 'live', 'stats', 'videos', 'rewards']
 // páginas extras: para onde a pílula flutuante de voltar leva
-const BACK = { career: ['home', 'Início'], live: ['lives', 'Lives'] }
+const BACK = { career: ['home', 'Início'], live: ['lives', 'Lives'], videos: ['stats', 'Estatísticas'] }
 const pill = document.createElement('button')
 pill.type = 'button'; pill.className = 'lx-backf'; pill.hidden = true
 pill.addEventListener('click', () => go(pill.dataset.to))
@@ -341,19 +342,19 @@ function backPill(tab) {
     requestAnimationFrame(() => { tick = false; pill.classList.toggle('on', scrollY > 90) })
   }, { passive: true })
 }   // a Carreira abre pelo Início; a página da live, pela Lives
-const LUXE = ['home', 'career', 'lives', 'live', 'stats']   // telas com o topo esmeralda de ponta a ponta (sem o cabeçalho de sempre)
+const LUXE = ['home', 'career', 'lives', 'live', 'stats', 'videos']   // telas com o topo esmeralda de ponta a ponta (sem o cabeçalho de sempre)
 function go(tab) {
   const from = TAB_ORDER.indexOf(state.tab), to = TAB_ORDER.indexOf(tab)
   const v = document.getElementById('view')
   v.classList.remove('slide-l', 'slide-r')
   if (from !== to) { void v.offsetWidth; v.classList.add(to > from ? 'slide-r' : 'slide-l') }
   state.tab = tab
-  const tabId = { career: 'home', live: 'lives' }[tab] || tab
+  const tabId = { career: 'home', live: 'lives', videos: 'stats' }[tab] || tab
   app.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tabId))
   app.querySelector('.tabs').style.setProperty('--ti', TABS.findIndex(t => t.id === tabId))   // o destaque desliza até a aba
   document.body.classList.toggle('luxe', LUXE.includes(tab))
   backPill(tab)
-  document.getElementById('title').textContent = { home: 'E aí, Galli!', career: 'Carreira', live: 'Live', rewards: 'Recompensas', stats: 'Estatísticas' }[tab] ?? ENTITIES[tab].title
+  document.getElementById('title').textContent = { home: 'E aí, Galli!', career: 'Carreira', live: 'Live', videos: 'Vídeos', rewards: 'Recompensas', stats: 'Estatísticas' }[tab] ?? ENTITIES[tab].title
   const kicker = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })
   document.getElementById('kicker').textContent = tab === 'home' ? kicker[0].toUpperCase() + kicker.slice(1).replace('-feira', '') : ''
   window.scrollTo(0, 0)
@@ -822,7 +823,7 @@ function celebrate(goal, ym, again = false) {
 }
 
 // cartões aparecem ao rolar, em cascata; as linhas de dentro entram uma por uma e os gráficos só se formam quando aparecem
-const REVEAL = '.st-stale, .feature, .life, .fxp, .sec, .month, .seg, .best, .chartcard, .card, .form, .proj, .ret, .rec, .quad, .empty, .cx-teaser, .nx-card, .nb-grid, .nb-lc, .ls-best, .ls-list, .ls-wk, .ls-seg, .lx-h, .nx-h, .ld-note, .st-streak, .nb-leg, .ls-c3, .lx-lead, .st-empty'
+const REVEAL = '.st-stale, .feature, .life, .fxp, .sec, .month, .seg, .best, .chartcard, .card, .form, .proj, .ret, .rec, .quad, .empty, .cx-teaser, .vd-today, .nx-card, .nb-grid, .nb-lc, .ls-best, .ls-list, .ls-wk, .ls-seg, .lx-h, .nx-h, .ld-note, .st-streak, .nb-leg, .ls-c3, .lx-lead, .st-empty'
 function reveal(root) {
   root.querySelectorAll('[data-count]').forEach(countUp)
   root.querySelectorAll('.lv .crown, .rec.new .rt svg').forEach(x => x.classList.add('wiggle'))
@@ -1342,17 +1343,6 @@ function funnelCard(s, prev) {
     ${F.gifters ? stNote('gem', `Média de <b>${esc(int(Math.round(F.gems / F.gifters)))}</b> diamantes por presenteador.`) : ''}</div>`
 }
 
-// Vindos dos vídeos: quantas pessoas entraram na live depois de ver um vídeo seu
-function videosCard(ym, shown = ym) {
-  const a = summaryOf(ym)
-  if (!a?.video_joined) return ''
-  const b = summaryOf(prevYm(ym)) || {}
-  const share = a.unique_viewers ? a.video_joined / a.unique_viewers * 100 : null
-  return `<div class="lx-block">${stH('VINDOS DOS VÍDEOS', a.period ? `ATÉ ${esc(shortDate(`${a.period[1]}T12:00`))}` : '')}
-    <div class="nx-card st-vid"><span class="si c">${ic('cam')}</span><div><b>${esc(int(a.video_joined))} pessoas</b><small>entraram na live depois de ver um vídeo seu${share != null ? ` · ${esc(dec(share, 1))}% do público do mês` : ''}</small></div>${stPill(a.video_joined, b.video_joined)}</div>
-    ${ym !== shown ? '' : stNote('live', share != null && share < 5 ? 'Quase todo o público chega pela entrega normal das lives. Postar com frequência pode trazer mais gente pelos vídeos.' : 'Os vídeos já trazem uma parte boa do público das lives.')}</div>`
-}
-
 // Seu público: gênero, idade e países do mês, comparados com o mês anterior
 const COUNTRY = { Brazil: ['🇧🇷', 'Brasil'], Philippines: ['🇵🇭', 'Filipinas'], Italy: ['🇮🇹', 'Itália'], 'United Kingdom': ['🇬🇧', 'Reino Unido'], 'United States': ['🇺🇸', 'Estados Unidos'], Portugal: ['🇵🇹', 'Portugal'], Spain: ['🇪🇸', 'Espanha'], Mexico: ['🇲🇽', 'México'], Indonesia: ['🇮🇩', 'Indonésia'], Germany: ['🇩🇪', 'Alemanha'], France: ['🇫🇷', 'França'], Argentina: ['🇦🇷', 'Argentina'], Japan: ['🇯🇵', 'Japão'], Others: ['', 'Outros'] }
 function audienceCard(ym, shown = ym) {
@@ -1391,12 +1381,10 @@ function lastSummaryMonth(ym, test) {
 }
 const staleNote = (from, shown) => `<div class="st-stale">${ic('cam')}<span>Ainda não chegou o resumo de <b>${esc(monthWord(shown))}</b>: mostrando <b>${esc(monthWord(from))}</b>. Mande os prints do Overview e do Viewer insights para atualizar.</span><button type="button" class="st-cta" data-open-prints>Mandar prints</button></div>`
 function summaryCards(ym) {
-  const vm = lastSummaryMonth(ym, a => a?.video_joined), am = lastSummaryMonth(ym, hasAudience)
-  const html = (vm ? videosCard(vm, ym) : '') + (am ? audienceCard(am, ym) : '')
-  // um aviso só, no fim, quando o que aparece é de um mês anterior
-  const old = [vm, am].filter(m => m && m !== ym).sort().at(-1)
-  if (html) return old ? html.replace(/<\/div>$/, `${staleNote(old, ym)}</div>`) : html
-  return `<div class="lx-block">${stH('SEU PÚBLICO')}<div class="st-stale">${ic('cam')}<span><b>Seu público</b> (gênero, idade e países) e <b>vindos dos vídeos</b> aparecem quando você manda os prints do resumo do mês: Overview e Viewer insights.</span><button type="button" class="st-cta" data-open-prints>Mandar prints</button></div></div>`
+  const am = lastSummaryMonth(ym, hasAudience)
+  // quando o que aparece é de um mês anterior, um aviso no fim
+  if (am) return am !== ym ? audienceCard(am, ym).replace(/<\/div>$/, `${staleNote(am, ym)}</div>`) : audienceCard(am, ym)
+  return `<div class="lx-block">${stH('SEU PÚBLICO')}<div class="st-stale">${ic('cam')}<span><b>Seu público</b> (gênero, idade e países) aparece quando você manda os prints do resumo do mês: Overview e Viewer insights.</span><button type="button" class="st-cta" data-open-prints>Mandar prints</button></div></div>`
 }
 
 // Engajamento: a cada mil visualizações, por espectador e quanto vale cada mil visualizações
@@ -1569,7 +1557,7 @@ function renderStats(animate) {
         </div>
       </section>
       <section class="lx-sheet">
-        ${lives.length ? `<div class="lx-block">${streakCard(lives)}</div>` : ''}
+        <div class="lx-block">${lives.length ? streakCard(lives) : ''}${videoTeaser(ym)}</div>
         <div class="lx-block st-tabs"><div class="ls-seg slider" role="group" aria-label="Assunto" style="--n:3;--i:${STABS.findIndex(([k]) => k === tab)}">${STABS.map(([k, l]) => `<button type="button" data-stab="${k}" aria-pressed="${k === tab}">${l}</button>`).join('')}</div></div>
         <div data-stpane>${statsPane(tab, s, prev, rate)}</div>
       </section>
@@ -1589,10 +1577,185 @@ function renderStats(animate) {
     pane.querySelectorAll('[data-open-prints]').forEach(b => b.addEventListener('click', openPrints))
     bindList(pane); reveal(pane)
   }))
+  view.querySelector('[data-videos]').addEventListener('click', () => go('videos'))
   view.querySelectorAll('[data-prints], [data-open-prints]').forEach(b => b.addEventListener('click', openPrints))
   updateDue()
   bindList(view)
   if (animate) { reveal(view); countFmt(view.querySelector('[data-proj]'), total, compact) }
+}
+
+// ---------- Seus vídeos (abre pelo cartão da Estatísticas) ----------
+
+const ymdOf = d => d.toLocaleDateString('sv-SE')
+const addDays = (ymd, n) => { const d = new Date(`${ymd}T12:00`); d.setDate(d.getDate() + n); return ymdOf(d) }
+// vídeos gravados por dia: { '2026-11-10': 2, ... }
+const videoMap = () => Object.fromEntries((state.data.videoPosts || []).map(r => [r.date, Number(r.count) || 0]))
+// dias já passados do mês (o mês em andamento conta até hoje)
+const daysSoFar = ym => (ym === today().slice(0, 7) ? new Date().getDate() : new Date(+ym.slice(0, 4), +ym.slice(5), 0).getDate())
+function videoMonth(ym, vm = videoMap()) {
+  const days = Object.entries(vm).filter(([d]) => d.startsWith(ym))
+  const total = days.reduce((a, [, v]) => a + v, 0)
+  const n = daysSoFar(ym)
+  return { total, withVideo: days.filter(([, v]) => v > 0).length, n, perDay: n ? total / n : 0, recorded: days.length }
+}
+
+// cartão da Estatísticas que abre a página
+function videoTeaser(ym) {
+  const vm = videoMap(), m = videoMonth(ym, vm)
+  const joined = summaryOf(ym)?.video_joined
+  const sub = [`em ${monthWord(ym)}`, ym === today().slice(0, 7) && `hoje: ${vm[today()] ?? 0}`, joined && `${mil1(joined)} vieram deles`].filter(Boolean).join(' · ')
+  return `<button type="button" class="cx-teaser vd-teaser" data-videos aria-label="Abrir seus vídeos">
+    <span class="cx-ic vd-ic">${ic('cam')}</span>
+    <span class="cx-t"><small>SEUS VÍDEOS</small><b>${m.recorded ? `${m.total} ${m.total === 1 ? 'vídeo' : 'vídeos'}` : 'Registrar vídeos'}</b><span>${esc(m.recorded ? sub : 'quantos vídeos você posta e se isso ajuda as lives')}</span></span>
+    <span class="cx-go">${ic('chev')}</span></button>`
+}
+
+const vidDayLabel = d => {
+  const t = today()
+  const name = d === t ? 'Hoje' : d === addDays(t, -1) ? 'Ontem' : cap(weekday(d))
+  return `${name}, ${d.slice(8)}/${d.slice(5, 7)}`
+}
+
+function renderVideos(animate) {
+  const view = document.getElementById('view')
+  const { lives } = state.data
+  const vm = videoMap()
+  const t = today()
+  const ym = state.smonth || t.slice(0, 7)
+  const mName = monthWord(ym)
+  const m = videoMonth(ym, vm), p = videoMonth(prevYm(ym), vm)
+  const dp = m.perDay && p.perDay ? Math.round((m.perDay - p.perDay) / p.perDay * 100) : null
+  if (!state.vdate || state.vdate > t) state.vdate = t
+  state.vqty ??= 0
+  const firstDay = Object.keys(vm).sort()[0]
+  const joinedM = summaryOf(ym)?.video_joined
+
+  // últimos 14 dias (até hoje): vídeos por dia e se teve live
+  const liveDays = new Set(lives.map(l => l.date))
+  const last = Array.from({ length: 14 }, (_, k) => addDays(t, k - 13))
+  const top = Math.max(...last.map(d => vm[d] || 0), 1)
+  const strip = `<div class="nx-card vd-strip">
+      <div class="vd-sh"><div><b>${m.total} ${m.total === 1 ? 'vídeo' : 'vídeos'}</b><small>em ${esc(mName)} · ${esc(dec(m.perDay, 1))} por dia · ${m.withVideo} de ${m.n} dias com vídeo</small></div>${dp != null ? `<em class="${dp >= 0 ? 'u' : 'd'}">${dp >= 0 ? '↑' : '↓'} ${Math.abs(dp)}% por dia vs ${esc(monthWord(prevYm(ym)).slice(0, 3))}.</em>` : ''}</div>
+      <div class="vd-bars">${last.map((d, i) => { const v = vm[d]; return `<div class="${d === t ? 'now' : ''}" style="--i:${i}"><b>${v || ''}</b><i class="${v ? '' : 'z'}" style="height:${v ? (v / top * 100).toFixed(0) : 4}%"></i><u class="${liveDays.has(d) ? 'on' : ''}"></u><span>${new Date(`${d}T12:00`).toLocaleDateString('pt-BR', { weekday: 'narrow' }).toUpperCase()}</span></div>` }).join('')}</div>
+      <div class="vd-leg"><span><i></i>vídeos no dia</span><span><u></u>teve live</span></div></div>`
+
+  // vindos dos vídeos, comparando por dia (o começo do mês não vira "queda")
+  const jm = lastSummaryMonth(ym, a => a?.video_joined)
+  let joinedHtml = ''
+  if (jm) {
+    const a = summaryOf(jm), b = summaryOf(prevYm(jm)) || {}
+    const per = s => s?.video_joined ? s.video_joined / (s.period ? +s.period[1].slice(8) : daysSoFar(jm)) : null
+    const perA = per(a), perB = b.video_joined ? b.video_joined / (b.period ? +b.period[1].slice(8) : new Date(+prevYm(jm).slice(0, 4), +prevYm(jm).slice(5), 0).getDate()) : null
+    const share = a.unique_viewers ? a.video_joined / a.unique_viewers * 100 : null
+    joinedHtml = `<div class="lx-block">${stH('VINDOS DOS VÍDEOS', a.period ? `ATÉ ${esc(shortDate(`${a.period[1]}T12:00`))}` : '')}
+      <div class="nx-card st-vid"><span class="si c">${ic('user')}</span><div><b>${esc(int(a.video_joined))} pessoas</b><small>entraram na live depois de ver um vídeo seu${share != null ? ` · ${esc(dec(share, 1))}% do público do mês` : ''}</small></div></div>
+      <div class="nx-card vd-pd">${stRow('cal', `Por dia em ${monthWord(jm)}`, a.period ? `até dia ${+a.period[1].slice(8)}` : '', int(Math.round(perA)), stPill(perA, perB))}${perB ? stRow('cal', `Por dia em ${monthWord(prevYm(jm))}`, 'mês inteiro', int(Math.round(perB))) : ''}</div>
+      ${jm !== ym ? staleNote(jm, ym) : stNote('clock', 'A comparação é <b>por dia</b>: assim o começo do mês não parece uma queda.')}</div>`
+  }
+
+  // a quantidade influencia? lives de dias com vídeo (no dia ou na véspera) × sem vídeo, desde o primeiro registro
+  let vsHtml
+  const tracked = firstDay ? lives.filter(l => l.date >= firstDay && Number(l.diamonds) > 0) : []
+  const withV = tracked.filter(l => (vm[l.date] || 0) + (vm[addDays(l.date, -1)] || 0) > 0)
+  const without = tracked.filter(l => !withV.includes(l))
+  if (withV.length >= 3 && without.length >= 3) {
+    const rows = [['gem', 'Diamantes por live', 'diamonds', mil1], ['user', 'Espectadores por live', 'unique_viewers', v => int(Math.round(v))], ['heart', 'Novos seguidores por live', 'new_followers', v => '+' + int(Math.round(v))]]
+      .map(([icon, label, k, fmt]) => { const a = avgOf(withV, k), b = avgOf(without, k); return a && b ? [icon, label, a, b, fmt] : null }).filter(Boolean)
+    vsHtml = `<div class="nx-card">${rows.map(([icon, label, a, b, fmt]) => { const d = Math.round((a - b) / b * 100), mx = Math.max(a, b), up = d >= 0
+      return `<div class="ls-cr"><div class="ls-crh"><span class="si g">${ic(icon)}</span><span class="ls-crl">${esc(label)}<small>sem vídeo: ${esc(fmt(b))}</small></span><b>${esc(fmt(a))}</b><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${Math.abs(d)}%</em></div><div class="ls-cb"><u style="width:${(b / mx * 100).toFixed(0)}%"></u><i class="${up ? '' : 'd'}" style="width:${(a / mx * 100).toFixed(0)}%"></i></div></div>` }).join('')}</div>
+      <div class="nb-leg"><span><u></u>dias sem vídeo</span><span><i></i>dias com vídeo</span></div>
+      ${stNote('cam', `"Dia com vídeo" = você postou no dia da live ou na véspera. ${withV.length} lives com vídeo × ${without.length} sem.`)}`
+  } else vsHtml = `<p class="st-empty">Grave os vídeos de mais alguns dias para comparar. Precisa de pelo menos 3 lives com vídeo e 3 sem (no dia ou na véspera)${tracked.length ? `: até agora ${withV.length} com e ${without.length} sem` : ''}.</p>`
+
+  // vídeos × diamantes por semana (segunda a domingo), desde o primeiro registro
+  let wkHtml = ''
+  if (firstDay) {
+    const weeks = []
+    for (let w = weekStartOf(new Date()), k = 0; k < 8 && w >= weekStartOf(new Date(`${firstDay}T12:00`)); k++, w = addDays(w, -7)) {
+      const days = Array.from({ length: 7 }, (_, i) => addDays(w, i))
+      const ls = lives.filter(l => days.includes(l.date) && Number(l.diamonds) > 0)
+      weeks.unshift({ w, v: days.reduce((a, d) => a + (vm[d] || 0), 0), g: ls.length ? sumOf(ls, 'diamonds') / ls.length : 0 })
+    }
+    const ok = weeks.filter(x => x.g)
+    if (ok.length >= 3) {
+      const W = 300, H = 120, bw = W / weeks.length, vtop = Math.max(...weeks.map(x => x.v), 1)
+      const gmin = Math.min(...ok.map(x => x.g)) * 0.9, gmax = Math.max(...ok.map(x => x.g)) * 1.03
+      const y = g => H - (g - gmin) / (gmax - gmin || 1) * H
+      const pts = weeks.map((x, k) => (x.g ? `${(k * bw + bw / 2).toFixed(1)},${y(x.g).toFixed(1)}` : null)).filter(Boolean).join(' ')
+      const med = [...ok].map(x => x.v).sort((a, b) => a - b)[Math.floor(ok.length / 2)]
+      const hi = ok.filter(x => x.v >= med), lo = ok.filter(x => x.v < med)
+      const avgG = xs => xs.reduce((a, x) => a + x.g, 0) / xs.length
+      const diff = hi.length && lo.length ? Math.round((avgG(hi) - avgG(lo)) / avgG(lo) * 100) : null
+      wkHtml = `<div class="lx-block">${stH('VÍDEOS × DIAMANTES', `${weeks.length} SEMANAS`)}<div class="nx-card st-chart vd-wk">
+        <div class="vd-wkc"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${weeks.map((x, k) => `<rect x="${(k * bw + bw * 0.2).toFixed(1)}" y="${(H - x.v / vtop * H).toFixed(1)}" width="${(bw * 0.6).toFixed(1)}" height="${(x.v / vtop * H).toFixed(1)}" rx="4" style="--i:${k}"/>`).join('')}<polyline points="${pts}"/></svg>
+          ${weeks.map((x, k) => (x.g ? `<span class="vd-dot" style="left:${((k + 0.5) / weeks.length * 100).toFixed(2)}%;top:${(y(x.g) / H * 100).toFixed(1)}%;--k:${k}"></span>` : '')).join('')}</div>
+        <div class="vd-ax">${weeks.map(x => `<span><b>${x.v}</b>${+x.w.slice(8)}/${+x.w.slice(5, 7)}</span>`).join('')}</div>
+        <div class="vd-leg"><span><i></i>vídeos na semana</span><span><em></em>diamantes por live</span></div>
+        ${diff != null ? stNote('trophy', `Nas semanas com <b>${med} ou mais vídeos</b>, suas lives renderam <b>${Math.abs(diff)}% ${diff >= 0 ? 'mais' : 'menos'}</b> (${esc(mil1(avgG(hi)))} × ${esc(mil1(avgG(lo)))} por live).`) : ''}</div></div>`
+    }
+  }
+
+  // mês a mês: vídeos gravados e pessoas vindas dos vídeos
+  const months = [...new Set(Object.keys(vm).map(d => d.slice(0, 7)))].sort().reverse()
+  const monthsHtml = months.length ? `<div class="lx-block">${stH('MÊS A MÊS')}<div class="nx-card">${months.map(mm => { const x = videoMonth(mm, vm), j = summaryOf(mm)?.video_joined
+    return stRow('cal', cap(monthWord(mm)) + (mm.slice(0, 4) !== t.slice(0, 4) ? ` de ${mm.slice(0, 4)}` : ''), [j && `${mil1(j)} pessoas vieram dos vídeos`, mm === t.slice(0, 7) && 'em andamento'].filter(Boolean).join(' · '), `${x.total} ${x.total === 1 ? 'vídeo' : 'vídeos'}`, '', mm === t.slice(0, 7) ? 'c' : 'g') }).join('')}</div>
+    ${stNote('cam', 'Os números ficam mais confiáveis depois de umas <b>4 semanas</b> registrando. É uma tendência, não uma prova: outras coisas também mudam de uma semana pra outra.')}</div>` : ''
+
+  const saved = vm[state.vdate]
+  view.innerHTML = `
+    <div class="lx ls vd">
+      <section class="lx-hero vd-hero">
+        <div class="lx-bar"><button type="button" class="lx-prints" data-back>${ic('back')}Estatísticas</button><span>${esc(mName.toUpperCase())} ${ym.slice(0, 4)}</span></div>
+        <p class="lx-hi">Seus <b>vídeos</b></p>
+        <div class="ls-big"><small>VÍDEOS POSTADOS EM ${esc(mName.toUpperCase())}</small><b data-count>${m.total}</b>${dp != null ? `<span class="ls-pill"><i>${dp >= 0 ? '↑' : '↓'} ${Math.abs(dp)}% por dia</i>vs ${esc(monthWord(prevYm(ym)))}</span>` : ''}</div>
+        <div class="vd-rec">
+          <div class="vd-rh"><small>REGISTRAR VÍDEOS</small><label class="vd-date">${ic('cal')}<span data-vdl>${esc(vidDayLabel(state.vdate))}</span>${ic('chev')}<input type="date" data-vdate value="${state.vdate}" max="${t}" aria-label="Dia da postagem"></label></div>
+          <div class="vd-rr"><div class="vd-step dk"><button type="button" data-vc="-1" aria-label="Tirar um vídeo">−</button><b data-vcount>${state.vqty}</b><button type="button" data-vc="1" aria-label="Somar um vídeo">+</button></div><button type="button" class="vd-save" data-vsave ${state.vqty ? '' : 'disabled'}>Gravar</button></div>
+          <p class="vd-was" data-vwas>${saved == null ? 'Nada gravado nesse dia ainda.' : `Já gravado nesse dia: <b>${saved} ${saved === 1 ? 'vídeo' : 'vídeos'}</b> · gravar de novo substitui.`}</p>
+        </div>
+        <div class="lx-glass">
+          <div><small><i>${ic('cal')}</i>com vídeo</small><b class="num">${m.withVideo} de ${m.n}</b></div>
+          <div><small><i>${ic('stats')}</i>por dia</small><b class="num">${esc(dec(m.perDay, 1))}</b></div>
+          <div><small><i>${ic('user')}</i>vieram deles</small><b class="num">${joinedM ? esc(mil1(joinedM)) : '—'}</b></div>
+        </div>
+      </section>
+      <section class="lx-sheet">
+        <div class="lx-block">${stH('ÚLTIMOS 14 DIAS')}${strip}</div>
+        ${joinedHtml}
+        <div class="lx-block">${stH('A QUANTIDADE INFLUENCIA?', firstDay ? `DESDE ${esc(shortDate(`${firstDay}T12:00`))}` : '')}${vsHtml}</div>
+        ${wkHtml}${monthsHtml}
+      </section>
+    </div>`
+
+  view.querySelector('[data-back]').addEventListener('click', () => go('stats'))
+  view.querySelectorAll('[data-open-prints]').forEach(b => b.addEventListener('click', openPrints))
+  const count = view.querySelector('[data-vcount]'), save = view.querySelector('[data-vsave]'), was = view.querySelector('[data-vwas]')
+  const bump = () => { count.classList.remove('bump'); void count.offsetWidth; count.classList.add('bump') }
+  view.querySelectorAll('[data-vc]').forEach(b => b.addEventListener('click', () => {
+    state.vqty = Math.max(0, Math.min(30, state.vqty + Number(b.dataset.vc)))
+    count.textContent = state.vqty; save.disabled = !state.vqty; bump()
+  }))
+  view.querySelector('[data-vdate]').addEventListener('change', e => {
+    if (!e.target.value) return
+    state.vdate = e.target.value > t ? t : e.target.value
+    view.querySelector('[data-vdl]').textContent = vidDayLabel(state.vdate)
+    const v = videoMap()[state.vdate]
+    was.innerHTML = v == null ? 'Nada gravado nesse dia ainda.' : `Já gravado nesse dia: <b>${v} ${v === 1 ? 'vídeo' : 'vídeos'}</b> · gravar de novo substitui.`
+  })
+  save.addEventListener('click', async () => {
+    if (save.disabled) return
+    const n = state.vqty, date = state.vdate
+    save.disabled = true
+    const { error } = await sb.from('video_posts').upsert({ date, count: n, updated_at: new Date().toISOString() }, { onConflict: 'user_id,date' })
+    if (error) { save.disabled = false; return toast(/video_posts/.test(error.message) ? 'Falta criar a tabela dos vídeos no Supabase (migração 006).' : 'Erro ao gravar: ' + error.message) }
+    state.vqty = 0
+    if (still()) save.textContent = 'Gravado'; else { save.classList.add('ok'); save.innerHTML = CHECK }
+    count.textContent = 0; bump()
+    toast(`${n} ${n === 1 ? 'vídeo gravado' : 'vídeos gravados'} em ${date.slice(8)}/${date.slice(5, 7)}`)
+    await load('videoPosts')
+    setTimeout(() => { if (state.tab === 'videos') renderVideos(false) }, 900)
+  })
+  if (animate) reveal(view)
 }
 
 // ---------- Recompensas ----------
