@@ -318,8 +318,30 @@ async function reload(tab = state.tab) {
   if (await fetchFor(tab) && state.tab === tab) DRAW[tab](false)
 }
 
-const TAB_ORDER = ['home', 'career', 'lives', 'live', 'stats', 'rewards']   // a Carreira abre pelo Início; a página da live, pela Lives
-const LUXE = ['home', 'career', 'lives', 'live']   // telas com o topo esmeralda de ponta a ponta (sem o cabeçalho de sempre)
+const TAB_ORDER = ['home', 'career', 'lives', 'live', 'stats', 'rewards']
+// páginas extras: para onde a pílula flutuante de voltar leva
+const BACK = { career: ['home', 'Início'], live: ['lives', 'Lives'] }
+const pill = document.createElement('button')
+pill.type = 'button'; pill.className = 'lx-backf'; pill.hidden = true
+pill.addEventListener('click', () => go(pill.dataset.to))
+function backPill(tab) {
+  const t = BACK[tab]
+  pill.hidden = !t; pill.classList.remove('on')
+  if (!t) return
+  pill.dataset.to = t[0]; pill.setAttribute('aria-label', `Voltar para ${t[1]}`)
+  pill.innerHTML = `${ic('back')}<span>${t[1]}</span>`
+  if (!pill.isConnected) document.body.append(pill)
+}
+// a pílula aparece quando o botão de voltar do topo sai da tela
+{
+  let tick = false
+  addEventListener('scroll', () => {
+    if (tick || pill.hidden) return
+    tick = true
+    requestAnimationFrame(() => { tick = false; pill.classList.toggle('on', scrollY > 90) })
+  }, { passive: true })
+}   // a Carreira abre pelo Início; a página da live, pela Lives
+const LUXE = ['home', 'career', 'lives', 'live', 'stats']   // telas com o topo esmeralda de ponta a ponta (sem o cabeçalho de sempre)
 function go(tab) {
   const from = TAB_ORDER.indexOf(state.tab), to = TAB_ORDER.indexOf(tab)
   const v = document.getElementById('view')
@@ -329,9 +351,8 @@ function go(tab) {
   const tabId = { career: 'home', live: 'lives' }[tab] || tab
   app.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tabId))
   app.querySelector('.tabs').style.setProperty('--ti', TABS.findIndex(t => t.id === tabId))   // o destaque desliza até a aba
-  const luxe = LUXE.includes(tab)
-  document.body.classList.toggle('luxe', luxe)
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', luxe ? '#0f7558' : '#dfe8d4')
+  document.body.classList.toggle('luxe', LUXE.includes(tab))
+  backPill(tab)
   document.getElementById('title').textContent = { home: 'E aí, Galli!', career: 'Carreira', live: 'Live', rewards: 'Recompensas', stats: 'Estatísticas' }[tab] ?? ENTITIES[tab].title
   const kicker = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })
   document.getElementById('kicker').textContent = tab === 'home' ? kicker[0].toUpperCase() + kicker.slice(1).replace('-feira', '') : ''
@@ -357,13 +378,6 @@ const prevYm = ym => { const [y, m] = ym.split('-').map(Number); return ymOf(new
 const monthWord = ym => new Date(`${ym}-15T12:00`).toLocaleDateString('pt-BR', { month: 'long' })
 const cap = t => t ? t[0].toUpperCase() + t.slice(1) : t
 const weekday = d => new Date(`${d}T12:00`).toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '')
-
-// "↑ 12%" contra o valor de antes (vazio quando não há com o que comparar)
-function delta(cur, before) {
-  if (!before || cur == null) return ''
-  const p = (cur - before) / before * 100
-  return `<em class="${p >= 0 ? 'up' : 'down'}">${p >= 0 ? '↑' : '↓'} ${int(Math.round(Math.abs(p)))}%</em>`
-}
 
 // chuva de diamantes (ou notinhas) caindo dentro do card principal
 const RAIN = [[6, 34, 14, 0], [22, 24, 11, -6], [38, 38, 17, -3], [54, 28, 12, -9], [70, 32, 15, -1], [86, 26, 10, -5], [14, 30, 16, -11], [62, 22, 13, -8], [94, 34, 18, -13], [46, 26, 12, -14]]
@@ -739,54 +753,6 @@ function openGoal(ym) {
   document.activeElement?.blur()
 }
 
-// Dias seguidos com live (hoje ainda pode ter live, então a conta começa ontem se hoje não teve)
-function streakCard(lives) {
-  const days = new Set(lives.map(l => l.date))
-  if (!days.size) return ''
-  const ymd = d => d.toLocaleDateString('sv-SE')
-  const d = new Date()
-  const liveToday = days.has(ymd(d))
-  if (!liveToday) d.setDate(d.getDate() - 1)
-  let streak = 0
-  while (days.has(ymd(d))) { streak++; d.setDate(d.getDate() - 1) }
-  let best = 0, run = 0
-  const all = [...days].sort()
-  for (let i = 0; i < all.length; i++) {
-    const gap = i ? (new Date(`${all[i]}T12:00`) - new Date(`${all[i - 1]}T12:00`)) / 864e5 : 1
-    run = gap === 1 ? run + 1 : 1
-    best = Math.max(best, run)
-  }
-  const cells = Array.from({ length: 14 }, (_, i) => {
-    const x = new Date(); x.setDate(x.getDate() - 13 + i)
-    const letter = x.toLocaleDateString('pt-BR', { weekday: 'narrow' }).toUpperCase()
-    return `<span class="${days.has(ymd(x)) ? 'on' : ''} ${i === 13 ? 'today' : ''}"><i></i>${letter}</span>`
-  }).join('')
-  const sub = streak >= best ? 'seguidos com live · é o seu recorde!' : `seguidos com live · faltam ${best - streak} pro recorde`
-  return `
-    <div class="feature">
-      <div class="k"><i class="cop flare">${ic('flame')}</i>Sequência<em>maior: ${best} ${best === 1 ? 'dia' : 'dias'}</em></div>
-      <div class="big" style="font-size:30px">${streak} ${streak === 1 ? 'dia' : 'dias'}</div>
-      <div class="sub">${sub}${liveToday ? '' : ' · hoje ainda não teve live'}</div>
-      <div class="streak">${cells}</div>
-    </div>`
-}
-
-// Projeção (mês atual) ou como o mês fechou (meses passados)
-function projCard(ml, rate, ym, current, nLives) {
-  const gems = sumOf(ml, 'diamonds')
-  if (!gems) return ''
-  const now = new Date()
-  const [y, m] = ym.split('-').map(Number)
-  const nDays = new Date(y, m, 0).getDate()
-  const total = current ? gems / now.getDate() * nDays : gems
-  const totalUsd = total * 0.01 * 0.51
-  const next = monthWord(ymOf(new Date(y, m, 15))).slice(0, 3)
-  return sec(current ? 'Projeção' : 'Fechamento', `
-    <div class="proj">
-      <div class="pc"><small>${esc(cap(monthWord(ym)))} ${current ? 'deve fechar com' : 'fechou com'}</small><b>${esc(compact(total))}</b><span>${current ? `no ritmo de hoje · dia ${now.getDate()} de ${nDays}` : `${nLives != null ? `${nLives} ${nLives === 1 ? 'live' : 'lives'} · ` : 'resumo do TikTok · '}${esc(int(gems))} diamantes`}</span></div>
-      <div class="pk"><div><span>Em dólares</span><b>${esc(usd0(Math.round(totalUsd)))}</b></div><div><span>Em reais</span><b>${rate ? esc(brl0(totalUsd * rate)) : '—'}</b></div><div><span>Limite em ${esc(next)}.</span><b>${esc(compactUsd(limitFor(totalUsd).tier[1]))}</b></div></div>
-    </div>`)
-}
 const compactUsd = v => (v >= 1000 && v % 1000 === 0 ? `US$ ${int(v / 1000)}K` : usd0(v))
 
 const brlRate = r => 'R$ ' + new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 }).format(r)
@@ -855,13 +821,29 @@ function celebrate(goal, ym, again = false) {
   setTimeout(close, 4500)
 }
 
+// cartões aparecem ao rolar, em cascata; as linhas de dentro entram uma por uma e os gráficos só se formam quando aparecem
+const REVEAL = '.feature, .life, .fxp, .sec, .month, .seg, .best, .chartcard, .card, .form, .proj, .ret, .rec, .quad, .empty, .cx-teaser, .nx-card, .nb-grid, .nb-lc, .ls-best, .ls-list, .ls-wk, .ls-seg, .lx-h, .nx-h, .ld-note, .st-streak, .nb-leg, .ls-c3, .lx-lead, .st-empty'
 function reveal(root) {
   root.querySelectorAll('[data-count]').forEach(countUp)
   root.querySelectorAll('.lv .crown, .rec.new .rt svg').forEach(x => x.classList.add('wiggle'))
-  root.querySelectorAll('.feature, .life, .fxp, .sec, .month, .seg, .best, .chartcard, .card, .form, .proj, .ret, .rec, .quad, .empty, .cx-teaser, .nx-card, .nb-t, .nb-lc, .lx-block, .ls-best, .ls-list').forEach(el => {
+  root.querySelectorAll(REVEAL).forEach(el => {
+    if (el.parentElement.closest('.reveal')) return   // já entra junto com o cartão de fora
+    el.querySelectorAll('.nx-row, .cx-yr, .st-c, .rk, .ls-row, .ls-cr').forEach((r, k) => r.style.setProperty('--r', k))
     el.classList.add('reveal')
     revealer.observe(el)
   })
+}
+// rolada rápida: o que ficou acima da tela sem ter aparecido aparece na hora (para não ficar escondido ao voltar)
+{
+  let tick = false
+  addEventListener('scroll', () => {
+    if (tick) return
+    tick = true
+    requestAnimationFrame(() => {
+      tick = false
+      document.querySelectorAll('.reveal:not(.in)').forEach(el => { if (el.getBoundingClientRect().bottom < 0) { el.classList.add('in'); revealer.unobserve(el) } })
+    })
+  }, { passive: true })
 }
 
 const empty = (msg, name) => `<div class="empty"><p class="muted">${esc(msg)}</p><button class="btn" data-new="${name}">Adicionar</button></div>`
@@ -1087,227 +1069,6 @@ function monthStats(lives, month, livesOnly = false) {
 }
 const summaryOf = month => (state.data.summaries || []).find(r => r.month === month)?.data
 
-function funnelCard(s, prev) {
-  const f = st => {
-    const t = k => sumOf(st.agg, k)
-    const views = t('views'), unique = t('unique_viewers'), gifters = t('gifters'), followers = t('new_followers'), gems = t('diamonds')
-    return { views, unique, gifters, followers, tick: gifters ? gems / gifters : null }
-  }
-  const F = f(s)
-  if (!F.views || !F.unique) return ''
-  const P = prev ? f(prev) : null
-  return sec('Público', `
-    <div class="quad">
-      ${qcell('eye', 'Visualizações', int(F.views), '', 'total do mês')}
-      ${qcell('user', 'Espectadores', int(F.unique), '', `${dec(F.unique / F.views * 100, 0)}% das views`)}
-      ${qcell('gem', 'Presenteadores', int(F.gifters), delta(F.gifters / F.unique, P?.unique ? P.gifters / P.unique : 0), `${dec(F.gifters / F.unique * 100)}% do público`)}
-      ${qcell('heart', 'Seguidores', '+' + int(F.followers), delta(F.followers / F.unique, P?.unique ? P.followers / P.unique : 0), `${dec(F.followers / F.unique * 1000)} a cada mil`)}
-    </div>
-    ${F.tick ? `<div class="fnote">${ic('gem')}Média de <b>${esc(int(Math.round(F.tick)))}</b> diamantes por presenteador</div>` : ''}`)
-}
-
-// Seu público: gênero, idade e países do mês, comparados com o mês anterior
-const COUNTRY = { Brazil: ['🇧🇷', 'Brasil'], Philippines: ['🇵🇭', 'Filipinas'], Italy: ['🇮🇹', 'Itália'], 'United Kingdom': ['🇬🇧', 'Reino Unido'], 'United States': ['🇺🇸', 'Estados Unidos'], Portugal: ['🇵🇹', 'Portugal'], Spain: ['🇪🇸', 'Espanha'], Mexico: ['🇲🇽', 'México'], Indonesia: ['🇮🇩', 'Indonésia'], Germany: ['🇩🇪', 'Alemanha'], France: ['🇫🇷', 'França'], Argentina: ['🇦🇷', 'Argentina'], Japan: ['🇯🇵', 'Japão'], Others: ['', 'Outros'] }
-function audienceCard(ym) {
-  const row = (state.data.summaries || []).find(r => r.month === ym)
-  const a = row?.data
-  if (!a || (a.female_pct == null && !a.ages && !a.countries)) return ''
-  const b = summaryOf(prevYm(ym)) || {}
-  const pName = monthWord(prevYm(ym))
-  const pts = (cur, before) => {
-    if (before == null || cur == null) return ''
-    const d = cur - before
-    return d === 0 ? '<em class="muted">=</em>' : `<em class="${d > 0 ? 'up' : 'down'}">${d > 0 ? '↑' : '↓'} ${Math.abs(d)} pt</em>`
-  }
-  const ages = AGE_ORDER.filter(k => a.ages?.[k] != null && a.ages[k] <= 100 && (k !== '13-17' || a.ages[k] > 0)).map(k => [k, a.ages[k]])
-  const countries = mergeCountries([], (a.countries || []).map(([n, v]) => [n.replace(/^(?:[A-Z][A-Za-z]{0,2}\s)+(?=[A-Z][a-z])/, ''), v]))
-  const topAge = Math.max(...ages.map(([, v]) => v), 1)
-  const scale = Math.max(topAge, ...Object.values(b.ages || {})) * 1.08
-  const bc = Object.fromEntries(b.countries || [])
-  return sec('Seu público', `
-    <div class="aud">
-      ${a.female_pct != null ? `
-      <div class="ah"><small>Gênero</small><span class="lg2"><i class="f"></i>Mulheres <i class="m"></i>Homens</span></div>
-      <div class="gbar"><i style="width:${a.female_pct}%">${a.female_pct}%</i><i style="width:${a.male_pct}%">${a.male_pct}%</i></div>
-      ${b.female_pct != null ? `<div class="gcmp">${esc(pName)}: ${b.female_pct}% · ${b.male_pct}% ${a.female_pct !== b.female_pct ? `<em class="${a.female_pct > b.female_pct ? 'up' : 'down'}">${a.female_pct > b.female_pct ? '↑' : '↓'} ${Math.abs(a.female_pct - b.female_pct)} ${Math.abs(a.female_pct - b.female_pct) === 1 ? 'pt' : 'pts'} mulheres</em>` : ''}</div>` : ''}` : ''}
-      ${ages.length ? `
-      <div class="ah"><small>Idade</small><span class="lg2"><i class="cur"></i>${esc(monthWord(ym).slice(0, 3))}${b.ages ? ` <i class="prv"></i>${esc(pName.slice(0, 3))}` : ''}</span></div>
-      ${ages.map(([k, v]) => `<div class="ab ${v === topAge ? 'top' : ''}"><span>${k.replace('-', '–')}</span><div><i style="width:${(v / scale * 100).toFixed(1)}%"></i>${b.ages?.[k] != null ? `<u style="width:${(b.ages[k] / scale * 100).toFixed(1)}%"></u>` : ''}</div><b class="num">${v}%</b></div>`).join('')}` : ''}
-      ${countries.length ? `
-      <div class="ah"><small>Países</small><span class="lg2">${b.countries ? `vs. ${esc(pName)}` : ''}</span></div>
-      ${countries.map(([n, v]) => { const [flag, name] = COUNTRY[n] || ['', n]; return `<div class="ac"><span>${flag ? flag + ' ' : ''}${esc(name)}</span><b class="num">${v}%</b>${n === 'Others' ? '<em></em>' : pts(v, bc[n])}</div>` }).join('')}` : ''}
-      <div class="afoot">${ic('cal')}${a.period ? `Dados de ${esc(a.period[0].slice(8))} a ${esc(shortDate(`${a.period[1]}T12:00`))} · ` : ''}${ym === today().slice(0, 7) ? `print de ${esc(shortDate(row.updated_at))} · atualize toda semana` : `resumo de ${esc(monthWord(ym))}`}</div>
-    </div>`)
-}
-
-function retentionCard(s, prev, ym) {
-  const cur = avgOf(s.agg, 'avg_watch_sec')
-  if (!cur) return ''
-  // resumo do mês e média das lives medem de jeitos diferentes: só compara igual com igual
-  const before = prev ? avgOf(prev.agg, 'avg_watch_sec') : 0
-  const mixed = prev && before && prev.fromSummary !== s.fromSummary
-  const d = before && !mixed ? Math.round(cur - before) : null
-  const pName = monthWord(prevYm(ym))
-  const top = Math.max(cur, before) * 1.15
-  const bar = (label, v, on) => `<div class="rb ${on ? 'cur' : ''}"><span>${esc(label)}</span><i><i style="width:${(v / top * 100).toFixed(1)}%"></i></i><b>${Math.round(v)}s</b></div>`
-  const peak = avgOf(s.agg, 'peak_viewers'), pPeak = prev && !mixed ? avgOf(prev.agg, 'peak_viewers') : 0
-  return sec('Retenção', `
-    <div class="ret">
-      <div class="rh"><div><small>Tempo médio assistido</small><b>${Math.round(cur)}s</b></div>${d != null ? `<em class="${d >= 0 ? 'up' : 'down'}">${d >= 0 ? '↑' : '↓'} ${Math.abs(d)} s vs. ${esc(pName)}</em>` : ''}</div>
-      ${before ? bar(pName, before, false) : ''}${bar(monthWord(ym), cur, true)}
-      ${mixed ? `<p class="muted small">${esc(cap(monthWord(s.fromSummary ? ym : prevYm(ym))))} vem do resumo do mês do TikTok, que mede o tempo médio de um jeito diferente da média das lives.</p>` : s.fromSummary ? '<p class="muted small">Do resumo do mês do TikTok.</p>' : ''}
-      ${peak ? `<div class="row"><span>Pico médio por live</span><b class="num">${esc(int(Math.round(peak)))}${pPeak ? ` <span class="muted">(${esc(pName.slice(0, 3))}.: ${esc(int(Math.round(pPeak)))})</span>` : ''}</b></div>` : ''}
-    </div>`)
-}
-
-// ---------- Estatísticas novas ----------
-
-// a cada mil views, por espectador e quanto vale cada mil views (mês contra o anterior)
-function engagementCard(s, prev, rate) {
-  const f = st => {
-    const t = k => sumOf(st.agg, k)
-    const views = t('views'), unique = t('unique_viewers')
-    return { views, com: views ? t('comments') / views * 1000 : null, sha: views ? t('shares') / views * 1000 : null,
-      per: unique ? t('diamonds') / unique : null, mil: views && rate ? t('rewards_usd') * rate / views * 1000 : null }
-  }
-  const F = f(s)
-  if (!F.views) return ''
-  const P = prev ? f(prev) : {}
-  const cell = (icon, label, v, fmt, before, rateTxt, money) => v == null ? '' : qcell(icon, label, fmt(v), delta(v, before), rateTxt, money)
-  return sec('Engajamento e valor', `<div class="quad">
-    ${cell('heart', 'Comentários', F.com, v => dec(v, 0), P.com, 'a cada mil views')}
-    ${cell('live', 'Compartilh.', F.sha, v => dec(v, 0), P.sha, 'a cada mil views')}
-    ${cell('gem', 'Por espectador', F.per, v => dec(v, 2), P.per, 'diamantes')}
-    ${cell('usd', 'Mil views', F.mil, v => brl0(v), P.mil, 'em reais', true)}
-  </div>`, prev ? `<span>vs. ${esc(monthWord(prevYm(state.smonth)))}</span>` : '')
-}
-
-// Vindos dos vídeos: quantas pessoas entraram na live depois de ver um vídeo seu, e o peso disso no público do mês
-function videosCard(ym) {
-  const a = summaryOf(ym)
-  if (!a?.video_joined) return ''
-  const b = summaryOf(prevYm(ym)) || {}
-  const share = a.unique_viewers ? a.video_joined / a.unique_viewers * 100 : null
-  const pShare = b.video_joined && b.unique_viewers ? b.video_joined / b.unique_viewers * 100 : null
-  const fol = a.video_followers_pct, neu = a.video_new_pct ?? (fol != null ? 100 - fol : null)
-  return sec('Vindos dos vídeos', `<div class="card vids">
-    <div class="vh"><div><b class="num">${esc(int(a.video_joined))}</b><span>pessoas entraram depois de ver seus vídeos</span></div>${delta(a.video_joined, b.video_joined)}</div>
-    ${share != null ? `<div class="row"><span>Do público do mês (${esc(compact(a.unique_viewers))} espectadores)</span><b class="num">${esc(dec(share, 1))}%${pShare != null ? ` <span class="muted">(${esc(monthWord(prevYm(ym)).slice(0, 3))}.: ${esc(dec(pShare, 1))}%)</span>` : ''}</b></div>
-    <div class="track" style="background:var(--s2);margin-top:-4px"><i style="transform:scaleX(${Math.min(share / 10, 1).toFixed(3)});background:linear-gradient(90deg,var(--p1),var(--accent-2))"></i></div>` : ''}
-    ${fol != null ? `<div class="gbar"><i style="width:${fol}%">${fol}%</i><i style="width:${neu}%">${neu > 6 ? `${neu}%` : ''}</i></div>
-    <div class="lg2" style="justify-content:space-between"><span><i class="f"></i>Seguidores de vídeos antigos</span><span><i class="m"></i>Entraram pelos seus vídeos ${neu <= 6 ? `${neu}%` : ''}</span></div>` : ''}
-    ${hint('live', share != null && share < 5 ? 'Quase todo o público chega pela entrega normal das lives. Postar com frequência pode trazer mais gente pelos vídeos.' : 'Os vídeos já trazem uma parte boa do público das lives.')}
-  </div>`, a.period ? `<span>até ${esc(shortDate(`${a.period[1]}T12:00`))}</span>` : '')
-}
-
-const hint = (icon, html) => `<p class="hint2">${ic(icon)}<span>${html}</span></p>`
-
-// média de diamantes por live em cada dia da semana (todas as lives)
-function weekdayCard(lives) {
-  const ls = lives.filter(l => l.date && Number(l.diamonds) > 0)
-  if (ls.length < 5) return ''
-  const names = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
-  const avg = [1, 2, 3, 4, 5, 6, 0].map(d => {
-    const g = ls.filter(l => new Date(`${l.date}T12:00`).getDay() === d)
-    return { d, n: g.length, v: g.length ? sumOf(g, 'diamonds') / g.length : 0 }
-  })
-  const best = avg.reduce((a, b) => (b.v > a.v ? b : a))
-  return sec('Melhor dia da semana', `<div class="chartcard">
-    <div class="wk">${avg.map(a => `<div class="${a === best ? 'best1' : ''}"><b>${a.v ? esc(compactK(a.v)) : ''}</b><i style="height:${(a.v / best.v * 100).toFixed(1)}%"></i><span>${names[a.d][0]}</span></div>`).join('')}</div>
-    ${hint('trophy', `<b>${names[best.d]}</b> rende mais: média de <b class="num">${esc(compact(best.v))}</b> diamantes por live`)}
-  </div>`, '<span>todas as lives</span>')
-}
-const compactK = v => (v >= 1e6 ? `${dec(v / 1e6, 1)}M` : `${int(Math.round(v / 1e3))}K`)
-
-// diamantes por hora de acordo com o tamanho da live
-function durationCard(lives) {
-  const ls = lives.filter(l => Number(l.duration_min) > 0 && Number(l.diamonds) > 0)
-  if (ls.length < 5) return ''
-  const groups = [['Até 1h', 0, 60], ['1h a 2h', 60, 120], ['2h a 3h', 120, 180], ['Mais de 3h', 180, 1e9]].map(([label, a, b]) => {
-    const g = ls.filter(l => l.duration_min > a && l.duration_min <= b)
-    const h = sumOf(g, 'duration_min') / 60
-    return { label, n: g.length, v: h ? sumOf(g, 'diamonds') / h : 0 }
-  }).filter(g => g.n)
-  const best = groups.reduce((a, b) => (b.v > a.v ? b : a))
-  return sec('Duração ideal', `<div class="chartcard">
-    ${groups.map(g => `<div class="dur ${g === best ? 'best1' : ''}"><span>${g.label}<small>${g.n} ${g.n === 1 ? 'live' : 'lives'}</small></span><div><i style="width:${(g.v / best.v * 100).toFixed(1)}%"></i></div><b class="num">${esc(dec(g.v / 1e3, 1))}k/h</b></div>`).join('')}
-    ${hint('clock', `Lives de <b>${best.label.toLowerCase()}</b> rendem mais diamantes por hora`)}
-  </div>`, '<span>todas as lives</span>')
-}
-
-// calendário do mês: quanto mais forte, mais diamantes no dia
-function calendarCard(lives, ym) {
-  const [y, m] = ym.split('-').map(Number)
-  const n = new Date(y, m, 0).getDate()
-  const byDay = Array.from({ length: n }, (_, d) => sumOf(lives.filter(l => l.date === `${ym}-${String(d + 1).padStart(2, '0')}`), 'diamonds'))
-  const top = Math.max(...byDay)
-  if (!top) return ''
-  const lead = (new Date(y, m - 1, 1).getDay() + 6) % 7
-  const now = today()
-  return sec(`Calendário de ${esc(monthWord(ym))}`, `<div class="chartcard">
-    <div class="cal">${['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map(d => `<span class="h">${d}</span>`).join('')}${'<i class="x"></i>'.repeat(lead)}${byDay.map((v, d) => {
-      const day = `${ym}-${String(d + 1).padStart(2, '0')}`
-      return `<i class="${day > now ? 'fut' : v ? 'on' : ''}" style="--a:${v ? (0.25 + v / top * 0.75).toFixed(2) : 0}" title="${v ? esc(int(v)) : ''}"><b>${d + 1}</b></i>`
-    }).join('')}</div>
-    <div class="legend2"><span>menos</span>${[0.25, 0.45, 0.65, 0.85, 1].map(a => `<i style="--a:${a}"></i>`).join('')}<span>mais</span></div>
-  </div>`)
-}
-
-// títulos usados mais de uma vez, pela média de diamantes por live
-function titlesCard(lives) {
-  const by = new Map()
-  for (const l of lives) if (l.title && Number(l.diamonds) > 0) by.set(l.title, [...(by.get(l.title) || []), l])
-  const rows = [...by].filter(([, g]) => g.length > 1).map(([t, g]) => ({ t, n: g.length, avg: sumOf(g, 'diamonds') / g.length, best: Math.max(...g.map(l => Number(l.diamonds))) }))
-    .sort((a, b) => b.avg - a.avg).slice(0, 5)
-  if (rows.length < 2) return ''
-  return sec('Títulos campeões', `<div class="group">${rows.map((r, i) => `
-    <div class="rk"><span class="pos ${i === 0 ? 'g' : ''}">${i + 1}º</span><div class="t"><b>${esc(r.t)}</b><span>${r.n} lives · melhor <span class="num">${esc(int(r.best))}</span></span></div><b class="num">${esc(compact(r.avg))}</b></div>`).join('')}</div>`, '<span>média por live</span>')
-}
-
-// diamantes dos últimos 6 meses (até o mês escolhido); usa o resumo do TikTok quando ele é maior
-function monthsCard(lives, ym) {
-  const months = []
-  let m = ym
-  for (let i = 0; i < 6; i++) { months.unshift(m); m = prevYm(m) }
-  const vals = months.map(mm => Math.max(sumOf(lives.filter(l => l.date?.startsWith(mm)), 'diamonds'), Number(summaryOf(mm)?.diamonds) || 0))
-  const withData = vals.filter(Boolean)
-  if (withData.length < 2) return ''
-  const top = Math.max(...vals)
-  const cur = today().slice(0, 7)
-  const done = months.map((mm, i) => (mm < cur ? vals[i] : 0)).filter(Boolean)
-  return sec('Últimos 6 meses', `<div class="chartcard">
-    <div class="wk mo">${months.map((mm, i) => `<div class="${mm === cur ? 'cur' : vals[i] === top ? 'best1' : ''}"><b>${vals[i] ? esc(dec(vals[i] / 1e6, 2)) : ''}</b><i style="height:${(vals[i] / top * 100).toFixed(1)}%"></i><span>${esc(monthWord(mm).slice(0, 3))}</span></div>`).join('')}</div>
-    ${done.length ? hint('stats', `Média de <b class="num">${esc(compact(sumOf(done.map(v => ({ v })), 'v') / done.length))}</b> por mês${months.includes(cur) ? ` · ${esc(monthWord(cur))} ainda em andamento` : ''}`) : ''}
-  </div>`, '<span>diamantes, em milhões</span>')
-}
-
-function recordsCard(lives) {
-  const top = k => lives.filter(l => Number(l[k]) > 0).reduce((a, l) => (!a || Number(l[k]) > Number(a[k]) ? l : a), null)
-  const byMonth = {}
-  for (const l of lives) if (l.date) byMonth[l.date.slice(0, 7)] = (byMonth[l.date.slice(0, 7)] || 0) + (Number(l.diamonds) || 0)
-  for (const r of state.data.summaries || []) if (r.data?.diamonds) byMonth[r.month] = Math.max(byMonth[r.month] || 0, r.data.diamonds)
-  const bestMonth = Object.entries(byMonth).sort((a, b) => b[1] - a[1])[0]
-  const days = [...new Set(lives.map(l => l.date).filter(Boolean))].sort()
-  let best = 0, run = 0, bestEnd = null
-  days.forEach((d, i) => {
-    run = i && (new Date(`${d}T12:00`) - new Date(`${days[i - 1]}T12:00`)) / 864e5 === 1 ? run + 1 : 1
-    if (run > best) { best = run; bestEnd = d }
-  })
-  const fresh = d => d && (Date.now() - new Date(`${d}T12:00`)) / 864e5 <= 7
-  const dm = d => shortDate(`${d}T12:00`)
-  const gem = top('diamonds'), fol = top('new_followers'), peak = top('peak_viewers')
-  const items = [
-    gem && ['Maior live', int(gem.diamonds), `diamantes · ${dm(gem.date)}`, gem.date],
-    fol && ['Mais seguidores', '+' + int(fol.new_followers), `numa live · ${dm(fol.date)}`, fol.date],
-    peak && ['Maior pico', int(peak.peak_viewers), `espectadores · ${dm(peak.date)}`, peak.date],
-    bestMonth && bestMonth[1] && ['Melhor mês', compact(bestMonth[1]), new Date(`${bestMonth[0]}-15T12:00`).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }), null],
-    best > 1 && ['Maior sequência', `${best} dias`, `até ${new Date(`${bestEnd}T12:00`).toLocaleDateString('pt-BR')}`, null],
-  ].filter(Boolean)
-  if (!items.length) return ''
-  return sec('Recordes', `<div class="recs">${items.map(([label, value, when, date]) => `
-    <div class="rec ${fresh(date) ? 'new' : ''}"><i class="rt">${ic('trophy')}</i><div><small>${esc(label)}</small><span>${fresh(date) ? `<u>Novo recorde</u> · ${esc(dm(date))}` : esc(when)}</span></div><b>${esc(value)}</b></div>`).join('')}</div>`)
-}
-
 const perHour = l => (l.duration_min ? (Number(l.diamonds) || 0) / (l.duration_min / 60) : 0)
 
 const LSORT = ['data', 'diamantes', 'hora']
@@ -1527,7 +1288,227 @@ function renderLive(animate) {
   if (animate) reveal(view)
 }
 
-// ---------- Estatísticas ----------
+// ---------- Estatísticas (abas Público / Engajamento / Ritmo) ----------
+
+const stH = (t, side = '') => `<div class="lx-row lx-h"><small>${t}</small>${side ? `<small>${side}</small>` : ''}</div>`
+// pílula de comparação ("↑ 6%"); vazia quando não há com o que comparar
+const stPill = (cur, before) => { if (!before || cur == null) return ''; const p = Math.round((cur - before) / before * 100); return `<em class="${p >= 0 ? 'u' : 'd'}">${p >= 0 ? '↑' : '↓'} ${Math.abs(p)}%</em>` }
+const stRow = (icon, label, sub, value, pill = '', tone = 'g') => `<div class="nx-row"><span class="si ${tone}">${ic(icon)}</span><div><b>${esc(label)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div><div class="nx-v"><b>${esc(value)}</b>${pill}</div></div>`
+const stNote = (icon, html) => `<p class="ld-note">${ic(icon)}<span>${html}</span></p>`
+const stEmpty = msg => `<div class="lx-block"><p class="st-empty">${esc(msg)}</p></div>`
+// foguinho da sequência: fogo colorido (amarelo → laranja → vermelho) com miolo claro
+const FLAME = `<svg class="st-flame" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="flo" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff4d2e"/><stop offset=".55" stop-color="#ff8a1f"/><stop offset="1" stop-color="#ffc24a"/></linearGradient><linearGradient id="fli" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffd25c"/><stop offset="1" stop-color="#fff6d6"/></linearGradient></defs><path fill="url(#flo)" stroke="none" d="M12.6 2.2c.5 3.1-1.3 4.8-2.9 6.6C8 10.7 6.2 12.6 6.2 15.5c0 3.5 2.6 6.3 5.9 6.3s5.9-2.6 5.9-6.3c0-2.5-1.1-4.4-2.4-6-.3 1.4-1 2.4-2.1 2.9.5-3.7-.4-7.4-1.9-10.2z"/><path fill="url(#fli)" stroke="none" d="M12.1 21.8c-1.9 0-3.3-1.4-3.3-3.3 0-2 1.3-3.1 2.3-4.5.3 1 .9 1.7 1.7 2 0-1.3.5-2.5 1.3-3.4 1 1.3 1.8 2.8 1.8 4.4 0 2.6-1.6 4.8-3.8 4.8z"/></svg>`
+
+// sequência de dias com live (hoje ainda pode ter live, então a conta começa ontem se hoje não teve)
+function streakCard(lives) {
+  const days = new Set(lives.map(l => l.date))
+  if (!days.size) return ''
+  const ymd = d => d.toLocaleDateString('sv-SE')
+  const d = new Date()
+  const liveToday = days.has(ymd(d))
+  if (!liveToday) d.setDate(d.getDate() - 1)
+  let streak = 0
+  while (days.has(ymd(d))) { streak++; d.setDate(d.getDate() - 1) }
+  let best = 0, run = 0
+  const all = [...days].sort()
+  for (let i = 0; i < all.length; i++) {
+    const gap = i ? (new Date(`${all[i]}T12:00`) - new Date(`${all[i - 1]}T12:00`)) / 864e5 : 1
+    run = gap === 1 ? run + 1 : 1
+    best = Math.max(best, run)
+  }
+  const cells = Array.from({ length: 14 }, (_, i) => {
+    const x = new Date(); x.setDate(x.getDate() - 13 + i)
+    const letter = x.toLocaleDateString('pt-BR', { weekday: 'narrow' }).toUpperCase()
+    return `<span class="${days.has(ymd(x)) ? 'on' : ''} ${i === 13 ? 'now' : ''}" style="--i:${i}"><i></i>${letter}</span>`
+  }).join('')
+  const title = streak ? `${streak} ${streak === 1 ? 'dia seguido' : 'dias seguidos'} com live` : 'Nenhuma live ontem nem hoje'
+  const sub = streak && streak >= best ? 'é o seu recorde! 🎉' : `${streak ? `faltam ${best - streak} pro` : 'seu'} recorde de ${best} ${best === 1 ? 'dia' : 'dias'}${liveToday ? '' : ' · hoje ainda não teve live'}`
+  return `<div class="st-streak"><div class="st-sh"><span class="st-fl"><i class="st-glow"></i>${FLAME}</span><div><small>SEQUÊNCIA</small><b>${title}</b><span>${sub}</span></div></div><div class="st-days">${cells}</div></div>`
+}
+
+// Público: visualizações → espectadores → presenteadores → seguidores
+function funnelCard(s, prev) {
+  const f = st => { const t = k => sumOf(st.agg, k); return { views: t('views'), unique: t('unique_viewers'), gifters: t('gifters'), followers: t('new_followers'), gems: t('diamonds') } }
+  const F = f(s)
+  if (!F.views || !F.unique) return ''
+  const P = prev ? f(prev) : {}
+  const rows = [
+    stRow('eye', 'Visualizações', 'total do mês', mil1(F.views), stPill(F.views, P.views)),
+    stRow('user', 'Espectadores', `${dec(F.unique / F.views * 100, 0)}% das visualizações`, mil1(F.unique), stPill(F.unique, P.unique)),
+    F.gifters ? stRow('gem', 'Presenteadores', `${dec(F.gifters / F.unique * 100)}% do público`, int(F.gifters), stPill(F.gifters / F.unique, P.unique ? P.gifters / P.unique : 0)) : '',
+    stRow('heart', 'Novos seguidores', `${dec(F.followers / F.unique * 1000)} a cada mil espectadores`, '+' + int(F.followers), stPill(F.followers / F.unique, P.unique ? P.followers / P.unique : 0)),
+  ].join('')
+  return `<div class="lx-block">${stH('PÚBLICO', prev ? `VS ${esc(monthWord(prevYm(state.smonth)).toUpperCase())}` : '')}<div class="nx-card">${rows}</div>
+    ${F.gifters ? stNote('gem', `Média de <b>${esc(int(Math.round(F.gems / F.gifters)))}</b> diamantes por presenteador.`) : ''}</div>`
+}
+
+// Vindos dos vídeos: quantas pessoas entraram na live depois de ver um vídeo seu
+function videosCard(ym) {
+  const a = summaryOf(ym)
+  if (!a?.video_joined) return ''
+  const b = summaryOf(prevYm(ym)) || {}
+  const share = a.unique_viewers ? a.video_joined / a.unique_viewers * 100 : null
+  return `<div class="lx-block">${stH('VINDOS DOS VÍDEOS', a.period ? `ATÉ ${esc(shortDate(`${a.period[1]}T12:00`))}` : '')}
+    <div class="nx-card st-vid"><span class="si c">${ic('cam')}</span><div><b>${esc(int(a.video_joined))} pessoas</b><small>entraram na live depois de ver um vídeo seu${share != null ? ` · ${esc(dec(share, 1))}% do público do mês` : ''}</small></div>${stPill(a.video_joined, b.video_joined)}</div>
+    ${stNote('live', share != null && share < 5 ? 'Quase todo o público chega pela entrega normal das lives. Postar com frequência pode trazer mais gente pelos vídeos.' : 'Os vídeos já trazem uma parte boa do público das lives.')}</div>`
+}
+
+// Seu público: gênero, idade e países do mês, comparados com o mês anterior
+const COUNTRY = { Brazil: ['🇧🇷', 'Brasil'], Philippines: ['🇵🇭', 'Filipinas'], Italy: ['🇮🇹', 'Itália'], 'United Kingdom': ['🇬🇧', 'Reino Unido'], 'United States': ['🇺🇸', 'Estados Unidos'], Portugal: ['🇵🇹', 'Portugal'], Spain: ['🇪🇸', 'Espanha'], Mexico: ['🇲🇽', 'México'], Indonesia: ['🇮🇩', 'Indonésia'], Germany: ['🇩🇪', 'Alemanha'], France: ['🇫🇷', 'França'], Argentina: ['🇦🇷', 'Argentina'], Japan: ['🇯🇵', 'Japão'], Others: ['', 'Outros'] }
+function audienceCard(ym) {
+  const row = (state.data.summaries || []).find(r => r.month === ym)
+  const a = row?.data
+  if (!a || (a.female_pct == null && !a.ages && !a.countries)) return ''
+  const b = summaryOf(prevYm(ym)) || {}
+  const pName = monthWord(prevYm(ym))
+  const pts = (cur, before) => {
+    if (before == null || cur == null) return '<em></em>'
+    const d = cur - before
+    return d === 0 ? '<em>=</em>' : `<em class="${d > 0 ? 'up' : 'dn'}">${d > 0 ? '↑' : '↓'} ${Math.abs(d)} ${Math.abs(d) === 1 ? 'pt' : 'pts'}</em>`
+  }
+  const ages = AGE_ORDER.filter(k => a.ages?.[k] != null && a.ages[k] <= 100 && (k !== '13-17' || a.ages[k] > 0)).map(k => [k, a.ages[k]])
+  const countries = mergeCountries([], (a.countries || []).map(([n, v]) => [n.replace(/^(?:[A-Z][A-Za-z]{0,2}\s)+(?=[A-Z][a-z])/, ''), v]))
+  const topAge = Math.max(...ages.map(([, v]) => v), 1)
+  const bc = Object.fromEntries(b.countries || [])
+  const fd = b.female_pct != null ? a.female_pct - b.female_pct : 0
+  return `<div class="lx-block">${stH('SEU PÚBLICO')}<div class="nx-card st-aud">
+    ${a.female_pct != null ? `
+    <div class="st-ah"><small>GÊNERO</small><span class="st-lg"><i class="f"></i>mulheres <i class="m"></i>homens</span></div>
+    <div class="st-g"><i style="width:${a.female_pct}%">${a.female_pct}%</i><i style="width:${a.male_pct}%">${a.male_pct}%</i></div>
+    ${b.female_pct != null ? `<p class="st-gc">${esc(pName)}: ${b.female_pct}% · ${b.male_pct}%${fd ? ` <em class="${fd > 0 ? 'up' : 'dn'}">${fd > 0 ? '↑' : '↓'} ${Math.abs(fd)} ${Math.abs(fd) === 1 ? 'pt' : 'pts'} mulheres</em>` : ''}</p>` : ''}` : ''}
+    ${ages.length ? `<div class="st-ah"><small>IDADE</small><span>% do público</span></div>
+    ${ages.map(([k, v]) => `<div class="cx-yr ${v === topAge ? 'cx-best' : ''}"><span>${k.replace('-', '–')}${b.ages?.[k] != null ? `<small>${esc(pName.slice(0, 3))}.: ${b.ages[k]}%</small>` : ''}</span><i><i style="width:${(v / topAge * 100).toFixed(1)}%"></i></i><b>${v}%</b></div>`).join('')}` : ''}
+    ${countries.length ? `<div class="st-ah"><small>PAÍSES</small><span>${b.countries ? `vs ${esc(pName)}` : ''}</span></div>
+    ${countries.map(([n, v]) => { const [flag, name] = COUNTRY[n] || ['', n]; return `<div class="st-c"><span>${flag ? flag + ' ' : ''}${esc(name)}</span><b>${v}%</b>${n === 'Others' ? '<em></em>' : pts(v, bc[n])}</div>` }).join('')}` : ''}
+    <p class="st-foot">${ic('cal')}${a.period ? `Dados de ${esc(a.period[0].slice(8))} a ${esc(shortDate(`${a.period[1]}T12:00`))} · ` : ''}${ym === today().slice(0, 7) ? `print de ${esc(shortDate(row.updated_at))} · atualize toda semana` : `resumo de ${esc(monthWord(ym))}`}</p>
+  </div></div>`
+}
+
+// Engajamento: a cada mil visualizações, por espectador e quanto vale cada mil visualizações
+function engagementCard(s, prev, rate) {
+  const f = st => {
+    const t = k => sumOf(st.agg, k)
+    const views = t('views'), unique = t('unique_viewers')
+    return { views, com: views ? t('comments') / views * 1000 : null, sha: views ? t('shares') / views * 1000 : null,
+      per: unique ? t('diamonds') / unique : null, mil: views && rate ? t('rewards_usd') * rate / views * 1000 : null }
+  }
+  const F = f(s)
+  if (!F.views) return ''
+  const P = prev ? f(prev) : {}
+  const rows = [
+    F.com != null && stRow('heart', 'Comentários', 'a cada mil visualizações', dec(F.com, 0), stPill(F.com, P.com)),
+    F.sha != null && stRow('live', 'Compartilhamentos', 'a cada mil visualizações', dec(F.sha, 0), stPill(F.sha, P.sha)),
+    F.per != null && stRow('gem', 'Diamantes por espectador', 'média do mês', dec(F.per, 2), stPill(F.per, P.per)),
+    F.mil != null && stRow('usd', 'Cada mil visualizações', 'quanto rendeu em reais', brl0(F.mil), stPill(F.mil, P.mil), 'c'),
+  ].filter(Boolean).join('')
+  return `<div class="lx-block">${stH('ENGAJAMENTO', prev ? `VS ${esc(monthWord(prevYm(state.smonth)).toUpperCase())}` : '')}<div class="nx-card">${rows}</div></div>`
+}
+
+// Retenção: tempo médio assistido e pico médio
+function retentionCard(s, prev, ym) {
+  const cur = avgOf(s.agg, 'avg_watch_sec')
+  if (!cur) return ''
+  // resumo do mês e média das lives medem de jeitos diferentes: só compara igual com igual
+  const before = prev ? avgOf(prev.agg, 'avg_watch_sec') : 0
+  const mixed = prev && before && prev.fromSummary !== s.fromSummary
+  const d = before && !mixed ? Math.round(cur - before) : null
+  const pName = monthWord(prevYm(ym))
+  const top = Math.max(cur, before) * 1.15
+  const bar = (label, v, on) => `<div class="cx-yr ${on ? 'cx-cur' : ''}"><span>${esc(label)}</span><i><i style="width:${(v / top * 100).toFixed(1)}%"></i></i><b>${Math.round(v)} s</b></div>`
+  const peak = avgOf(s.agg, 'peak_viewers'), pPeak = prev && !mixed ? avgOf(prev.agg, 'peak_viewers') : 0
+  return `<div class="lx-block">${stH('RETENÇÃO')}<div class="nx-card st-ret">
+    <div class="st-rh"><div><small>TEMPO MÉDIO ASSISTIDO</small><b>${Math.round(cur)} s</b></div>${d != null ? `<em class="${d >= 0 ? 'u' : 'd'}">${d >= 0 ? '↑' : '↓'} ${Math.abs(d)} s vs ${esc(pName)}</em>` : ''}</div>
+    ${before ? bar(pName, before, false) : ''}${bar(monthWord(ym), cur, true)}
+    ${peak ? `<div class="st-kv"><span>Pico médio por live</span><b>${esc(int(Math.round(peak)))}${pPeak ? ` <small>(${esc(pName.slice(0, 3))}.: ${esc(int(Math.round(pPeak)))})</small>` : ''}</b></div>` : ''}
+  </div>${mixed ? stNote('cal', `${esc(cap(monthWord(s.fromSummary ? ym : prevYm(ym))))} vem do resumo do mês do TikTok, que mede o tempo médio de um jeito diferente da média das lives.`) : s.fromSummary ? stNote('cal', 'Do resumo do mês do TikTok.') : ''}</div>`
+}
+
+// média de diamantes por live em cada dia da semana (todas as lives), de domingo a sábado
+function weekdayCard(lives) {
+  const ls = lives.filter(l => l.date && Number(l.diamonds) > 0)
+  if (ls.length < 5) return ''
+  const names = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
+  const avg = [0, 1, 2, 3, 4, 5, 6].map(d => {
+    const g = ls.filter(l => new Date(`${l.date}T12:00`).getDay() === d)
+    return { d, n: g.length, v: g.length ? sumOf(g, 'diamonds') / g.length : 0 }
+  })
+  const best = avg.reduce((a, b) => (b.v > a.v ? b : a))
+  return `<div class="lx-block">${stH('MELHOR DIA DA SEMANA', 'MÉDIA POR LIVE')}<div class="nx-card st-chart">
+    <div class="st-wk">${avg.map((a, k) => `<div class="${a === best ? 'wk-top' : ''}" style="--i:${k}"><b>${a.v ? esc(compactK(a.v)) : ''}</b><i style="height:${(a.v / best.v * 100).toFixed(1)}%"></i><span>${names[a.d][0]}</span></div>`).join('')}</div>
+    ${stNote('trophy', `<b>${names[best.d]}</b> rende mais: média de <b>${esc(mil1(best.v))}</b> diamantes por live.`)}</div></div>`
+}
+const compactK = v => (v >= 1e6 ? `${dec(v / 1e6, 1)}M` : `${int(Math.round(v / 1e3))}K`)
+
+// diamantes por hora de acordo com o tamanho da live
+function durationCard(lives) {
+  const ls = lives.filter(l => Number(l.duration_min) > 0 && Number(l.diamonds) > 0)
+  if (ls.length < 5) return ''
+  const groups = [['Até 1h', 0, 60], ['1h a 2h', 60, 120], ['2h a 3h', 120, 180], ['Mais de 3h', 180, 1e9]].map(([label, a, b]) => {
+    const g = ls.filter(l => l.duration_min > a && l.duration_min <= b)
+    const h = sumOf(g, 'duration_min') / 60
+    return { label, n: g.length, v: h ? sumOf(g, 'diamonds') / h : 0 }
+  }).filter(g => g.n)
+  const best = groups.reduce((a, b) => (b.v > a.v ? b : a))
+  return `<div class="lx-block">${stH('DURAÇÃO IDEAL', 'DIAMANTES POR HORA')}<div class="nx-card st-chart">
+    ${groups.map(g => `<div class="cx-yr ${g === best ? 'cx-best' : ''}"><span>${g.label}<small>${g.n} ${g.n === 1 ? 'live' : 'lives'}</small></span><i><i style="width:${(g.v / best.v * 100).toFixed(1)}%"></i></i><b>${esc(mil1(g.v))}/h</b></div>`).join('')}
+    ${stNote('clock', `Lives de <b>${best.label.toLowerCase()}</b> rendem mais diamantes por hora.`)}</div></div>`
+}
+
+// títulos usados mais de uma vez, pela média de diamantes por live
+function titlesCard(lives) {
+  const by = new Map()
+  for (const l of lives) if (l.title && Number(l.diamonds) > 0) by.set(l.title, [...(by.get(l.title) || []), l])
+  const rows = [...by].filter(([, g]) => g.length > 1).map(([t, g]) => ({ t, n: g.length, avg: sumOf(g, 'diamonds') / g.length, best: Math.max(...g.map(l => Number(l.diamonds))) }))
+    .sort((a, b) => b.avg - a.avg).slice(0, 5)
+  if (rows.length < 2) return ''
+  return `<div class="lx-block">${stH('TÍTULOS CAMPEÕES', 'MÉDIA POR LIVE')}<div class="nx-card st-rk">${rows.map((r, i) => `
+    <div class="rk"><span class="pos ${i === 0 ? 'g' : ''}">${i + 1}º</span><div class="t"><b>${esc(r.t)}</b><span>${r.n} lives · melhor ${esc(mil1(r.best))}</span></div><b>${esc(mil1(r.avg))}</b></div>`).join('')}</div></div>`
+}
+
+// recordes desde que as lives são registradas no app
+function recordsCard(lives) {
+  const top = k => lives.filter(l => Number(l[k]) > 0).reduce((a, l) => (!a || Number(l[k]) > Number(a[k]) ? l : a), null)
+  const byMonth = {}
+  for (const l of lives) if (l.date) byMonth[l.date.slice(0, 7)] = (byMonth[l.date.slice(0, 7)] || 0) + (Number(l.diamonds) || 0)
+  for (const r of state.data.summaries || []) if (r.data?.diamonds) byMonth[r.month] = Math.max(byMonth[r.month] || 0, r.data.diamonds)
+  const bestMonth = Object.entries(byMonth).sort((a, b) => b[1] - a[1])[0]
+  const days = [...new Set(lives.map(l => l.date).filter(Boolean))].sort()
+  let best = 0, run = 0, bestEnd = null
+  days.forEach((d, i) => {
+    run = i && (new Date(`${d}T12:00`) - new Date(`${days[i - 1]}T12:00`)) / 864e5 === 1 ? run + 1 : 1
+    if (run > best) { best = run; bestEnd = d }
+  })
+  const fresh = d => d && (Date.now() - new Date(`${d}T12:00`)) / 864e5 <= 7
+  const when = d => `${shortDate(`${d}T12:00`)}${fresh(d) ? ' · novo recorde' : ''}`
+  const gem = top('diamonds'), fol = top('new_followers'), peak = top('peak_viewers')
+  const rows = [
+    gem && stRow('trophy', 'Maior live', when(gem.date), mil1(Number(gem.diamonds)), '', fresh(gem.date) ? 'c' : 'g'),
+    fol && stRow('user', 'Mais seguidores numa live', when(fol.date), '+' + int(fol.new_followers), '', fresh(fol.date) ? 'c' : 'g'),
+    peak && stRow('eye', 'Maior pico', when(peak.date), int(peak.peak_viewers), '', fresh(peak.date) ? 'c' : 'g'),
+    bestMonth && bestMonth[1] && stRow('cal', 'Melhor mês', new Date(`${bestMonth[0]}-15T12:00`).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }), compact(bestMonth[1])),
+    best > 1 && stRow('flame', 'Maior sequência', `até ${new Date(`${bestEnd}T12:00`).toLocaleDateString('pt-BR')}`, `${best} dias`),
+  ].filter(Boolean)
+  if (!rows.length) return ''
+  return `<div class="lx-block">${stH('RECORDES')}<div class="nx-card">${rows.join('')}</div>${stNote('trophy', 'Recordes desde que você começou a registrar as lives no app.')}</div>`
+}
+
+const STABS = [['pub', 'Público'], ['eng', 'Engajamento'], ['rit', 'Ritmo']]
+function statsPane(tab, s, prev, rate) {
+  const { lives } = state.data
+  const parts = tab === 'pub' ? [funnelCard(s, prev), videosCard(state.smonth), audienceCard(state.smonth)]
+    : tab === 'eng' ? [engagementCard(s, prev, rate), retentionCard(s, prev, state.smonth)]
+      : [weekdayCard(lives), durationCard(lives), titlesCard(lives), recordsCard(lives)]
+  const html = parts.filter(Boolean).join('')
+  return html || stEmpty(tab === 'rit' ? 'Registre pelo menos 5 lives para ver o seu ritmo.' : 'Mande os prints do resumo do mês (Overview e Viewer insights) ou registre lives com os prints para ver estes números.')
+}
+
+// número que conta do zero até o valor, já no formato curto (ex.: 2,77M)
+function countFmt(el, target, fmt) {
+  if (!el || !target || still()) return
+  const t0 = performance.now(), dur = 1300
+  const step = t => { const k = Math.min((t - t0) / dur, 1); el.textContent = fmt(target * (1 - (1 - k) ** 4)); if (k < 1) requestAnimationFrame(step) }
+  requestAnimationFrame(step)
+}
 
 function renderStats(animate) {
   const view = document.getElementById('view')
@@ -1536,33 +1517,66 @@ function renderStats(animate) {
   const months = [...new Set([current, ...lives.map(l => l.date?.slice(0, 7)).filter(Boolean)])].sort()
   if (!months.includes(state.smonth)) state.smonth = current
   const i = months.indexOf(state.smonth)
-  const s = monthStats(lives, state.smonth)
+  const ym = state.smonth
+  const s = monthStats(lives, ym)
   const prev = i > 0 ? monthStats(lives, months[i - 1]) : null
   const rate = payoutRate(withdrawals, state.rate?.commercial)?.rate ?? null
-  const parts = [
-    streakCard(lives),
-    projCard(s.agg, rate, state.smonth, state.smonth === current, s.fromSummary ? null : s.ls.length),
-    funnelCard(s, prev),
-    engagementCard(s, prev, rate),
-    videosCard(state.smonth),
-    audienceCard(state.smonth),
-    retentionCard(s, prev, state.smonth),
-    weekdayCard(lives),
-    durationCard(lives),
-    calendarCard(lives, state.smonth),
-    titlesCard(lives),
-    monthsCard(lives, state.smonth),
-    recordsCard(lives),
-  ].filter(Boolean)
+  const tab = state.stab || 'pub'
+
+  // projeção (mês em andamento) ou como o mês fechou
+  const isCur = ym === current
+  const [y, m] = ym.split('-').map(Number)
+  const nDays = new Date(y, m, 0).getDate(), day = new Date().getDate()
+  const total = isCur ? s.gems / day * nDays : s.gems
+  const totalUsd = total * 0.01 * 0.51
+  const mName = monthWord(ym), next = monthWord(ymOf(new Date(y, m, 15))).slice(0, 3)
+  const pg = prev?.gems ? Math.round((s.gems - prev.gems) / prev.gems * 100) : null
+  const brlK = v => (v >= 1e6 ? `R$ ${dec(v / 1e6, 2)}M` : v >= 1e3 ? `R$ ${dec(v / 1e3, 1).replace(/,0$/, '')}K` : brl0(v))
+  const [mw, yw] = new Date(`${ym}-15T12:00`).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).split(' de ')
+
   view.innerHTML = `
-    ${monthPicker(state.smonth, `${s.ls.length} ${s.ls.length === 1 ? 'live' : 'lives'} · ${s.days} ${s.days === 1 ? 'dia' : 'dias'} de live`, 'data-smonth', i, months.length)}
-    ${parts.length ? parts.join('') : empty('Registre lives pelos prints para ver as estatísticas.', 'lives')}`
+    <div class="lx ls st">
+      <section class="lx-hero">
+        <div class="lx-bar"><span>ESTATÍSTICAS</span><button type="button" class="lx-prints" data-prints>${ic('cam')}Prints<i class="due" hidden></i></button></div>
+        <div class="ls-month">
+          <button type="button" data-smonth="-1" aria-label="Mês anterior" ${i === 0 ? 'disabled' : ''}>${ic('back')}</button>
+          <div><b>${esc(cap(mw))} <em>${esc(yw)}</em></b><small>${s.ls.length} ${s.ls.length === 1 ? 'live' : 'lives'} · ${s.days} ${s.days === 1 ? 'dia' : 'dias'} de live</small></div>
+          <button type="button" data-smonth="1" aria-label="Próximo mês" ${i === months.length - 1 ? 'disabled' : ''}>${ic('chev')}</button>
+        </div>
+        <div class="ls-big"><small>${esc(mName.toUpperCase())} ${isCur ? 'DEVE FECHAR COM' : 'FECHOU COM'}</small><b data-proj>${total ? esc(compact(total)) : '—'}</b>
+          ${isCur && total ? `<span class="ls-pill"><i>dia ${day} de ${nDays}</i>no ritmo de hoje</span>` : pg != null ? `<span class="ls-pill"><i>${pg >= 0 ? '↑' : '↓'} ${Math.abs(pg)}%</i>vs ${esc(monthWord(months[i - 1]))}</span>` : ''}</div>
+        ${isCur && total ? `<div class="st-prog"><i style="width:${(s.gems / total * 100).toFixed(1)}%"></i><u style="left:${(s.gems / total * 100).toFixed(1)}%"></u></div>
+        <div class="st-progl"><span>${esc(compact(s.gems))} até agora</span><span>+${esc(compact(total - s.gems))} previstos</span></div>` : ''}
+        <div class="lx-glass">
+          <div><small><i>${ic('usd')}</i>em dólares</small><b class="num">${total ? esc(usdK(totalUsd)) : '—'}</b></div>
+          <div><small><i>${ic('bank')}</i>em reais</small><b class="num">${total && rate ? esc(brlK(totalUsd * rate)) : '—'}</b></div>
+          <div><small><i>${ic('shield')}</i>limite ${esc(next)}.</small><b class="num">${total ? esc(compactUsd(limitFor(totalUsd).tier[1])) : '—'}</b></div>
+        </div>
+      </section>
+      <section class="lx-sheet">
+        ${lives.length ? `<div class="lx-block">${streakCard(lives)}</div>` : ''}
+        <div class="lx-block st-tabs"><div class="ls-seg slider" role="group" aria-label="Assunto" style="--n:3;--i:${STABS.findIndex(([k]) => k === tab)}">${STABS.map(([k, l]) => `<button type="button" data-stab="${k}" aria-pressed="${k === tab}">${l}</button>`).join('')}</div></div>
+        <div data-stpane>${statsPane(tab, s, prev, rate)}</div>
+      </section>
+    </div>`
   view.querySelectorAll('[data-smonth]').forEach(b => b.addEventListener('click', () => {
     state.smonth = months[i + Number(b.dataset.smonth)]
     renderStats()
   }))
+  const seg = view.querySelector('.ls-seg')
+  view.querySelectorAll('[data-stab]').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.stab === state.stab) return
+    state.stab = b.dataset.stab
+    view.querySelectorAll('[data-stab]').forEach(x => x.setAttribute('aria-pressed', x === b))
+    slideTo(seg, STABS.findIndex(([k]) => k === state.stab))
+    const pane = view.querySelector('[data-stpane]')
+    pane.innerHTML = statsPane(state.stab, s, prev, rate)
+    bindList(pane); reveal(pane)
+  }))
+  view.querySelector('[data-prints]').addEventListener('click', openPrints)
+  updateDue()
   bindList(view)
-  if (animate) reveal(view)
+  if (animate) { reveal(view); countFmt(view.querySelector('[data-proj]'), total, compact) }
 }
 
 // ---------- Recompensas ----------
