@@ -1210,13 +1210,23 @@ body.esm.liq .ibtn.solid svg { color: #1D3F6D !important; }
   .st .cx-yr:nth-of-type(2) > i i { animation-delay: .06s; } .st .cx-yr:nth-of-type(3) > i i { animation-delay: .12s; } .st .cx-yr:nth-of-type(4) > i i { animation-delay: .18s; } .st .cx-yr:nth-of-type(5) > i i { animation-delay: .24s; }
   .st-g i { transform-origin: left; animation: barx .9s cubic-bezier(.23, 1, .32, 1) both; } .st-g i + i { animation-delay: .15s; transform-origin: right; }
   .st-prog i { transform-origin: left; animation: barx 1.3s cubic-bezier(.23, 1, .32, 1) both; } .st-prog u { animation: fadeup .4s ease 1.1s both; }
-  .st [data-stpane] > .lx-block { animation: fadeup .45s cubic-bezier(.23, 1, .32, 1) both; } .st [data-stpane] > .lx-block:nth-child(2) { animation-delay: .06s; } .st [data-stpane] > .lx-block:nth-child(3) { animation-delay: .12s; } .st [data-stpane] > .lx-block:nth-child(4) { animation-delay: .18s; }
 }
 @keyframes flick { 0%, 100% { transform: scale(1) rotate(0); } 30% { transform: scale(1.06, .97) rotate(-2deg); } 60% { transform: scale(.97, 1.05) rotate(2deg); } }
 @keyframes glow { 0%, 100% { opacity: .75; } 50% { opacity: 1; } }
 @keyframes dpop { from { transform: scale(.3); opacity: 0; } }
 @keyframes barx { from { transform: scaleX(0); } }
 @keyframes fadeup { from { opacity: 0; transform: translateY(6px); } }
+/* ao rolar: cada cartão aparece com fade em cascata; as linhas de dentro entram uma por uma; os gráficos só se formam quando aparecem */
+.rv { opacity: 0; transform: translateY(22px) scale(.97); filter: blur(4px); transition: opacity .55s ease, transform .75s cubic-bezier(.22, 1.2, .36, 1), filter .55s ease; }
+.rv.in { opacity: 1; transform: none; filter: none; }
+.rv:not(.in) .st-days span i, .rv:not(.in) .st-wk i, .rv:not(.in) .st-wk b, .rv:not(.in) .cx-yr > i i, .rv:not(.in) .st-g i { animation: none !important; }
+@media (prefers-reduced-motion: no-preference) {
+  .rv.in :is(.nx-row, .cx-yr, .st-c, .rk, .ls-row, .nb-lc) { animation: fadeup .5s cubic-bezier(.23, 1, .32, 1) both; animation-delay: calc(var(--r, 0) * 70ms + .12s); }
+  .rv:not(.in) :is(.nx-row, .cx-yr, .st-c, .rk, .ls-row, .nb-lc) { opacity: 0; }
+  .rv.in .cx-yr > i i { animation-delay: calc(var(--r, 0) * 70ms + .2s) !important; }
+}
+@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; filter: none; transition: none; } }
+.screen { overflow: clip; }
 </style>
 
 <div class="page">
@@ -1958,7 +1968,33 @@ function lxAnim() {
   }
   requestAnimationFrame(step)
 }
-{ const _g3 = go; go = k => { _g3(k); if (k === 'inicioX') lxAnim(); stCount() }; go('statsA') }
+// ao rolar a folha clara: os cartões aparecem em cascata (os que entram juntos na tela, um depois do outro)
+let lxIO
+function lxReveal() {
+  lxIO?.disconnect()
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  lxIO = new IntersectionObserver(es => {
+    let k = 0
+    for (const e of es.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)) {
+      // passou direto numa rolada rápida (já está acima da tela): aparece sem esperar
+      if (!e.isIntersecting) { if (e.rootBounds && e.boundingClientRect.bottom < e.rootBounds.top) { e.target.classList.add('in'); lxIO.unobserve(e.target) } continue }
+      e.target.style.transitionDelay = `${Math.min(k++, 5) * 80}ms`
+      e.target.classList.add('in'); lxIO.unobserve(e.target)
+    }
+  }, { root: document.getElementById('scroll'), rootMargin: '0px 0px -8% 0px' })
+  document.querySelectorAll('.lx-sheet :is(.lx-h, .nx-card, .st-streak, .ld-note, .ls-seg, .st-ins, .ls-best, .ls-list, .ls-wk, .nb-grid, .nb-lc, .cx-teaser, .lx-legend, .nb-leg)').forEach(el => {
+    if (el.parentElement.closest('.rv')) return
+    el.classList.add('rv')
+    el.querySelectorAll(':is(.nx-row, .cx-yr, .st-c, .rk, .ls-row)').forEach((r, i) => r.style.setProperty('--r', i))
+    lxIO.observe(el)
+  })
+}
+// rolada rápida: o que já ficou acima da tela sem ter aparecido aparece na hora (para não ficar escondido ao voltar)
+{ let tick = false; const sc = document.getElementById('scroll')
+  sc.addEventListener('scroll', () => { if (tick) return; tick = true; requestAnimationFrame(() => { tick = false
+    const top = sc.getBoundingClientRect().top
+    sc.querySelectorAll('.rv:not(.in)').forEach(el => { if (el.getBoundingClientRect().bottom < top) { el.classList.add('in'); lxIO?.unobserve(el) } }) }) }, { passive: true }) }
+{ const _g3 = go; go = k => { _g3(k); if (k === 'inicioX') lxAnim(); stCount(); lxReveal() }; go('statsA') }
 // número em milhões contando do zero (ex.: 2,77M), junto com a barra do mês
 function stCount() {
   const el = document.querySelector('[data-cntm]'); if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -1970,7 +2006,7 @@ function stCount() {
 // Estatísticas A: trocar a aba (Público / Engajamento / Ritmo)
 document.addEventListener('click', e => { const b = e.target.closest('[data-stp]'); if (!b) return
   for (const x of b.parentNode.children) x.classList.toggle('on', x === b)
-  document.querySelector('[data-stpane]').innerHTML = stPanes[b.dataset.stp]() })
+  document.querySelector('[data-stpane]').innerHTML = stPanes[b.dataset.stp](); lxReveal() })
 // Lives: ordenar a lista (Data / Diamantes / Por hora)
 document.addEventListener('click', e => { const b = e.target.closest('[data-lss]'); if (!b) return
   const seg = b.parentNode; for (const x of seg.children) x.classList.toggle('on', x === b)
