@@ -1239,7 +1239,6 @@ body.esm.liq .ibtn.solid svg { color: #1D3F6D !important; }
 .lx-backf:active { transform: scale(.94); }
 @media (prefers-reduced-motion: reduce) { .lx-backf { transition: opacity .2s ease; transform: none; } }
 /* aba Vídeos (protótipo) */
-.st .ls-seg { grid-template-columns: repeat(var(--n, 3), 1fr); } .st [data-stseg] { --n: 4; } .st [data-stseg] button { font-size: 12px; padding: 0 2px; }
 .vd-today { padding: 14px 16px; border-radius: 20px; background: linear-gradient(150deg, #fbe0cc, #fdf1e7 60%, #fcfdf9); border: 1px solid rgb(226 116 47 / .2); }
 .vd-th { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: center; }
 .lx-block .vd-th small { font-size: 10px; letter-spacing: .16em; font-weight: 700; color: #c25a1c; } .vd-th b { display: block; font-size: 17px; font-weight: 800; color: #0f2a20; } .vd-th span { font-size: 12px; color: #9a5a32; }
@@ -1274,6 +1273,16 @@ body.esm.liq .ibtn.solid svg { color: #1D3F6D !important; }
   .rv:not(.in) :is(.vd-bars i, .vd-wkc rect, .vd-wkc polyline, .vd-dot) { animation: none !important; }
 }
 @keyframes draw { from { stroke-dashoffset: 600; } to { stroke-dashoffset: 0; } }
+/* página "Seus vídeos" e o cartão que abre ela */
+.vd-teaser { margin-top: 12px; padding-bottom: 16px; } .vd-ic { background: linear-gradient(160deg, #f08a45, #c25a1c); }
+.vd-hero { background: radial-gradient(120% 60% at 85% 0%, rgb(226 116 47 / .24), transparent 60%), radial-gradient(90% 50% at 0% 100%, rgb(198 245 154 / .1), transparent 60%), linear-gradient(170deg, #0f7558, #0b5c45 55%, #083f30); }
+.vd-gstep { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 156px; gap: 12px; align-items: center; margin-top: 22px; padding: 10px 10px 10px 16px; border-radius: 20px;
+  background: rgb(255 255 255 / .07); border: 1px solid rgb(255 255 255 / .1); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.vd-gstep small { display: block; font-size: 10px; letter-spacing: .16em; font-weight: 700; color: #f5b98a; } .vd-gstep span { font-size: 12px; color: rgb(255 255 255 / .7); }
+.vd-step.dk { margin: 0; grid-template-columns: 44px 1fr 44px; padding: 4px; background: rgb(0 0 0 / .18); border-color: rgb(255 255 255 / .08); }
+.vd-step.dk button { height: 44px; color: #c6f59a; background: rgb(255 255 255 / .08); } .vd-step.dk button:last-child { color: #0a5640; background: #c6f59a; box-shadow: 0 0 14px rgb(198 245 154 / .4); }
+.vd-step.dk b { color: #fff; font-size: 28px; }
+.vd .lx-glass { grid-template-columns: repeat(3, 1fr); }
 </style>
 
 <div class="page">
@@ -1455,6 +1464,10 @@ stPanes.vid = () => `<div class="lx-block">${vidStepper()}</div>
   <div class="lx-block">${stH('A QUANTIDADE INFLUENCIA?', 'OUTUBRO')}${vidVs()}${stNote2()}</div>
   <div class="lx-block">${stH('VÍDEOS × DIAMANTES', '8 SEMANAS')}${vidWeeks()}</div>
   <div class="lx-block">${stH('MÊS A MÊS')}${vidMonths()}<p class="ld-note">${ic('cam')}<span>Os números ficam mais confiáveis depois de umas <b>4 semanas</b> registrando. É uma tendência, não uma prova: outras coisas também mudam de uma semana pra outra.</span></p></div>`
+const vidTeaser = () => `<button class="cx-teaser vd-teaser" data-go="videosP" aria-label="Abrir seus vídeos">
+  <span class="cx-ic vd-ic">${ic('cam')}</span>
+  <span class="cx-t"><small>SEUS VÍDEOS</small><b>31 vídeos</b><span>em outubro · hoje: ${vidToday} · 12,4K vieram deles</span></span>
+  <span class="cx-go">${ic('chev')}</span></button>`
 const stNote2 = () => `<p class="ld-note">${ic('cam')}<span>"Dia com vídeo" = você postou pelo menos um vídeo no dia da live ou no dia anterior.</span></p>`
 const stBar = `<div class="lx-bar"><span>ESTATÍSTICAS</span><button>${ic('cam')}Prints</button></div>`
 const S = {
@@ -1590,9 +1603,27 @@ const S = {
       ${lsGlass([['usd', 'em dólares', 'US$ 14,1K'], ['bank', 'em reais', 'R$ 68,7K'], ['shield', 'limite nov.', 'US$ 5K']])}
     </section>
     <section class="lx-sheet">
-      <div class="lx-block">${stStreak()}</div>
-      <div class="lx-block st-tabs"><div class="ls-seg" data-stseg>${[['pub', 'Público'], ['eng', 'Engajamento'], ['rit', 'Ritmo'], ['vid', 'Vídeos']].map(([k, l], i) => `<button class="${i ? '' : 'on'}" data-stp="${k}">${l}</button>`).join('')}</div></div>
+      <div class="lx-block">${stStreak()}${vidTeaser()}</div>
+      <div class="lx-block st-tabs"><div class="ls-seg" data-stseg>${[['pub', 'Público'], ['eng', 'Engajamento'], ['rit', 'Ritmo']].map(([k, l], i) => `<button class="${i ? '' : 'on'}" data-stp="${k}">${l}</button>`).join('')}</div></div>
       <div data-stpane>${stPanes.pub()}</div>
+    </section>
+  </div>` },
+
+  videosP: { tab: 'estatisticas', name: '✦ Estatísticas · Seus vídeos', html: () => `
+  <div class="lx ls vd">
+    <section class="lx-hero vd-hero">
+      <div class="lx-bar"><button data-go="statsA">${ic('back')}Estatísticas</button><span>OUTUBRO 2026</span></div>
+      <p class="lx-hi">Seus <b>vídeos</b></p>
+      <div class="ls-big"><small>VÍDEOS POSTADOS EM OUTUBRO</small><b>31</b><span class="ls-pill"><i>↑ 24% por dia</i>vs setembro</span></div>
+      <div class="vd-gstep"><div><small>HOJE · 22/10</small><span>toque no + a cada vídeo que postar</span></div><div class="vd-step dk"><button data-vc="-1" aria-label="Tirar um vídeo">−</button><b data-vcount>${vidToday}</b><button data-vc="1" aria-label="Somar um vídeo">+</button></div></div>
+      ${lsGlass([['cal', 'com vídeo', '19 de 22'], ['stats', 'por dia', '1,4'], ['user', 'vieram deles', '12,4K']])}
+    </section>
+    <section class="lx-sheet">
+      <div class="lx-block">${stH('ÚLTIMOS 14 DIAS')}${vidStrip()}</div>
+      <div class="lx-block">${stH('VINDOS DOS VÍDEOS', 'ATÉ 22/10')}${vidJoined()}</div>
+      <div class="lx-block">${stH('A QUANTIDADE INFLUENCIA?', 'OUTUBRO')}${vidVs()}${stNote2()}</div>
+      <div class="lx-block">${stH('VÍDEOS × DIAMANTES', '8 SEMANAS')}${vidWeeks()}</div>
+      <div class="lx-block">${stH('MÊS A MÊS')}${vidMonths()}<p class="ld-note">${ic('cam')}<span>Os números ficam mais confiáveis depois de umas <b>4 semanas</b> registrando. É uma tendência, não uma prova: outras coisas também mudam de uma semana pra outra.</span></p></div>
     </section>
   </div>` },
 
@@ -2073,7 +2104,7 @@ function lxReveal() {
     const top = sc.getBoundingClientRect().top
     sc.querySelectorAll('.rv:not(.in)').forEach(el => { if (el.getBoundingClientRect().bottom < top) { el.classList.add('in'); lxIO?.unobserve(el) } }) }) }, { passive: true }) }
 // pílula flutuante de voltar: só nas páginas extras; aparece quando o botão do topo sai da tela
-const BACKF = { carreira: ['inicioX', 'Início'], liveD: ['livesA', 'Lives'] }
+const BACKF = { carreira: ['inicioX', 'Início'], liveD: ['livesA', 'Lives'], videosP: ['statsA', 'Estatísticas'] }
 function backPill(k) {
   document.querySelector('.lx-backf')?.remove()
   const t = BACKF[k]; if (!t) return
