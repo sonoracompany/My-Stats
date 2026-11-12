@@ -1136,6 +1136,108 @@ body.esm.liq .ibtn.solid svg { color: #1D3F6D !important; }
 .ld-eng b { margin-top: auto; }
 .ls-list2 { margin-top: 4px; } .ls-list2 .nx-row { padding: 11px 16px; min-height: 58px; }
 .lx-block .ls-list2 small { letter-spacing: 0; font-weight: 500; }
+/* ===== Estatísticas: 3 propostas ===== */
+.st-prog { position: relative; z-index: 1; height: 8px; margin: 22px 4px 0; border-radius: 8px; background: rgb(0 0 0 / .22); }
+.st-prog i { display: block; height: 100%; border-radius: inherit; background: #c6f59a; }
+.st-prog u { position: absolute; top: -5px; width: 3px; height: 18px; border-radius: 3px; background: #fff; transform: translateX(-1.5px); }
+.st-progl { position: relative; z-index: 1; display: flex; justify-content: space-between; margin: 8px 4px 0; font-size: 11.5px; color: rgb(255 255 255 / .65); }
+.st-progl span:last-child { color: #f5b98a; }
+.st-streak { padding: 14px 16px; border-radius: 20px; background: linear-gradient(150deg, #fbe0cc, #fdf1e7 60%, #fcfdf9); border: 1px solid rgb(226 116 47 / .2); }
+.st-sh { display: flex; align-items: center; gap: 12px; }
+.st-fl { width: 42px; height: 42px; flex: none; border-radius: 13px; display: grid; place-items: center; color: #fff; background: linear-gradient(160deg, #f08a45, #c25a1c); box-shadow: 0 8px 18px -8px rgb(194 90 28 / .8); } .st-fl svg { width: 22px; height: 22px; }
+.lx-block .st-sh small { font-size: 10px; letter-spacing: .16em; font-weight: 700; color: #c25a1c; } .st-sh b { display: block; font-size: 17px; font-weight: 800; color: #0f2a20; } .st-sh span { font-size: 12px; color: #9a5a32; }
+.st-days { display: grid; grid-template-columns: repeat(14, 1fr); gap: 3px; margin-top: 12px; }
+.st-days span { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 9.5px; font-weight: 700; color: #9a5a32; }
+.st-days i { width: 100%; height: 16px; border-radius: 5px; background: rgb(194 90 28 / .12); } .st-days .on i { background: linear-gradient(#f08a45, #e2742f); }
+.st-days .now i { box-shadow: 0 0 0 2px #fdf1e7, 0 0 0 3.5px #c25a1c; }
+.st-days.dk { position: relative; z-index: 1; margin-top: 18px; } .st-days.dk span { color: rgb(255 255 255 / .55); } .st-days.dk i { height: 22px; border-radius: 7px; background: rgb(255 255 255 / .08); }
+.st-days.dk .on i { background: #c6f59a; } .st-days.dk .now { color: #fff; } .st-days.dk .now i { box-shadow: 0 0 0 2px #0b5c45, 0 0 0 3.5px #e2742f; }
+.st-tabs { padding-bottom: 0; } .st [data-stpane] > .lx-block:first-child { border-top: 0; }
+.st-ret { padding: 14px 16px; } .st-rh { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; }
+.lx-block .st-rh small { font-size: 10px; letter-spacing: .16em; } .st-rh b { display: block; font: 700 28px/1.1 -apple-system, "SF Pro Display", system-ui, sans-serif; color: #0f2a20; }
+.st-rh em, .st-vid em { font-style: normal; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 99px; color: #0e6b4f; background: rgb(198 245 154 / .7); }
+.st-kv { display: flex; justify-content: space-between; margin-top: 6px; padding-top: 10px; border-top: 1px solid rgb(15 42 32 / .06); font-size: 13px; color: #5f6e66; } .st-kv b { color: #0f2a20; } .lx-block .st-kv small { letter-spacing: 0; font-weight: 500; font-size: 12px; }
+.st-vid { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; padding: 14px 16px; } .st-vid b { display: block; font-size: 16px; font-weight: 700; color: #0f2a20; }
+.lx-block .st-vid small { font-size: 12px; font-weight: 500; letter-spacing: 0; color: #7b8a81; line-height: 1.35; }
+.st-aud { padding: 4px 16px 0; }
+.st-ah { display: flex; justify-content: space-between; align-items: center; margin: 14px 0 8px; } .lx-block .st-ah small { font-size: 10px; letter-spacing: .16em; } .st-ah > span { font-size: 11px; color: #7b8a81; }
+.st-lg { display: flex; align-items: center; gap: 4px; } .st-lg i { width: 8px; height: 8px; border-radius: 3px; margin-left: 6px; } .st-lg .f { background: #0e6b4f; } .st-lg .m { background: #e2742f; }
+.st-g { display: flex; height: 26px; gap: 2px; border-radius: 9px; overflow: hidden; } .st-g i { display: grid; place-items: center; font-style: normal; font-size: 12px; font-weight: 800; color: #fff; background: #0e6b4f; } .st-g i + i { background: #e2742f; }
+.st-gc { margin: 6px 0 0; font-size: 11.5px; color: #7b8a81; } .st-gc em { font-style: normal; font-weight: 700; color: #0e6b4f; margin-left: 4px; }
+.st .cx-yr { grid-template-columns: 76px 1fr 60px; padding: 6px 0; }
+.st-c { display: grid; grid-template-columns: 1fr 44px 54px; gap: 8px; align-items: center; padding: 8px 0; font-size: 13.5px; color: #0f2a20; } .st-c + .st-c { border-top: 1px solid rgb(15 42 32 / .06); }
+.st-c b { text-align: right; } .st-c em { font-style: normal; text-align: right; font-size: 11px; font-weight: 700; color: #7b8a81; } .st-c em.up { color: #0e6b4f; } .st-c em.dn { color: #b0243a; }
+.st-foot { display: flex; align-items: center; gap: 6px; margin: 10px -16px 0; padding: 9px 16px; border-top: 1px solid rgb(15 42 32 / .06); font-size: 11.5px; color: #7b8a81; background: rgb(198 245 154 / .22); } .st-foot svg { width: 14px; height: 14px; color: #e2742f; }
+.st-chart { padding: 14px 16px 12px; } .st-chart .ld-note { margin: 10px 0 0; }
+.st-wk { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; height: 140px; align-items: end; }
+.st-wk > div { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; }
+.st-wk i { width: 100%; max-width: 28px; min-height: 4px; border-radius: 8px 8px 4px 4px; background: #8fd3a4; } .st-wk b { font-size: 10.5px; font-weight: 600; color: #7b8a81; } .st-wk span { font-size: 11px; font-weight: 700; color: #7b8a81; }
+.st-wk .top i { background: linear-gradient(#f08a45, #c25a1c); } .st-wk .top b, .st-wk .top span { color: #c25a1c; }
+.st-rk { padding: 0 14px; } .st-rk .rk { padding: 10px 0; } .st-rk .rk + .rk { border-top: 1px solid rgb(15 42 32 / .06); } .st-rk .rk .t b, .st-rk .rk > b { color: #0f2a20; } .st-rk .rk .t span { letter-spacing: 0; }
+.lx-block .st-rk small { letter-spacing: 0; }
+.st .nx-card + .lx-row, .st .ld-note + .lx-row, .st .st-streak + .lx-row { margin-top: 18px; }
+/* B · descobertas */
+.st-fire { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; margin-top: 22px; text-align: center; }
+.st-fl.big { width: 54px; height: 54px; border-radius: 17px; margin-bottom: 10px; } .st-fl.big svg { width: 28px; height: 28px; }
+.st-fire b { font: 700 44px/1.1 -apple-system, "SF Pro Display", system-ui, sans-serif; letter-spacing: -.035em; } .st-fire small { margin-top: 4px; font-size: 12.5px; color: rgb(255 255 255 / .7); }
+.st-insl { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.st-ins { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 18px; background: #fcfdf9; border: 1px solid rgb(15 42 32 / .07); box-shadow: 0 1px 2px rgb(15 42 32 / .04), 0 10px 22px -18px rgb(15 42 32 / .3); }
+.st-ins p { margin: 0; font-size: 13.5px; line-height: 1.4; color: #3c4b43; } .st-ins p b { color: #0f2a20; }
+/* C · relatório */
+.st-rep { position: relative; z-index: 1; margin: 22px 0 0; font-size: 24px; font-weight: 300; color: rgb(255 255 255 / .85); } .st-rep b { font-weight: 700; color: #fff; }
+.st-kpi { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+.st-kpi > div { padding: 12px 14px; border-radius: 18px; background: rgb(255 255 255 / .07); border: 1px solid rgb(255 255 255 / .1); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.st-kpi small { display: flex; align-items: center; gap: 6px; font-size: 9.5px; letter-spacing: .14em; font-weight: 700; color: rgb(255 255 255 / .6); }
+.st-kpi small i { width: 18px; height: 18px; border-radius: 6px; display: grid; place-items: center; background: rgb(198 245 154 / .14); color: #c6f59a; } .st-kpi small i svg { width: 12px; height: 12px; }
+.st-kpi b { display: block; margin: 8px 0 2px; font: 700 26px/1.1 -apple-system, "SF Pro Display", system-ui, sans-serif; letter-spacing: -.03em; } .st-kpi span { font-size: 11.5px; color: #c6f59a; }
+.st-ch { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.st-ch > b { font: 200 44px/1 -apple-system, "SF Pro Display", system-ui, sans-serif; color: #0e6b4f; letter-spacing: -.04em; }
+.lx-block .st-ch small { font-size: 10px; letter-spacing: .2em; } .st-ch h3 { margin: 2px 0 0; font-size: 22px; font-weight: 800; color: #0f2a20; letter-spacing: -.02em; }
+.st-ch + .st-streak + .lx-row { margin-top: 18px; }
+.lx-block .nx-row small { letter-spacing: 0; font-weight: 500; font-size: 11.5px; color: #7b8a81; }
+/* foguinho: fogo colorido em destaque num quadrado verde-escuro, com brilho e uma chama que "respira" */
+.st-fl { position: relative; overflow: hidden; background: radial-gradient(70% 60% at 50% 72%, rgb(255 150 50 / .35), transparent 70%), linear-gradient(160deg, #13805e, #0a5640 70%) !important; box-shadow: 0 8px 18px -8px rgb(10 86 64 / .8), inset 0 1px 0 rgb(255 255 255 / .12) !important; }
+.st-fl .st-glow { position: absolute; left: 50%; top: 62%; width: 70%; height: 70%; translate: -50% -50%; border-radius: 50%; background: radial-gradient(circle, rgb(255 190 80 / .55), transparent 70%); filter: blur(4px); }
+.st-flame { position: relative; width: 28px !important; height: 28px !important; filter: drop-shadow(0 0 4px rgb(255 140 40 / .65)); transform-origin: 50% 90%; }
+.st-fl.big .st-flame { width: 36px !important; height: 36px !important; }
+@media (prefers-reduced-motion: no-preference) {
+  .st-flame { animation: flick 2.4s ease-in-out infinite; } .st-fl .st-glow { animation: glow 2.4s ease-in-out infinite; }
+  /* gráficos: entram crescendo, em onda */
+  .st-days span i { animation: dpop .5s cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: calc(var(--i) * 35ms + .1s); }
+  .st-wk i { transform-origin: bottom; animation: lsgrow .8s cubic-bezier(.23, 1, .32, 1) both; animation-delay: calc(var(--i) * 60ms); }
+  .st-wk b { animation: fadeup .5s ease both; animation-delay: calc(var(--i) * 60ms + .35s); }
+  .st .cx-yr > i i { transform-origin: left; animation: barx .9s cubic-bezier(.23, 1, .32, 1) both; }
+  .st .cx-yr:nth-of-type(2) > i i { animation-delay: .06s; } .st .cx-yr:nth-of-type(3) > i i { animation-delay: .12s; } .st .cx-yr:nth-of-type(4) > i i { animation-delay: .18s; } .st .cx-yr:nth-of-type(5) > i i { animation-delay: .24s; }
+  .st-g i { transform-origin: left; animation: barx .9s cubic-bezier(.23, 1, .32, 1) both; } .st-g i + i { animation-delay: .15s; transform-origin: right; }
+  .st-prog i { transform-origin: left; animation: barx 1.3s cubic-bezier(.23, 1, .32, 1) both; } .st-prog u { animation: fadeup .4s ease 1.1s both; }
+}
+@keyframes flick { 0%, 100% { transform: scale(1) rotate(0); } 30% { transform: scale(1.06, .97) rotate(-2deg); } 60% { transform: scale(.97, 1.05) rotate(2deg); } }
+@keyframes glow { 0%, 100% { opacity: .75; } 50% { opacity: 1; } }
+@keyframes dpop { from { transform: scale(.3); opacity: 0; } }
+@keyframes barx { from { transform: scaleX(0); } }
+@keyframes fadeup { from { opacity: 0; transform: translateY(6px); } }
+/* ao rolar: cada cartão aparece com fade em cascata; as linhas de dentro entram uma por uma; os gráficos só se formam quando aparecem */
+.rv { opacity: 0; transform: translateY(22px) scale(.97); filter: blur(4px); transition: opacity .55s ease, transform .75s cubic-bezier(.22, 1.2, .36, 1), filter .55s ease; }
+.rv.in { opacity: 1; transform: none; filter: none; }
+.rv:not(.in) .st-days span i, .rv:not(.in) .st-wk i, .rv:not(.in) .st-wk b, .rv:not(.in) .cx-yr > i i, .rv:not(.in) .st-g i { animation: none !important; }
+@media (prefers-reduced-motion: no-preference) {
+  .rv.in :is(.nx-row, .cx-yr, .st-c, .rk, .ls-row, .nb-lc) { animation: fadeup .5s cubic-bezier(.23, 1, .32, 1) both; animation-delay: calc(var(--r, 0) * 70ms + .12s); }
+  .rv:not(.in) :is(.nx-row, .cx-yr, .st-c, .rk, .ls-row, .nb-lc) { opacity: 0; }
+  .rv.in .cx-yr > i i { animation-delay: calc(var(--r, 0) * 70ms + .2s) !important; }
+}
+@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; filter: none; transition: none; } }
+.screen { overflow: clip; }
+/* pílula flutuante de voltar (páginas extras): vidro esmeralda acima da Dock, entra com mola quando o botão do topo some */
+.lx-backf { position: absolute; z-index: 7; left: 16px; bottom: 104px; height: 44px; padding: 0 16px 0 10px; border: 1px solid rgb(198 245 154 / .35); border-radius: 99px;
+  display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: #fff;
+  background: rgb(11 92 69 / .93); -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: 0 12px 28px -10px rgb(8 63 48 / .7), inset 0 1px 0 rgb(255 255 255 / .12);
+  opacity: 0; transform: translateY(16px) scale(.9); pointer-events: none;
+  transition: opacity .25s ease, transform .45s cubic-bezier(.34, 1.4, .64, 1); }
+.lx-backf svg { width: 20px; height: 20px; color: #c6f59a; stroke-width: 2.2; }
+.lx-backf.on { opacity: 1; transform: none; pointer-events: auto; }
+.lx-backf:active { transform: scale(.94); }
+@media (prefers-reduced-motion: reduce) { .lx-backf { transition: opacity .2s ease; transform: none; } }
 </style>
 
 <div class="page">
@@ -1250,6 +1352,44 @@ const lsList = (v, s = 'data') => v === 'A'
   : v === 'B' ? `<div class="nb-lives" style="margin-top:12px">${lsSorted(s).map(lsCardB).join('')}</div>`
   : `<div class="ls-tl">${lsSorted(s).map(lsTl).join('')}</div>`
 const lsMore = '<p class="ls-more">+ 14 lives em outubro</p>'
+// ===== Estatísticas: 3 propostas (dados de exemplo de outubro) =====
+const stUp = (d, up = d[0] !== '↓') => `<em class="${up ? 'u' : 'd'}">${d}</em>`
+const stRow = ([icon, label, sub, v, d, tone = 'g']) => `<div class="nx-row"><span class="si ${tone}">${ic(icon)}</span><div><b>${label}</b>${sub ? `<small>${sub}</small>` : ''}</div><div class="nx-v"><b>${v}</b>${d ? stUp(d) : ''}</div></div>`
+const stH = (t, side = '') => `<div class="lx-row lx-h"><small>${t}</small>${side ? `<small>${side}</small>` : ''}</div>`
+const stDays = (dark) => `<div class="st-days ${dark ? 'dk' : ''}">${['Q', 'S', 'S', 'D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D', 'S', 'T', 'Q'].map((d, i) => `<span class="${[2, 4].includes(i) ? '' : 'on'} ${i === 13 ? 'now' : ''}" style="--i:${i}"><i></i>${d}</span>`).join('')}</div>`
+const FLAME = `<svg class="st-flame" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="flo" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff4d2e"/><stop offset=".55" stop-color="#ff8a1f"/><stop offset="1" stop-color="#ffc24a"/></linearGradient><linearGradient id="fli" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffd25c"/><stop offset="1" stop-color="#fff6d6"/></linearGradient></defs>
+  <path fill="url(#flo)" stroke="none" d="M12.6 2.2c.5 3.1-1.3 4.8-2.9 6.6C8 10.7 6.2 12.6 6.2 15.5c0 3.5 2.6 6.3 5.9 6.3s5.9-2.6 5.9-6.3c0-2.5-1.1-4.4-2.4-6-.3 1.4-1 2.4-2.1 2.9.5-3.7-.4-7.4-1.9-10.2z"/>
+  <path fill="url(#fli)" stroke="none" d="M12.1 21.8c-1.9 0-3.3-1.4-3.3-3.3 0-2 1.3-3.1 2.3-4.5.3 1 .9 1.7 1.7 2 0-1.3.5-2.5 1.3-3.4 1 1.3 1.8 2.8 1.8 4.4 0 2.6-1.6 4.8-3.8 4.8z"/></svg>`
+const stFire = (cls = '') => `<span class="st-fl ${cls}"><i class="st-glow"></i>${FLAME}</span>`
+const stStreak = () => `<div class="st-streak"><div class="st-sh">${stFire()}<div><small>SEQUÊNCIA</small><b>9 dias seguidos com live</b><span>faltam 5 pro seu recorde de 14 dias</span></div></div>${stDays(false)}</div>`
+const stProjRows = () => `<div class="nx-card">${[['usd', 'Em dólares', 'recompensas, no ritmo de hoje', 'US$ 14,1K', '', 'c'], ['bank', 'Em reais', 'no dólar do último saque', 'R$ 68,7K', '', 'c'], ['shield', 'Limite de saque em novembro', 'pelo ganho de outubro', 'US$ 5K/dia', '', 'g']].map(stRow).join('')}</div>`
+const stFunnel = () => `<div class="nx-card">${[['eye', 'Visualizações', 'total do mês', '812,4K', '↑ 6%'], ['user', 'Espectadores', '91% das visualizações', '741,2K', '↑ 4%'], ['gem', 'Presenteadores', '0,6% do público', '4.211', '↓ 2%'], ['heart', 'Novos seguidores', '4,6 a cada mil espectadores', '+3.412', '↑ 5%']].map(stRow).join('')}</div>
+  <p class="ld-note">${ic('gem')}<span>Média de <b>466</b> diamantes por presenteador.</span></p>`
+const stEng = () => `<div class="nx-card">${[['heart', 'Comentários', 'a cada mil visualizações', '58', '↑ 6%'], ['live', 'Compartilhamentos', 'a cada mil visualizações', '11', '↓ 4%'], ['gem', 'Diamantes por espectador', 'média do mês', '2,65', '↑ 9%'], ['usd', 'Cada mil visualizações', 'quanto rendeu em reais', 'R$ 47', '↑ 7%', 'c']].map(stRow).join('')}</div>`
+const stRet = () => `<div class="nx-card st-ret"><div class="st-rh"><div><small>TEMPO MÉDIO ASSISTIDO</small><b>35 s</b></div><em class="u">↑ 3 s vs setembro</em></div>
+  ${[['setembro', 32, ''], ['outubro', 35, 'cur']].map(([m, v, c]) => `<div class="cx-yr ${c ? 'cx-cur' : ''}"><span>${m}</span><i><i style="width:${v / 40 * 100}%"></i></i><b>${v} s</b></div>`).join('')}
+  <div class="st-kv"><span>Pico médio por live</span><b>760 <small>(set.: 740)</small></b></div></div>`
+const stVideos = () => `<div class="nx-card st-vid"><span class="si c">${ic('cam')}</span><div><b>12,4K pessoas</b><small>entraram na live depois de ver um vídeo seu · 1,7% do público do mês</small></div><em class="u">↑ 18%</em></div>`
+const stAud = () => `<div class="nx-card st-aud">
+  <div class="st-ah"><small>GÊNERO</small><span class="st-lg"><i class="f"></i>mulheres <i class="m"></i>homens</span></div>
+  <div class="st-g"><i style="width:65%">65%</i><i style="width:35%">35%</i></div><p class="st-gc">setembro: 63% · 37% <em class="u">↑ 2 pts mulheres</em></p>
+  <div class="st-ah"><small>IDADE</small><span>% do público</span></div>
+  ${[['18–24', 3], ['25–34', 15], ['35–44', 21], ['45–54', 24], ['55+', 37]].map(([l, v]) => `<div class="cx-yr ${v === 37 ? 'cx-best' : ''}"><span>${l}</span><i><i style="width:${v / 37 * 100}%"></i></i><b>${v}%</b></div>`).join('')}
+  <div class="st-ah"><small>PAÍSES</small><span>vs setembro</span></div>
+  ${[['🇧🇷', 'Brasil', 20, '↑ 1 pt'], ['🇵🇭', 'Filipinas', 7, '↓ 2 pts'], ['🇮🇹', 'Itália', 4, '='], ['🇬🇧', 'Reino Unido', 3, '↑ 1 pt'], ['', 'Outros', 66, '']].map(([f, n, v, d]) => `<div class="st-c"><span>${f ? f + ' ' : ''}${n}</span><b>${v}%</b><em class="${d[0] === '↑' ? 'up' : d[0] === '↓' ? 'dn' : ''}">${d}</em></div>`).join('')}
+  <p class="st-foot">${ic('cal')}Print de 23/10 · atualize toda semana</p></div>`
+const stWeek = () => `<div class="nx-card st-chart"><div class="st-wk">${[['S', 82], ['T', 96], ['Q', 64], ['Q', 88], ['S', 118], ['S', 104], ['D', 72]].map(([d, v], k) => `<div class="${v === 118 ? 'top' : ''}" style="--i:${k}"><b>${v}K</b><i style="height:${v / 118 * 100}%"></i><span>${d}</span></div>`).join('')}</div>
+  <p class="ld-note">${ic('trophy')}<span><b>Sexta</b> rende mais: média de <b>118K</b> diamantes por live.</span></p></div>`
+const stDur = () => `<div class="nx-card st-chart">${[['Até 1h', '4 lives', 31.2], ['1h a 2h', '9 lives', 44.8], ['2h a 3h', '6 lives', 41.5], ['Mais de 3h', '2 lives', 36.9]].map(([l, n, v]) => `<div class="cx-yr ${v === 44.8 ? 'cx-best' : ''}"><span>${l}<small>${n}</small></span><i><i style="width:${v / 44.8 * 100}%"></i></i><b>${String(v).replace('.', ',')}K/h</b></div>`).join('')}
+  <p class="ld-note">${ic('clock')}<span>Lives de <b>1h a 2h</b> rendem mais diamantes por hora.</span></p></div>`
+const stTitles = () => `<div class="nx-card st-rk">${[["LET'S SING", 6, '104K', '98,2K'], ['SEXTOU', 4, '88,4K', '86,1K'], ['ONE SONG, ONE MEMORY', 5, '82,8K', '74,6K'], ['LIVE DA MANHÃ', 3, '45K', '41,3K']].map(([t, n, b, a], i) => `<div class="rk"><span class="pos ${i === 0 ? 'g' : ''}">${i + 1}º</span><div class="t"><b>${t}</b><span>${n} lives · melhor ${b}</span></div><b>${a}</b></div>`).join('')}</div>`
+const stRecs = () => `<div class="nx-card">${[['trophy', 'Maior live', '20/10 · novo recorde', '104K', '', 'c'], ['user', 'Mais seguidores numa live', '20/10 · novo recorde', '+260', '', 'c'], ['eye', 'Maior pico', '29/09', '1.500'], ['cal', 'Melhor mês', 'setembro de 2026', '2,6M'], ['flame', 'Maior sequência', 'até 18/09/2026', '14 dias']].map(stRow).join('')}</div>
+  <p class="ld-note">${ic('trophy')}<span>Recordes desde que você começou a registrar as lives no app.</span></p>`
+const stInsight = (icon, html, tone = 'g') => `<div class="st-ins"><span class="si ${tone}">${ic(icon)}</span><p>${html}</p></div>`
+const stPanes = { pub: () => `<div class="lx-block">${stH('PÚBLICO', 'VS SETEMBRO')}${stFunnel()}</div><div class="lx-block">${stH('VINDOS DOS VÍDEOS')}${stVideos()}</div><div class="lx-block">${stH('SEU PÚBLICO')}${stAud()}</div>`,
+  eng: () => `<div class="lx-block">${stH('ENGAJAMENTO', 'VS SETEMBRO')}${stEng()}</div><div class="lx-block">${stH('RETENÇÃO')}${stRet()}</div>`,
+  rit: () => `<div class="lx-block">${stH('MELHOR DIA DA SEMANA', 'MÉDIA POR LIVE')}${stWeek()}</div><div class="lx-block">${stH('DURAÇÃO IDEAL', 'DIAMANTES POR HORA')}${stDur()}</div><div class="lx-block">${stH('TÍTULOS CAMPEÕES', 'MÉDIA POR LIVE')}${stTitles()}</div><div class="lx-block">${stH('RECORDES')}${stRecs()}</div>` }
+const stBar = `<div class="lx-bar"><span>ESTATÍSTICAS</span><button>${ic('cam')}Prints</button></div>`
 const S = {
   inicioX: { tab: 'inicio', name: '✦ Início · Redesign total', html: () => `
   <div class="lx">
@@ -1370,6 +1510,62 @@ const S = {
         <div class="nx-card ls-list2">${LS_CMP.map(([i, l, v, p, d, up, c], k) => `<div class="nx-row"><span class="si ${c}">${ic(i)}</span><div><b>${l}</b><small>setembro: ${LS_KP[k]}</small></div><div class="nx-v"><b>${LS_K[k]}</b><em class="${up ? 'u' : 'd'}">${up ? '↑' : '↓'} ${d}%</em></div></div>`).join('')}</div></div>
       <div class="lx-block">${lsBest()}</div>
       <div class="lx-block"><div class="lx-row lx-h"><small>LIVES DO MÊS</small></div>${lsSeg('A')}<div data-lsl="A">${lsList('A')}</div>${lsMore}</div>
+    </section>
+  </div>` },
+
+  statsA: { tab: 'estatisticas', name: '✦ Estatísticas · A Abas', html: () => `
+  <div class="lx ls st">
+    <section class="lx-hero">
+      ${stBar}${lsMonth()}
+      <div class="ls-big"><small>OUTUBRO DEVE FECHAR COM</small><b data-cntm="2.77">2,77M</b><span class="ls-pill"><i>dia 22 de 31</i>no ritmo de hoje</span></div>
+      <div class="st-prog"><i style="width:71%"></i><u style="left:71%"></u></div>
+      <div class="st-progl"><span>1,96M até agora</span><span>+810K previstos</span></div>
+      ${lsGlass([['usd', 'em dólares', 'US$ 14,1K'], ['bank', 'em reais', 'R$ 68,7K'], ['shield', 'limite nov.', 'US$ 5K']])}
+    </section>
+    <section class="lx-sheet">
+      <div class="lx-block">${stStreak()}</div>
+      <div class="lx-block st-tabs"><div class="ls-seg" data-stseg>${[['pub', 'Público'], ['eng', 'Engajamento'], ['rit', 'Ritmo']].map(([k, l], i) => `<button class="${i ? '' : 'on'}" data-stp="${k}">${l}</button>`).join('')}</div></div>
+      <div data-stpane>${stPanes.pub()}</div>
+    </section>
+  </div>` },
+
+  statsB: { tab: 'estatisticas', name: '✦ Estatísticas · B Descobertas', html: () => `
+  <div class="lx ls st">
+    <section class="lx-hero">
+      ${stBar}${lsMonth()}
+      <div class="st-fire">${stFire('big')}<b>9 dias</b><small>seguidos com live · recorde: 14</small></div>
+      ${stDays(true)}
+      ${lsGlass([['stats', 'deve fechar', '2,77M'], ['bank', 'em reais', 'R$ 68,7K'], ['shield', 'limite nov.', 'US$ 5K']])}
+    </section>
+    <section class="lx-sheet">
+      <div class="lx-block">${stH('DESCOBERTAS DE OUTUBRO')}
+        <div class="st-insl">
+          ${stInsight('cal', '<b>Sexta</b> é o seu melhor dia: média de <b>118K</b> diamantes por live.', 'c')}
+          ${stInsight('clock', 'Lives de <b>1h a 2h</b> rendem mais por hora: <b>44,8K/h</b>.')}
+          ${stInsight('live', '<b>LET\'S SING</b> é o seu título campeão: <b>98,2K</b> por live.')}
+          ${stInsight('user', 'O público ficou mais feminino: <b>65% mulheres</b> (↑ 2 pts).')}
+          ${stInsight('cam', '<b>12,4K pessoas</b> vieram dos seus vídeos (↑ 18%).', 'c')}
+        </div></div>
+      ${stPanes.pub()}${stPanes.eng()}${stPanes.rit()}
+    </section>
+  </div>` },
+
+  statsC: { tab: 'estatisticas', name: '✦ Estatísticas · C Relatório', html: () => `
+  <div class="lx ls st">
+    <section class="lx-hero">
+      ${stBar}${lsMonth()}
+      <p class="st-rep">Relatório de <b>outubro</b></p>
+      <div class="st-kpi">${[['stats', 'DEVE FECHAR', '2,77M', '↑ 7% vs set.'], ['flame', 'SEQUÊNCIA', '9 dias', 'recorde: 14'], ['user', 'ESPECTADORES', '741,2K', '↑ 4% vs set.'], ['clock', 'RETENÇÃO', '35 s', '↑ 3 s vs set.']].map(([i, l, v, d]) => `<div><small><i>${ic(i)}</i>${l}</small><b>${v}</b><span>${d}</span></div>`).join('')}</div>
+    </section>
+    <section class="lx-sheet">
+      <div class="lx-block"><div class="st-ch"><b>01</b><div><small>CAPÍTULO</small><h3>Ritmo</h3></div></div>
+        ${stStreak()}${stH('PROJEÇÃO')}${stProjRows()}${stH('MELHOR DIA DA SEMANA', 'MÉDIA POR LIVE')}${stWeek()}${stH('DURAÇÃO IDEAL', 'DIAMANTES POR HORA')}${stDur()}</div>
+      <div class="lx-block"><div class="st-ch"><b>02</b><div><small>CAPÍTULO</small><h3>Público</h3></div></div>
+        ${stH('DE ONDE VEM', 'VS SETEMBRO')}${stFunnel()}${stH('VINDOS DOS VÍDEOS')}${stVideos()}${stH('QUEM ASSISTE')}${stAud()}</div>
+      <div class="lx-block"><div class="st-ch"><b>03</b><div><small>CAPÍTULO</small><h3>Engajamento</h3></div></div>
+        ${stEng()}${stH('RETENÇÃO')}${stRet()}</div>
+      <div class="lx-block"><div class="st-ch"><b>04</b><div><small>CAPÍTULO</small><h3>Títulos e recordes</h3></div></div>
+        ${stTitles()}${stH('RECORDES')}${stRecs()}</div>
     </section>
   </div>` },
 
@@ -1783,7 +1979,57 @@ function lxAnim() {
   }
   requestAnimationFrame(step)
 }
-{ const _g3 = go; go = k => { _g3(k); if (k === 'inicioX') lxAnim() }; go('livesA') }
+// ao rolar a folha clara: os cartões aparecem em cascata (os que entram juntos na tela, um depois do outro)
+let lxIO
+function lxReveal() {
+  lxIO?.disconnect()
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  lxIO = new IntersectionObserver(es => {
+    let k = 0
+    for (const e of es.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)) {
+      // passou direto numa rolada rápida (já está acima da tela): aparece sem esperar
+      if (!e.isIntersecting) { if (e.rootBounds && e.boundingClientRect.bottom < e.rootBounds.top) { e.target.classList.add('in'); lxIO.unobserve(e.target) } continue }
+      e.target.style.transitionDelay = `${Math.min(k++, 5) * 80}ms`
+      e.target.classList.add('in'); lxIO.unobserve(e.target)
+    }
+  }, { root: document.getElementById('scroll'), rootMargin: '0px 0px -8% 0px' })
+  document.querySelectorAll('.lx-sheet :is(.lx-h, .nx-card, .st-streak, .ld-note, .ls-seg, .st-ins, .ls-best, .ls-list, .ls-wk, .nb-grid, .nb-lc, .cx-teaser, .lx-legend, .nb-leg)').forEach(el => {
+    if (el.parentElement.closest('.rv')) return
+    el.classList.add('rv')
+    el.querySelectorAll(':is(.nx-row, .cx-yr, .st-c, .rk, .ls-row)').forEach((r, i) => r.style.setProperty('--r', i))
+    lxIO.observe(el)
+  })
+}
+// rolada rápida: o que já ficou acima da tela sem ter aparecido aparece na hora (para não ficar escondido ao voltar)
+{ let tick = false; const sc = document.getElementById('scroll')
+  sc.addEventListener('scroll', () => { if (tick) return; tick = true; requestAnimationFrame(() => { tick = false
+    const top = sc.getBoundingClientRect().top
+    sc.querySelectorAll('.rv:not(.in)').forEach(el => { if (el.getBoundingClientRect().bottom < top) { el.classList.add('in'); lxIO?.unobserve(el) } }) }) }, { passive: true }) }
+// pílula flutuante de voltar: só nas páginas extras; aparece quando o botão do topo sai da tela
+const BACKF = { carreira: ['inicioX', 'Início'], liveD: ['livesA', 'Lives'] }
+function backPill(k) {
+  document.querySelector('.lx-backf')?.remove()
+  const t = BACKF[k]; if (!t) return
+  const b = document.createElement('button'); b.className = 'lx-backf'; b.dataset.go = t[0]
+  b.setAttribute('aria-label', `Voltar para ${t[1]}`); b.innerHTML = `${ic('back')}<span>${t[1]}</span>`
+  document.querySelector('.screen').append(b)
+}
+{ const sc = document.getElementById('scroll'); let tick = false
+  sc.addEventListener('scroll', () => { if (tick) return; tick = true; requestAnimationFrame(() => { tick = false
+    document.querySelector('.lx-backf')?.classList.toggle('on', sc.scrollTop > 90) }) }, { passive: true }) }
+{ const _g3 = go; go = k => { _g3(k); if (k === 'inicioX') lxAnim(); stCount(); lxReveal(); backPill(k) }; go('statsA') }
+// número em milhões contando do zero (ex.: 2,77M), junto com a barra do mês
+function stCount() {
+  const el = document.querySelector('[data-cntm]'); if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  const target = Number(el.dataset.cntm), t0 = performance.now(), dur = 1300
+  const step = t => { const k = Math.min((t - t0) / dur, 1), e = 1 - (1 - k) ** 4
+    el.textContent = (target * e).toFixed(2).replace('.', ',') + 'M'; if (k < 1) requestAnimationFrame(step) }
+  requestAnimationFrame(step)
+}
+// Estatísticas A: trocar a aba (Público / Engajamento / Ritmo)
+document.addEventListener('click', e => { const b = e.target.closest('[data-stp]'); if (!b) return
+  for (const x of b.parentNode.children) x.classList.toggle('on', x === b)
+  document.querySelector('[data-stpane]').innerHTML = stPanes[b.dataset.stp](); lxReveal() })
 // Lives: ordenar a lista (Data / Diamantes / Por hora)
 document.addEventListener('click', e => { const b = e.target.closest('[data-lss]'); if (!b) return
   const seg = b.parentNode; for (const x of seg.children) x.classList.toggle('on', x === b)

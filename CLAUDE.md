@@ -81,6 +81,15 @@ Mostra diamantes, recompensas, saques, estatísticas e metas. Fala sempre em **p
   do mês com o melhor dia em cobre, faixa por live/por hora/ao vivo), comparativo em lista, cartão da melhor live do mês e
   lista agrupada por semana (ordenar por data/diamantes/por hora). Tocar numa live abre a folha de edição; só o cartão da
   melhor do mês abre a **página da live** (`renderLive`, rota `live`, `state.liveId`).
+- **Estatísticas redesenhada (opção "A Abas", aprovada):** `renderStats` com topo esmeralda (projeção do mês que conta
+  do zero, barra do mês, faixa dólares/reais/limite), cartão da sequência com o foguinho colorido (`FLAME`), e abas
+  Público / Engajamento / Ritmo (`statsPane`; `state.stab`). Calendário e últimos 6 meses saíram (estão na Lives e na Carreira).
+- **Animação ao rolar** (`reveal`/`REVEAL`): cada cartão aparece com fade em cascata; as linhas de dentro entram uma por uma
+  (`--r`) e os gráficos só se formam quando o cartão aparece (`.reveal.in`). Rolada rápida não deixa nada escondido.
+- **Pílula flutuante de voltar** (`backPill`, `BACK`): só nas páginas extras (Carreira → Início, página da live → Lives);
+  aparece quando o botão do topo sai da tela.
+- **Barra de status:** `black-translucent` + faixa esmeralda fixa atrás do relógio (`#app::before`, altura do safe-area).
+  Cuidado: a classe `top` é do cabeçalho antigo e fica escondida nas telas novas (`body.luxe .top`); não usar esse nome.
 - **Números grandes com K e M no app inteiro** (`compact`, `mil1`, `goalLabel`, `usdK`): 1,96M, 59,6K, US$ 7,8K.
-- Prévia: `design/preview.html` (telas "✦ Início · Redesign total", "✦ Carreira · tela nova", "✦ Lives · A/B/C", "✦ Lives · Página da live").
-- **Próximo passo:** redesenhar Estatísticas e Recompensas no mesmo estilo, sempre com prévia antes.
+- Prévia: `design/preview.html` (telas "✦ Início · Redesign total", "✦ Carreira · tela nova", "✦ Lives · A/B/C", "✦ Lives · Página da live", "✦ Estatísticas · A/B/C").
+- **Próximo passo:** redesenhar Recompensas no mesmo estilo, sempre com prévia antes.
