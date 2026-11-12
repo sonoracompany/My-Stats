@@ -1238,6 +1238,42 @@ body.esm.liq .ibtn.solid svg { color: #1D3F6D !important; }
 .lx-backf.on { opacity: 1; transform: none; pointer-events: auto; }
 .lx-backf:active { transform: scale(.94); }
 @media (prefers-reduced-motion: reduce) { .lx-backf { transition: opacity .2s ease; transform: none; } }
+/* aba Vídeos (protótipo) */
+.st .ls-seg { grid-template-columns: repeat(var(--n, 3), 1fr); } .st [data-stseg] { --n: 4; } .st [data-stseg] button { font-size: 12px; padding: 0 2px; }
+.vd-today { padding: 14px 16px; border-radius: 20px; background: linear-gradient(150deg, #fbe0cc, #fdf1e7 60%, #fcfdf9); border: 1px solid rgb(226 116 47 / .2); }
+.vd-th { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: center; }
+.lx-block .vd-th small { font-size: 10px; letter-spacing: .16em; font-weight: 700; color: #c25a1c; } .vd-th b { display: block; font-size: 17px; font-weight: 800; color: #0f2a20; } .vd-th span { font-size: 12px; color: #9a5a32; }
+.vd-step { display: grid; grid-template-columns: 56px 1fr 56px; align-items: center; margin-top: 12px; padding: 6px; border-radius: 18px; background: #fcfdf9; border: 1px solid rgb(194 90 28 / .15); }
+.vd-step button { height: 48px; border: 0; border-radius: 14px; font-size: 26px; font-weight: 500; line-height: 1; color: #0e6b4f; background: rgb(198 245 154 / .6); }
+.vd-step button:last-child { color: #fff; background: linear-gradient(135deg, #13805e, #0a5640); box-shadow: 0 8px 16px -8px rgb(10 86 64 / .7); }
+.vd-step button:active { transform: scale(.94); }
+.vd-step b { text-align: center; font: 700 34px/1 -apple-system, "SF Pro Display", system-ui, sans-serif; color: #0f2a20; font-variant-numeric: tabular-nums; }
+.vd-step b.bump { animation: bump .35s cubic-bezier(.34, 1.56, .64, 1); } @keyframes bump { 40% { transform: scale(1.25); } }
+.vd-strip { padding: 14px 16px 12px; }
+.vd-sh { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; } .vd-sh b { display: block; font: 700 22px/1.1 -apple-system, "SF Pro Display", system-ui, sans-serif; color: #0f2a20; }
+.lx-block .vd-sh small { font-size: 11.5px; font-weight: 500; letter-spacing: 0; color: #7b8a81; }
+.vd-sh em { flex: none; font-style: normal; font-size: 10.5px; font-weight: 800; padding: 2px 8px; border-radius: 99px; color: #0e6b4f; background: rgb(198 245 154 / .7); }
+.vd-bars { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; height: 96px; margin-top: 14px; align-items: end; }
+.vd-bars > div { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 3px; }
+.vd-bars b { font-size: 9.5px; font-weight: 700; color: #7b8a81; min-height: 12px; }
+.vd-bars i { width: 100%; border-radius: 5px 5px 2px 2px; background: linear-gradient(#f08a45, #e2742f); } .vd-bars i.z { background: rgb(15 42 32 / .08); }
+.vd-bars u { width: 5px; height: 5px; border-radius: 50%; background: transparent; } .vd-bars u.on { background: #0e6b4f; }
+.vd-bars span { font-size: 9px; font-weight: 700; color: #7b8a81; } .vd-bars .now span { color: #c25a1c; } .vd-bars .now i { box-shadow: 0 0 0 2px #fcfdf9, 0 0 0 3.5px #c25a1c; }
+.vd-leg { display: flex; justify-content: flex-end; gap: 14px; margin-top: 8px; font-size: 11px; color: #7b8a81; }
+.vd-leg span { display: flex; align-items: center; gap: 5px; } .vd-leg i { width: 10px; height: 10px; border-radius: 3px; background: #e2742f; } .vd-leg u { width: 6px; height: 6px; border-radius: 50%; background: #0e6b4f; }
+.vd-leg em { width: 14px; height: 3px; border-radius: 3px; background: #0e6b4f; }
+.vd-pd { margin-top: 8px; }
+.vd-wkc { position: relative; height: 120px; margin-top: 4px; } .vd-wkc svg { display: block; width: 100%; height: 120px; overflow: visible; }
+.vd-wkc rect { fill: rgb(226 116 47 / .3); stroke: none; } .vd-wkc polyline { fill: none; stroke: #0e6b4f; stroke-width: 2.5; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }
+.vd-dot { position: absolute; width: 9px; height: 9px; translate: -50% -50%; border-radius: 50%; background: #fcfdf9; box-shadow: inset 0 0 0 2.5px #0e6b4f; }
+.vd-ax { margin-top: 8px; color: #7b8a81 !important; } .vd-ax span { display: flex; flex-direction: column; align-items: center; width: 12.5%; font-size: 9.5px; } .vd-ax b { font-size: 11px; color: #c25a1c; }
+@media (prefers-reduced-motion: no-preference) {
+  .rv.in .vd-bars i { transform-origin: bottom; animation: lsgrow .7s cubic-bezier(.23, 1, .32, 1) both; animation-delay: calc(var(--i) * 40ms + .1s); }
+  .rv.in .vd-wkc rect { transform-origin: 0 120px; transform-box: view-box; animation: lsgrow .8s cubic-bezier(.23, 1, .32, 1) both; animation-delay: calc(var(--i) * 60ms + .1s); }
+  .rv.in .vd-wkc polyline { stroke-dasharray: 600; animation: draw 1.4s ease .5s both; } .rv.in .vd-dot { animation: dpop .4s cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: calc(.6s + var(--k, 0) * 80ms); }
+  .rv:not(.in) :is(.vd-bars i, .vd-wkc rect, .vd-wkc polyline, .vd-dot) { animation: none !important; }
+}
+@keyframes draw { from { stroke-dashoffset: 600; } to { stroke-dashoffset: 0; } }
 </style>
 
 <div class="page">
@@ -1386,9 +1422,40 @@ const stTitles = () => `<div class="nx-card st-rk">${[["LET'S SING", 6, '104K', 
 const stRecs = () => `<div class="nx-card">${[['trophy', 'Maior live', '20/10 · novo recorde', '104K', '', 'c'], ['user', 'Mais seguidores numa live', '20/10 · novo recorde', '+260', '', 'c'], ['eye', 'Maior pico', '29/09', '1.500'], ['cal', 'Melhor mês', 'setembro de 2026', '2,6M'], ['flame', 'Maior sequência', 'até 18/09/2026', '14 dias']].map(stRow).join('')}</div>
   <p class="ld-note">${ic('trophy')}<span>Recordes desde que você começou a registrar as lives no app.</span></p>`
 const stInsight = (icon, html, tone = 'g') => `<div class="st-ins"><span class="si ${tone}">${ic(icon)}</span><p>${html}</p></div>`
-const stPanes = { pub: () => `<div class="lx-block">${stH('PÚBLICO', 'VS SETEMBRO')}${stFunnel()}</div><div class="lx-block">${stH('VINDOS DOS VÍDEOS')}${stVideos()}</div><div class="lx-block">${stH('SEU PÚBLICO')}${stAud()}</div>`,
+const stPanes = { pub: () => `<div class="lx-block">${stH('PÚBLICO', 'VS SETEMBRO')}${stFunnel()}</div><div class="lx-block">${stH('SEU PÚBLICO')}${stAud()}</div>`,
   eng: () => `<div class="lx-block">${stH('ENGAJAMENTO', 'VS SETEMBRO')}${stEng()}</div><div class="lx-block">${stH('RETENÇÃO')}${stRet()}</div>`,
   rit: () => `<div class="lx-block">${stH('MELHOR DIA DA SEMANA', 'MÉDIA POR LIVE')}${stWeek()}</div><div class="lx-block">${stH('DURAÇÃO IDEAL', 'DIAMANTES POR HORA')}${stDur()}</div><div class="lx-block">${stH('TÍTULOS CAMPEÕES', 'MÉDIA POR LIVE')}${stTitles()}</div><div class="lx-block">${stH('RECORDES')}${stRecs()}</div>` }
+// ===== Aba Vídeos (protótipo): contador de vídeos postados e se a quantidade influencia =====
+let vidToday = 2
+const VID_DAYS = [2, 0, 1, 3, 2, 0, 1, 2, 4, 1, 0, 2, 3, 2]      // vídeos por dia, de 09/10 a 22/10
+const VID_LIVE = [1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]      // teve live nesse dia?
+const VID_WEEKS = [['24/8', 6, 81], ['31/8', 9, 88], ['7/9', 4, 76], ['14/9', 11, 95], ['21/9', 8, 86], ['28/9', 13, 99], ['5/10', 10, 93], ['12/10', 12, 97]]   // [semana, vídeos, mil diamantes por live]
+const vidStepper = () => `<div class="vd-today"><div class="vd-th"><span class="si c">${ic('cam')}</span><div><small>HOJE · QUI 22/10</small><b>Vídeos postados</b><span>toque no + a cada vídeo que postar</span></div></div>
+  <div class="vd-step"><button data-vc="-1" aria-label="Tirar um vídeo">−</button><b data-vcount>${vidToday}</b><button data-vc="1" aria-label="Somar um vídeo">+</button></div></div>`
+const vidStrip = () => { const top = Math.max(...VID_DAYS, 1); const L = ['S', 'S', 'D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D', 'S', 'T', 'Q', 'Q']
+  return `<div class="nx-card vd-strip"><div class="vd-sh"><div><b>31 vídeos</b><small>em outubro · 1,4 por dia · 19 de 22 dias com vídeo</small></div><em class="u">↑ 24% por dia vs set.</em></div>
+  <div class="vd-bars">${VID_DAYS.map((v, i) => `<div class="${i === 13 ? 'now' : ''}" style="--i:${i}"><b>${v || ''}</b><i style="height:${v ? (v / top * 100).toFixed(0) : 4}%" class="${v ? '' : 'z'}"></i><u class="${VID_LIVE[i] ? 'on' : ''}"></u><span>${L[i]}</span></div>`).join('')}</div>
+  <div class="vd-leg"><span><i></i>vídeos no dia</span><span><u></u>teve live</span></div></div>` }
+const vidJoined = () => `<div class="nx-card st-vid"><span class="si c">${ic('user')}</span><div><b>12.400 pessoas</b><small>entraram na live depois de ver um vídeo seu · 1,7% do público do mês</small></div></div>
+  <div class="nx-card vd-pd">${stRow(['cal', 'Por dia em outubro', 'até dia 22', '564', '↑ 18%', 'g'])}${stRow(['cal', 'Por dia em setembro', 'mês inteiro', '478', '', 'g'])}</div>
+  <p class="ld-note">${ic('clock')}<span>A comparação é <b>por dia</b>: assim o começo do mês não parece uma queda.</span></p>`
+const vidVs = () => `<div class="nx-card">${[['gem', 'Diamantes por live', '96,8K', '84,2K', 15], ['user', 'Espectadores por live', '2.180', '1.910', 14], ['heart', 'Novos seguidores por live', '+184', '+139', 32]].map(([i, l, a, b, d]) => `<div class="ls-cr"><div class="ls-crh"><span class="si g">${ic(i)}</span><span class="ls-crl">${l}<small>sem vídeo no dia: ${b}</small></span><b>${a}</b><em class="u">↑ ${d}%</em></div><div class="ls-cb"><u style="width:${(100 / (1 + d / 100)).toFixed(0)}%"></u><i style="width:100%"></i></div></div>`).join('')}</div>
+  <div class="lx-legend" style="margin-top:8px"><span><u></u>dias sem vídeo</span><span><i></i>dias com vídeo</span></div>`
+const vidWeeks = () => { const W = 300, H = 120, top = 14, gmin = 70, gmax = 102, bw = W / VID_WEEKS.length
+  const pts = VID_WEEKS.map(([, , g], k) => `${(k * bw + bw / 2).toFixed(1)},${(H - (g - gmin) / (gmax - gmin) * H).toFixed(1)}`).join(' ')
+  return `<div class="nx-card st-chart vd-wk"><div class="vd-wkc"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${VID_WEEKS.map(([, v], k) => `<rect x="${(k * bw + bw * 0.2).toFixed(1)}" y="${(H - v / top * H).toFixed(1)}" width="${(bw * 0.6).toFixed(1)}" height="${(v / top * H).toFixed(1)}" rx="4" style="--i:${k}"/>`).join('')}<polyline points="${pts}"/></svg>
+    ${VID_WEEKS.map(([, v, g], k) => `<span class="vd-dot" style="left:${((k + 0.5) / VID_WEEKS.length * 100).toFixed(2)}%;top:${((1 - (g - gmin) / (gmax - gmin)) * 100).toFixed(1)}%" title="${g}K"></span>`).join('')}</div>
+    <div class="ls-axis vd-ax">${VID_WEEKS.map(([w, v]) => `<span><b>${v}</b>${w}</span>`).join('')}</div>
+    <div class="vd-leg"><span><i></i>vídeos na semana</span><span><em></em>diamantes por live</span></div>
+    <p class="ld-note">${ic('trophy')}<span>Nas semanas com <b>10 ou mais vídeos</b>, suas lives renderam <b>13% mais</b> (96K × 85K por live).</span></p></div>` }
+const vidMonths = () => `<div class="nx-card">${[['mai', 18, '6,1K'], ['jun', 22, '7,4K'], ['jul', 15, '5,2K'], ['ago', 26, '11,9K'], ['set', 29, '14,3K'], ['out', 31, '12,4K']].reverse().map(([m, v, j], k) => `<div class="nx-row"><span class="si ${k ? 'g' : 'c'}">${ic('cal')}</span><div><b>${{ mai: 'Maio', jun: 'Junho', jul: 'Julho', ago: 'Agosto', set: 'Setembro', out: 'Outubro' }[m]}</b><small>${j} pessoas vieram dos vídeos${k ? '' : ' · em andamento'}</small></div><div class="nx-v"><b>${v} vídeos</b></div></div>`).join('')}</div>`
+stPanes.vid = () => `<div class="lx-block">${vidStepper()}</div>
+  <div class="lx-block">${stH('ÚLTIMOS 14 DIAS')}${vidStrip()}</div>
+  <div class="lx-block">${stH('VINDOS DOS VÍDEOS', 'ATÉ 22/10')}${vidJoined()}</div>
+  <div class="lx-block">${stH('A QUANTIDADE INFLUENCIA?', 'OUTUBRO')}${vidVs()}${stNote2()}</div>
+  <div class="lx-block">${stH('VÍDEOS × DIAMANTES', '8 SEMANAS')}${vidWeeks()}</div>
+  <div class="lx-block">${stH('MÊS A MÊS')}${vidMonths()}<p class="ld-note">${ic('cam')}<span>Os números ficam mais confiáveis depois de umas <b>4 semanas</b> registrando. É uma tendência, não uma prova: outras coisas também mudam de uma semana pra outra.</span></p></div>`
+const stNote2 = () => `<p class="ld-note">${ic('cam')}<span>"Dia com vídeo" = você postou pelo menos um vídeo no dia da live ou no dia anterior.</span></p>`
 const stBar = `<div class="lx-bar"><span>ESTATÍSTICAS</span><button>${ic('cam')}Prints</button></div>`
 const S = {
   inicioX: { tab: 'inicio', name: '✦ Início · Redesign total', html: () => `
@@ -1524,7 +1591,7 @@ const S = {
     </section>
     <section class="lx-sheet">
       <div class="lx-block">${stStreak()}</div>
-      <div class="lx-block st-tabs"><div class="ls-seg" data-stseg>${[['pub', 'Público'], ['eng', 'Engajamento'], ['rit', 'Ritmo']].map(([k, l], i) => `<button class="${i ? '' : 'on'}" data-stp="${k}">${l}</button>`).join('')}</div></div>
+      <div class="lx-block st-tabs"><div class="ls-seg" data-stseg>${[['pub', 'Público'], ['eng', 'Engajamento'], ['rit', 'Ritmo'], ['vid', 'Vídeos']].map(([k, l], i) => `<button class="${i ? '' : 'on'}" data-stp="${k}">${l}</button>`).join('')}</div></div>
       <div data-stpane>${stPanes.pub()}</div>
     </section>
   </div>` },
@@ -2026,6 +2093,10 @@ function stCount() {
     el.textContent = (target * e).toFixed(2).replace('.', ',') + 'M'; if (k < 1) requestAnimationFrame(step) }
   requestAnimationFrame(step)
 }
+// Vídeos: contador do dia (− / +)
+document.addEventListener('click', e => { const b = e.target.closest('[data-vc]'); if (!b) return
+  vidToday = Math.max(0, vidToday + Number(b.dataset.vc)); const el = document.querySelector('[data-vcount]'); el.textContent = vidToday
+  el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump') })
 // Estatísticas A: trocar a aba (Público / Engajamento / Ritmo)
 document.addEventListener('click', e => { const b = e.target.closest('[data-stp]'); if (!b) return
   for (const x of b.parentNode.children) x.classList.toggle('on', x === b)
