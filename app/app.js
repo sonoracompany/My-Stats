@@ -822,7 +822,7 @@ function celebrate(goal, ym, again = false) {
 }
 
 // cartões aparecem ao rolar, em cascata; as linhas de dentro entram uma por uma e os gráficos só se formam quando aparecem
-const REVEAL = '.feature, .life, .fxp, .sec, .month, .seg, .best, .chartcard, .card, .form, .proj, .ret, .rec, .quad, .empty, .cx-teaser, .nx-card, .nb-grid, .nb-lc, .ls-best, .ls-list, .ls-wk, .ls-seg, .lx-h, .nx-h, .ld-note, .st-streak, .nb-leg, .ls-c3, .lx-lead, .st-empty'
+const REVEAL = '.st-stale, .feature, .life, .fxp, .sec, .month, .seg, .best, .chartcard, .card, .form, .proj, .ret, .rec, .quad, .empty, .cx-teaser, .nx-card, .nb-grid, .nb-lc, .ls-best, .ls-list, .ls-wk, .ls-seg, .lx-h, .nx-h, .ld-note, .st-streak, .nb-leg, .ls-c3, .lx-lead, .st-empty'
 function reveal(root) {
   root.querySelectorAll('[data-count]').forEach(countUp)
   root.querySelectorAll('.lv .crown, .rec.new .rt svg').forEach(x => x.classList.add('wiggle'))
@@ -1343,19 +1343,19 @@ function funnelCard(s, prev) {
 }
 
 // Vindos dos vídeos: quantas pessoas entraram na live depois de ver um vídeo seu
-function videosCard(ym) {
+function videosCard(ym, shown = ym) {
   const a = summaryOf(ym)
   if (!a?.video_joined) return ''
   const b = summaryOf(prevYm(ym)) || {}
   const share = a.unique_viewers ? a.video_joined / a.unique_viewers * 100 : null
   return `<div class="lx-block">${stH('VINDOS DOS VÍDEOS', a.period ? `ATÉ ${esc(shortDate(`${a.period[1]}T12:00`))}` : '')}
     <div class="nx-card st-vid"><span class="si c">${ic('cam')}</span><div><b>${esc(int(a.video_joined))} pessoas</b><small>entraram na live depois de ver um vídeo seu${share != null ? ` · ${esc(dec(share, 1))}% do público do mês` : ''}</small></div>${stPill(a.video_joined, b.video_joined)}</div>
-    ${stNote('live', share != null && share < 5 ? 'Quase todo o público chega pela entrega normal das lives. Postar com frequência pode trazer mais gente pelos vídeos.' : 'Os vídeos já trazem uma parte boa do público das lives.')}</div>`
+    ${ym !== shown ? '' : stNote('live', share != null && share < 5 ? 'Quase todo o público chega pela entrega normal das lives. Postar com frequência pode trazer mais gente pelos vídeos.' : 'Os vídeos já trazem uma parte boa do público das lives.')}</div>`
 }
 
 // Seu público: gênero, idade e países do mês, comparados com o mês anterior
 const COUNTRY = { Brazil: ['🇧🇷', 'Brasil'], Philippines: ['🇵🇭', 'Filipinas'], Italy: ['🇮🇹', 'Itália'], 'United Kingdom': ['🇬🇧', 'Reino Unido'], 'United States': ['🇺🇸', 'Estados Unidos'], Portugal: ['🇵🇹', 'Portugal'], Spain: ['🇪🇸', 'Espanha'], Mexico: ['🇲🇽', 'México'], Indonesia: ['🇮🇩', 'Indonésia'], Germany: ['🇩🇪', 'Alemanha'], France: ['🇫🇷', 'França'], Argentina: ['🇦🇷', 'Argentina'], Japan: ['🇯🇵', 'Japão'], Others: ['', 'Outros'] }
-function audienceCard(ym) {
+function audienceCard(ym, shown = ym) {
   const row = (state.data.summaries || []).find(r => r.month === ym)
   const a = row?.data
   if (!a || (a.female_pct == null && !a.ages && !a.countries)) return ''
@@ -1382,6 +1382,21 @@ function audienceCard(ym) {
     ${countries.map(([n, v]) => { const [flag, name] = COUNTRY[n] || ['', n]; return `<div class="st-c"><span>${flag ? flag + ' ' : ''}${esc(name)}</span><b>${v}%</b>${n === 'Others' ? '<em></em>' : pts(v, bc[n])}</div>` }).join('')}` : ''}
     <p class="st-foot">${ic('cal')}${a.period ? `Dados de ${esc(a.period[0].slice(8))} a ${esc(shortDate(`${a.period[1]}T12:00`))} · ` : ''}${ym === today().slice(0, 7) ? `print de ${esc(shortDate(row.updated_at))} · atualize toda semana` : `resumo de ${esc(monthWord(ym))}`}</p>
   </div></div>`
+}
+
+// o mês escolhido ainda não tem o resumo do TikTok: usa o último resumo que tem esse dado (de um mês anterior)
+const hasAudience = a => a && (a.female_pct != null || a.ages || a.countries)
+function lastSummaryMonth(ym, test) {
+  return (state.data.summaries || []).filter(r => r.month <= ym && test(r.data)).map(r => r.month).sort().at(-1)
+}
+const staleNote = (from, shown) => `<div class="st-stale">${ic('cam')}<span>Ainda não chegou o resumo de <b>${esc(monthWord(shown))}</b>: mostrando <b>${esc(monthWord(from))}</b>. Mande os prints do Overview e do Viewer insights para atualizar.</span><button type="button" class="st-cta" data-open-prints>Mandar prints</button></div>`
+function summaryCards(ym) {
+  const vm = lastSummaryMonth(ym, a => a?.video_joined), am = lastSummaryMonth(ym, hasAudience)
+  const html = (vm ? videosCard(vm, ym) : '') + (am ? audienceCard(am, ym) : '')
+  // um aviso só, no fim, quando o que aparece é de um mês anterior
+  const old = [vm, am].filter(m => m && m !== ym).sort().at(-1)
+  if (html) return old ? html.replace(/<\/div>$/, `${staleNote(old, ym)}</div>`) : html
+  return `<div class="lx-block">${stH('SEU PÚBLICO')}<div class="st-stale">${ic('cam')}<span><b>Seu público</b> (gênero, idade e países) e <b>vindos dos vídeos</b> aparecem quando você manda os prints do resumo do mês: Overview e Viewer insights.</span><button type="button" class="st-cta" data-open-prints>Mandar prints</button></div></div>`
 }
 
 // Engajamento: a cada mil visualizações, por espectador e quanto vale cada mil visualizações
@@ -1495,7 +1510,7 @@ function recordsCard(lives) {
 const STABS = [['pub', 'Público'], ['eng', 'Engajamento'], ['rit', 'Ritmo']]
 function statsPane(tab, s, prev, rate) {
   const { lives } = state.data
-  const parts = tab === 'pub' ? [funnelCard(s, prev), videosCard(state.smonth), audienceCard(state.smonth)]
+  const parts = tab === 'pub' ? [funnelCard(s, prev), summaryCards(state.smonth)]
     : tab === 'eng' ? [engagementCard(s, prev, rate), retentionCard(s, prev, state.smonth)]
       : [weekdayCard(lives), durationCard(lives), titlesCard(lives), recordsCard(lives)]
   const html = parts.filter(Boolean).join('')
@@ -1571,9 +1586,10 @@ function renderStats(animate) {
     slideTo(seg, STABS.findIndex(([k]) => k === state.stab))
     const pane = view.querySelector('[data-stpane]')
     pane.innerHTML = statsPane(state.stab, s, prev, rate)
+    pane.querySelectorAll('[data-open-prints]').forEach(b => b.addEventListener('click', openPrints))
     bindList(pane); reveal(pane)
   }))
-  view.querySelector('[data-prints]').addEventListener('click', openPrints)
+  view.querySelectorAll('[data-prints], [data-open-prints]').forEach(b => b.addEventListener('click', openPrints))
   updateDue()
   bindList(view)
   if (animate) { reveal(view); countFmt(view.querySelector('[data-proj]'), total, compact) }
