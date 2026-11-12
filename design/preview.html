@@ -1227,6 +1227,17 @@ body.esm.liq .ibtn.solid svg { color: #1D3F6D !important; }
 }
 @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; filter: none; transition: none; } }
 .screen { overflow: clip; }
+/* pílula flutuante de voltar (páginas extras): vidro esmeralda acima da Dock, entra com mola quando o botão do topo some */
+.lx-backf { position: absolute; z-index: 7; left: 16px; bottom: 104px; height: 44px; padding: 0 16px 0 10px; border: 1px solid rgb(198 245 154 / .35); border-radius: 99px;
+  display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: #fff;
+  background: rgb(11 92 69 / .93); -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: 0 12px 28px -10px rgb(8 63 48 / .7), inset 0 1px 0 rgb(255 255 255 / .12);
+  opacity: 0; transform: translateY(16px) scale(.9); pointer-events: none;
+  transition: opacity .25s ease, transform .45s cubic-bezier(.34, 1.4, .64, 1); }
+.lx-backf svg { width: 20px; height: 20px; color: #c6f59a; stroke-width: 2.2; }
+.lx-backf.on { opacity: 1; transform: none; pointer-events: auto; }
+.lx-backf:active { transform: scale(.94); }
+@media (prefers-reduced-motion: reduce) { .lx-backf { transition: opacity .2s ease; transform: none; } }
 </style>
 
 <div class="page">
@@ -1994,7 +2005,19 @@ function lxReveal() {
   sc.addEventListener('scroll', () => { if (tick) return; tick = true; requestAnimationFrame(() => { tick = false
     const top = sc.getBoundingClientRect().top
     sc.querySelectorAll('.rv:not(.in)').forEach(el => { if (el.getBoundingClientRect().bottom < top) { el.classList.add('in'); lxIO?.unobserve(el) } }) }) }, { passive: true }) }
-{ const _g3 = go; go = k => { _g3(k); if (k === 'inicioX') lxAnim(); stCount(); lxReveal() }; go('statsA') }
+// pílula flutuante de voltar: só nas páginas extras; aparece quando o botão do topo sai da tela
+const BACKF = { carreira: ['inicioX', 'Início'], liveD: ['livesA', 'Lives'] }
+function backPill(k) {
+  document.querySelector('.lx-backf')?.remove()
+  const t = BACKF[k]; if (!t) return
+  const b = document.createElement('button'); b.className = 'lx-backf'; b.dataset.go = t[0]
+  b.setAttribute('aria-label', `Voltar para ${t[1]}`); b.innerHTML = `${ic('back')}<span>${t[1]}</span>`
+  document.querySelector('.screen').append(b)
+}
+{ const sc = document.getElementById('scroll'); let tick = false
+  sc.addEventListener('scroll', () => { if (tick) return; tick = true; requestAnimationFrame(() => { tick = false
+    document.querySelector('.lx-backf')?.classList.toggle('on', sc.scrollTop > 90) }) }, { passive: true }) }
+{ const _g3 = go; go = k => { _g3(k); if (k === 'inicioX') lxAnim(); stCount(); lxReveal(); backPill(k) }; go('statsA') }
 // número em milhões contando do zero (ex.: 2,77M), junto com a barra do mês
 function stCount() {
   const el = document.querySelector('[data-cntm]'); if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return
