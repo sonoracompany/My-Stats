@@ -22,13 +22,13 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
+      - uses: actions/checkout@v7
+      - uses: actions/configure-pages@v6
       # Cada publicação ganha uma versão nos endereços dos arquivos, para o iPhone não reaproveitar os antigos
       - name: Stamp version
         run: sed -i "s/__V__/${GITHUB_SHA::7}/g" app/index.html app/*.js
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: app
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
