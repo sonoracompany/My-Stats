@@ -2171,6 +2171,8 @@ function showMonth(result, texts) {
   const data = {}
   for (const p of parsed) for (const [k, v] of Object.entries(p)) {
     if (k === 'ages') data.ages = { ...data.ages, ...v }   // vários prints da mesma tela rolada se completam
+    else if (k === 'ages_guess') data.ages_guess = { ...v, ...data.ages_guess }
+    else if (k === 'countries_guess') data.countries_guess = [...(data.countries_guess || []), ...v]
     else if (k === 'countries') data.countries = mergeCountries(data.countries, v, true)
     else if (k === 'period') data.period = v
     else if (k !== 'month') data[k] = v
@@ -2192,6 +2194,12 @@ function showMonth(result, texts) {
       ${!period ? '<p class="small muted">Mande junto o print do topo do Overview (onde aparece "Custom · Oct 1 - Oct 29") pra o app saber o período.</p>' : ''}
       ${metrics.length ? `<div class="fields" style="box-shadow:none;padding:0">${metrics.map(([k, l]) => `<label class="field half auto" for="m-${k}"><span>${esc(l)}</span><input id="m-${k}" name="${k}" type="text" inputmode="decimal" value="${esc(int(data[k]))}"></label>`).join('')}</div>
       <p class="muted small">O TikTok arredonda o mês (2.6M, 4.1K). Se a leitura perdeu um ponto (41K no lugar de 4.1K), corrija aqui.</p>` : ''}
+      ${(() => {
+        // trava: diamantes do resumo muito longe das lives já registradas no mês = provável erro de leitura
+        const liveGems = sumOf((state.data.lives || []).filter(l => l.date?.startsWith(month) && (!data.period || l.date <= data.period[1])), 'diamonds')
+        if (!data.diamonds || !liveGems || (data.diamonds <= liveGems * 1.6 && data.diamonds >= liveGems * 0.6)) return ''
+        return `<p class="small neg m-warn">Confira os diamantes: o print diz <b>${esc(compact(data.diamonds))}</b>, mas as lives que você registrou em ${esc(monthWord(month))} somam <b>${esc(compact(liveGems))}</b>. Se a leitura errou, corrija o número acima antes de salvar.</p>`
+      })()}
       ${aud.length ? `<div class="row"><span>Público</span><b>${esc(aud.join(' · '))}</b></div>` : ''}
       <button class="btn primary" type="submit">Salvar resumo</button></form>`)
   const form = result.querySelector('#m-form')
