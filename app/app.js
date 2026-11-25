@@ -1068,7 +1068,20 @@ function monthStats(lives, month, livesOnly = false) {
   return { ls, agg, fromSummary, days, gems, min, usd: total('rewards_usd'),
     perDay: fromSummary ? null : days ? gems / days : 0, perHour: min ? gems / (min / 60) : null, perLive: fromSummary ? null : ls.length ? gems / ls.length : 0 }
 }
-const summaryOf = month => (state.data.summaries || []).find(r => r.month === month)?.data
+// Resumo do mês salvo. Trava: se os diamantes do resumo forem impossíveis perto das lives registradas
+// (erro de leitura que ficou salvo, ex.: 13,9M num mês de 1,3M), o app ignora diamantes e recompensas do resumo e usa as lives
+function summaryOf(month) {
+  const d = (state.data.summaries || []).find(r => r.month === month)?.data
+  if (!d?.diamonds) return d
+  const ls = (state.data.lives || []).filter(l => l.date?.startsWith(month) && Number(l.diamonds) > 0)
+  const gems = sumOf(ls, 'diamonds'), hrs = sumOf(ls.filter(l => Number(l.duration_min) > 0), 'duration_min') / 60
+  const perHour = hrs ? sumOf(ls.filter(l => Number(l.duration_min) > 0), 'diamonds') / hrs : 0
+  const off = d.duration_min && perHour ? d.diamonds / (d.duration_min / 60) > perHour * 3   // rende 3× mais por hora que as lives: leitura errada
+    : ls.length >= 8 && d.diamonds > gems * 5
+  if (!off) return d
+  const { diamonds, rewards_usd, ...rest } = d
+  return rest
+}
 
 const perHour = l => (l.duration_min ? (Number(l.diamonds) || 0) / (l.duration_min / 60) : 0)
 
@@ -1473,7 +1486,7 @@ function recordsCard(lives) {
   const top = k => lives.filter(l => Number(l[k]) > 0).reduce((a, l) => (!a || Number(l[k]) > Number(a[k]) ? l : a), null)
   const byMonth = {}
   for (const l of lives) if (l.date) byMonth[l.date.slice(0, 7)] = (byMonth[l.date.slice(0, 7)] || 0) + (Number(l.diamonds) || 0)
-  for (const r of state.data.summaries || []) if (r.data?.diamonds) byMonth[r.month] = Math.max(byMonth[r.month] || 0, r.data.diamonds)
+  for (const r of state.data.summaries || []) { const g = summaryOf(r.month)?.diamonds; if (g) byMonth[r.month] = Math.max(byMonth[r.month] || 0, g) }
   const bestMonth = Object.entries(byMonth).sort((a, b) => b[1] - a[1])[0]
   const days = [...new Set(lives.map(l => l.date).filter(Boolean))].sort()
   let best = 0, run = 0, bestEnd = null

@@ -64,7 +64,9 @@ Mostra diamantes, recompensas, saques, estatísticas e metas. Fala sempre em **p
   perdido é tratado como número 10× **maior** (corrige o que inchou: recompensas ou diamantes); "26 9K"/"26. 9K" = 26.9K;
   "Om33s" = 0m33s; "%" lido como "9" ou "0," ("5%"→"59", "22%"→"2920,") vira palpite resolvido pela soma de 100%
   (`ages_guess`, `countries_guess`); "United States of America" = United States. A tela do resumo avisa (`.m-warn`) quando os
-  diamantes ficam muito longe das lives registradas no mês.
+  diamantes ficam muito longe das lives registradas no mês. E `summaryOf` ignora diamantes/recompensas de um resumo salvo
+  que seja impossível perto das lives (rende 3× mais por hora que elas, ou 5× o total com 8+ lives): um erro antigo salvo
+  não estraga Lives/Estatísticas/Carreira.
   Para depurar, rode o `ocr.js` de verdade no Chromium do Playwright com o tesseract.js do npm (o jsdelivr é bloqueado aqui):
   `npm i tesseract.js@5.1.1 @tesseract.js-data/eng` e redirecione `cdn.jsdelivr.net/npm/<pacote>/<arquivo>` para o node_modules.
 - Uma live do mesmo dia do print de Upcoming rewards não soma de novo no saldo (o print já inclui).
