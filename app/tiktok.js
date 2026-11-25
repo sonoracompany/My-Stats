@@ -295,12 +295,42 @@ const kmb = (n, u) => {
 // Se não baterem (ex.: "2.6M" lido como "3"), calcula pelas recompensas, arredondado como o TikTok mostra.
 export function fixMonth(out) {
   if (out.rewards_usd) {
-    const ratio = out.diamonds ? out.rewards_usd / (out.diamonds * 0.01) : 0
-    if (ratio < 0.35 || ratio > 0.7) {
-      const g = out.rewards_usd / 0.0051
-      const step = g >= 1e6 ? 1e5 : 1e2
-      out.diamonds = Math.round(g / step) * step
+    const fits = (usd, gems) => { const r = gems ? usd / (gems * 0.01) : 0; return r >= 0.35 && r <= 0.7 }
+    if (!fits(out.rewards_usd, out.diamonds)) {
+      // o ponto perdido deixa o número 10× MAIOR ("USD7.1K" lido como "USD71K", "1.3M" como "13M"): corrige o que inchou
+      const smaller = [0.1, 0.01].find(k => fits(out.rewards_usd * k, out.diamonds))
+      const fewer = [0.1, 0.01].find(k => fits(out.rewards_usd, out.diamonds * k))
+      if (out.diamonds && smaller) out.rewards_usd = Math.round(out.rewards_usd * smaller * 100) / 100
+      else if (out.diamonds && fewer) out.diamonds = Math.round(out.diamonds * fewer)
+      else {
+        // diamantes ilegíveis (ex.: "2.6M" lido como "3"): calcula pelas recompensas, arredondado como o TikTok mostra
+        const g = out.rewards_usd / 0.0051
+        const step = g >= 1e6 ? 1e5 : 1e2
+        out.diamonds = Math.round(g / step) * step
+      }
     }
+  }
+  // idade e países: as porcentagens somam 100. Um valor ilegível ("22%" lido como "2920,") sai do que falta para 100
+  if (out.ages_guess) {
+    const all = ['13-17', '18-24', '25-34', '35-44', '45-54', '55+']
+    out.ages ||= {}
+    for (const [k, v] of Object.entries(out.ages_guess)) {
+      if (out.ages[k] != null) continue
+      const others = all.filter(x => x !== k)
+      const sum = others.reduce((a, x) => a + (out.ages[x] ?? (x === '13-17' ? 0 : NaN)), 0)
+      out.ages[k] = Number.isFinite(sum) && sum <= 100 ? 100 - sum : v
+    }
+    delete out.ages_guess
+  }
+  if (out.countries_guess) {
+    out.countries ||= []
+    for (const [name, v] of out.countries_guess) {
+      if (out.countries.some(([n]) => n === name)) continue
+      const sum = out.countries.reduce((a, [, x]) => a + x, 0)
+      if (sum + v <= 101) out.countries.push([name, v])
+    }
+    out.countries.sort((x, y) => (x[0] === 'Others') - (y[0] === 'Others') || y[1] - x[1])
+    delete out.countries_guess
   }
   // "4.1K" lido como "41K": no número grande do TikTok o ponto some e o valor fica 10× maior.
   // Views e espectadores únicos vêm com o ponto; os outros são uma fração pequena deles: muito acima disso, era o ponto
@@ -312,7 +342,9 @@ export function fixMonth(out) {
 
 export function parseMonth(text, now = new Date()) {
   // letras que a leitura troca por números ("S3h" = 53h, "O0m41s" = 0m41s) e o "I" de "Italy" lido como "["
-  text = text.replace(/(?<![A-Za-z])S(?=\d)/g, '5').replace(/(?<![A-Za-z])[O](?=\d)/g, '0').replace(/[\[|](?=[a-z]{2})/g, 'I')
+  text = text.replace(/(?<![A-Za-z])S(?=\d)/g, '5').replace(/(?<![A-Za-z])[O](?=\d|\s?m\s?\d)/g, '0').replace(/[\[|](?=[a-z]{2})/g, 'I')
+  // o ponto do número vira espaço: "26. 9K" (grade do topo) e "Comments 26 9K" (lista do Key metrics) = 26.9K
+  text = text.replace(/\b(\d{1,3})\.\s(\d[KkMm])\b/g, '$1.$2').replace(/([A-Za-z]\s+\d{1,3})\s(\d[KkMm])\b/g, '$1.$2')
   const out = {}
   // período escolhido no topo ("Custom · Oct 1 - Oct 29"): é ele que diz o mês e até que dia vão os números
   const per = text.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})\s*[-–—]\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})\b/i)
@@ -362,20 +394,27 @@ export function parseMonth(text, now = new Date()) {
   // a leitura às vezes troca o hífen ("45—54", "4554") ou some com o "+" do 55+
   // porcentagem com dígito sobrando ("239%" no lugar de "23%"): corta até caber em 100
   const pctOk = v => { let n = Number(v); while (n > 100) n = Math.floor(n / 10); return n }
-  for (const r of text.matchAll(/^\W*(13|18|25|35|45)\s*\D{0,2}\s*(17|24|34|44|54)\s+(\d{1,4})\s?%/gm)) ages[`${r[1]}-${r[2]}`] = pctOk(r[3])
-  for (const r of text.matchAll(/^\W*55\s*\+?\s+(\d{1,4})\s?%/gm)) ages['55+'] = pctOk(r[1])
+  const guess = {}
+  for (const r of text.matchAll(/^\W*(13|18|25|35|45)\s*\D{0,2}\s*(17|24|34|44|54)\s+(\d{1,4})(\s?%)?/gm)) (r[4] ? ages : guess)[`${r[1]}-${r[2]}`] = pctOk(r[3])
+  for (const r of text.matchAll(/^\W*55\s*\+?\s+(\d{1,4})(\s?%)?/gm)) (r[2] ? ages : guess)['55+'] = pctOk(r[1])
   if (Object.keys(ages).length) out.ages = ages
+  for (const k of Object.keys(guess)) if (ages[k] != null) delete guess[k]
+  if (Object.keys(guess).length) out.ages_guess = guess
   const cs = text.split(/countries or regions/i)[1]
   if (cs) {
-    const countries = []
+    const countries = [], unsure = []
     // a bandeira vira letras soltas na leitura ("ER United Kingdom", "A Philippines"): procura o nome do país dentro da linha
     for (const line of cs.split('\n')) {
-      const r = line.match(/([A-Z][a-z]+(?: [A-Z][a-z]+)*)\s+(\d{1,3})\s?%\s*$/)
+      const r = line.match(/([A-Z][a-z]+(?: (?:of|and|the|[A-Z][a-z]+))*)\s+(\d{1,3})(\s?%)?\s*$/)
       if (!r) continue
-      const name = KNOWN.find(k => r[1].endsWith(k)) || r[1].replace(/^(?:[A-Z][A-Za-z]{0,2}\s)+/, '')
-      countries.push([name, Number(r[2])])
+      const full = r[1].replace(/ of America$/, '')
+      const name = KNOWN.find(k => full.endsWith(k)) || full.replace(/^(?:[A-Z][A-Za-z]{0,2}\s)+/, '')
+      if (r[3]) countries.push([name, Number(r[2])])
+      // sem o "%": ele costuma virar um 9 no fim ("5%" lido como "59")
+      else if (KNOWN.includes(name)) unsure.push([name, r[2].length > 1 && /9$/.test(r[2]) ? Math.floor(r[2] / 10) : Number(r[2])])
     }
     if (countries.length) out.countries = countries
+    if (unsure.length) out.countries_guess = unsure
   }
   return out
 }

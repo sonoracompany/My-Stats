@@ -60,7 +60,13 @@ Mostra diamantes, recompensas, saques, estatísticas e metas. Fala sempre em **p
 
 - **Leitura dos prints (OCR):** o leitor erra de jeitos previsíveis — perde o ponto ("4.1K" → "41K"), troca letras por números ("S3h", "O0m41s"),
   transforma a foto do perfil em lixo antes do título. Já há correções em `tiktok.js` (`fixMonth`, `cleanTitle`, `pctOk`…).
-  Para depurar, reproduza o pré-processamento de `ocr.js` + a função `rows()` com tesseract.js no Node antes de mexer.
+  Resumo do mês (nov/2026): "USD7.1K" lido como "USD71K" fazia o `fixMonth` recalcular os diamantes (deu 14–16M). Agora o ponto
+  perdido é tratado como número 10× **maior** (corrige o que inchou: recompensas ou diamantes); "26 9K"/"26. 9K" = 26.9K;
+  "Om33s" = 0m33s; "%" lido como "9" ou "0," ("5%"→"59", "22%"→"2920,") vira palpite resolvido pela soma de 100%
+  (`ages_guess`, `countries_guess`); "United States of America" = United States. A tela do resumo avisa (`.m-warn`) quando os
+  diamantes ficam muito longe das lives registradas no mês.
+  Para depurar, rode o `ocr.js` de verdade no Chromium do Playwright com o tesseract.js do npm (o jsdelivr é bloqueado aqui):
+  `npm i tesseract.js@5.1.1 @tesseract.js-data/eng` e redirecione `cdn.jsdelivr.net/npm/<pacote>/<arquivo>` para o node_modules.
 - Uma live do mesmo dia do print de Upcoming rewards não soma de novo no saldo (o print já inclui).
 - Mês em andamento compara com o mês anterior só até o mesmo dia.
 - Respeitar `prefers-reduced-motion` em toda animação; área de toque ≥ 44px.
